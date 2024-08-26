@@ -2,10 +2,14 @@ import Upload from './Upload';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: { default: 'Upload', template: '' },
-  description: ''
+	title: { default: 'Upload', template: '' },
+	description: ''
 };
 
 export default function UploadPage() {
-  return <Upload></Upload>;
+	return (
+		<div className='flex flex-grow items-center justify-center'>
+			<Upload></Upload>
+		</div>
+	);
 }

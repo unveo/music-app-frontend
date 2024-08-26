@@ -39,18 +39,21 @@ export function Card({
 						<Image
 							alt='track-image'
 							src={imageSrc}
-							width={320}
-							height={320}
-							className={cn(roundedClass, 'aspect-square')}
+							width={500}
+							height={500}
+							className={cn(roundedClass, 'aspect-square object-cover')}
 						></Image>
 					</Link>
 				) : (
 					<Image
 						alt='track-image'
 						src={imageSrc}
-						width={320}
-						height={320}
-						className={cn(roundedClass, 'aspect-square cursor-pointer')}
+						width={500}
+						height={500}
+						className={cn(
+							roundedClass,
+							'aspect-square cursor-pointer object-cover'
+						)}
 					></Image>
 				)}
 				{playButton ? (

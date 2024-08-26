@@ -33,18 +33,18 @@ export default function Profile({ username }: { username: string }) {
 	const isCurrentUser = currentUser?.id === userId;
 	const isFollowedQuery = useQuery({
 		queryKey: ['is-followed', userId],
-		queryFn: () => followService.check(userId as number),
+		queryFn: () => followService.check(userId!),
 		enabled: !!userId
 	});
 	const isFollowed = isFollowedQuery.data?.data;
 	const followersQuery = useQuery({
 		queryKey: ['followers', userId],
-		queryFn: () => followService.getManyFollowers(userId as number, 6),
+		queryFn: () => followService.getManyFollowers(userId!, 6),
 		enabled: !!userId
 	});
 	const followMutation = useMutation({
 		mutationKey: ['follow', userId],
-		mutationFn: () => followService.follow(userId as number),
+		mutationFn: () => followService.follow(userId!),
 		onSuccess: () => {
 			userQuery.refetch();
 			isFollowedQuery.refetch();
@@ -53,7 +53,7 @@ export default function Profile({ username }: { username: string }) {
 	});
 	const unfollowMutation = useMutation({
 		mutationKey: ['unfollow', userId],
-		mutationFn: () => followService.unfollow(userId as number),
+		mutationFn: () => followService.unfollow(userId!),
 		onSuccess: () => {
 			userQuery.refetch();
 			isFollowedQuery.refetch();
@@ -79,9 +79,9 @@ export default function Profile({ username }: { username: string }) {
 								<Image
 									alt='avatar'
 									src={`http:localhost:5000/${user.image}`}
-									width={320}
-									height={320}
-									className='rounded-full'
+									width={500}
+									height={500}
+									className='aspect-square rounded-full object-cover'
 								></Image>
 							</button>
 						</div>
@@ -108,8 +108,8 @@ export default function Profile({ username }: { username: string }) {
 							</Button>
 						)}
 						<div className='flex gap-3'>
-							<span>{`${nFormatter(user._count.followers as number)} Followers`}</span>
-							<span>{`${nFormatter(user._count.following as number)} Following`}</span>
+							<span>{`${nFormatter(user._count.followers)} Followers`}</span>
+							<span>{`${nFormatter(user._count.following)} Following`}</span>
 						</div>
 					</div>
 					<ul className='flex flex-col gap-12'>

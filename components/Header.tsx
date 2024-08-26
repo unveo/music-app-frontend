@@ -34,7 +34,7 @@ export default function Header() {
 					</div>
 				</div>
 				<div className='flex h-full items-center justify-end gap-2 px-2 md:w-40'>
-					<DropdownMenu>
+					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger asChild>
 							<Button
 								variant='ghost'
@@ -58,7 +58,7 @@ export default function Header() {
 					>
 						<ArrowUpFromLine className='size-[1.20rem]' />
 					</Link>
-					<DropdownMenu>
+					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger asChild>
 							<Button variant='ghost' size='icon' className='size-8 p-0'>
 								<Bell className='size-[1.20rem]' />
@@ -67,9 +67,13 @@ export default function Header() {
 						<DropdownMenuContent align='end' className='w-96'>
 							<DropdownMenuLabel>Notifications</DropdownMenuLabel>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Notification 1</DropdownMenuItem>
+							<DropdownMenuItem className='px-2 py-1.5'>
+								Notification 1
+							</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>Notification 2</DropdownMenuItem>
+							<DropdownMenuItem className='px-2 py-1.5'>
+								Notification 2
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 					<UserDropdownMenu></UserDropdownMenu>

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	AlbumCard,
 	CardSkeleton,
+	ListeningHistoryCard,
 	PlaylistCard,
 	TrackCard,
 	UserCard
@@ -15,6 +16,7 @@ import NotFound from './NotFound';
 import { playlistService } from '@/services/playlist/playlist.service';
 import { albumService } from '@/services/album/album.service';
 import { followService } from '@/services/user/follow/follow.service';
+import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
 
 export function List({
 	username,
@@ -220,7 +222,7 @@ export function FollowersList({ username }: { username: string }) {
 	const userId = user?.id;
 	const followersQuery = useQuery({
 		queryKey: ['followers', userId],
-		queryFn: () => followService.getManyFollowers(userId as number),
+		queryFn: () => followService.getManyFollowers(userId!),
 		enabled: !!userId
 	});
 	const followers = followersQuery.data?.data;
@@ -269,7 +271,7 @@ export function FollowingList({ username }: { username: string }) {
 	const userId = user?.id;
 	const followingQuery = useQuery({
 		queryKey: ['following', userId],
-		queryFn: () => followService.getManyFollowing(userId as number),
+		queryFn: () => followService.getManyFollowing(userId!),
 		enabled: !!userId
 	});
 	const following = followingQuery.data?.data;
@@ -302,6 +304,52 @@ export function FollowingList({ username }: { username: string }) {
 						{`${username}`}
 					</Link>
 					<span>{`doesn't follow any user`}</span>
+				</div>
+			);
+		}
+	}
+}
+
+export function HistoryList() {
+	const currentUserQuery = useQuery({
+		queryKey: ['current-user'],
+		queryFn: () => userService.getCurrent()
+	});
+	const currentUser = currentUserQuery.data?.data;
+
+	const listeningHistoryQuery = useQuery({
+		queryKey: ['listening-history'],
+		queryFn: () => listeningHistoryService.get()
+	});
+	const listeningHistory = listeningHistoryQuery.data?.data;
+
+	if (listeningHistoryQuery.isLoading || currentUserQuery.isLoading) {
+		return <ListSkeleton></ListSkeleton>;
+	}
+
+	if (listeningHistoryQuery.isError || currentUserQuery.isError) {
+		return <NotFound></NotFound>;
+	}
+
+	if (listeningHistory && currentUser) {
+		if (listeningHistory.length) {
+			return (
+				<List username={currentUser.username} name='listening history'>
+					{listeningHistory.map(({ track }) => (
+						<ListeningHistoryCard
+							key={track.id}
+							track={track}
+						></ListeningHistoryCard>
+					))}
+				</List>
+			);
+		} else {
+			return (
+				<div className='flex w-full max-w-[80rem] flex-grow items-center justify-center gap-5 p-8 text-5xl'>
+					<Link href={`/${currentUser.username}`} className='font-semibold'>
+						You
+					</Link>
+					<span>{`have nothing in your listening history`}</span>
 				</div>
 			);
 		}

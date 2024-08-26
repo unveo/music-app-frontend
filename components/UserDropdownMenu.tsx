@@ -28,7 +28,7 @@ export function UserDropdownMenu() {
 	});
 
 	return (
-		<DropdownMenu>
+		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<button className='size-8 rounded-full bg-muted outline-none'>
 					{currentUserQuery.isLoading ? (
@@ -36,10 +36,10 @@ export function UserDropdownMenu() {
 					) : (
 						<Image
 							src={`http:localhost:5000/${currentUser?.image}`}
-							width={36}
-							height={36}
-							alt='Avatar'
-							className='rounded-full'
+							width={100}
+							height={100}
+							alt='avatar'
+							className='aspect-square rounded-full object-cover'
 						/>
 					)}
 				</button>

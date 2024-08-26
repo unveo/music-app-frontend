@@ -6,6 +6,7 @@ import type {
 	RegisterDto
 } from './auth.types';
 import type { UserPrivate } from '../user/user.types';
+import { AxiosError } from 'axios';
 
 export const authService = {
 	async register(dto: RegisterDto) {
@@ -29,10 +30,10 @@ export const authService = {
 	},
 
 	async changeEmail(dto: ChangeEmailDto) {
-		return await api.patch<UserPrivate>('/auth/login/email', dto);
+		return await api.patch<UserPrivate>('/auth/email', dto);
 	},
 
 	async changePassword(dto: ChangePasswordDto) {
-		return await api.patch<UserPrivate>('/auth/login/password', dto);
+		return await api.patch<UserPrivate>('/auth/password', dto);
 	}
 };

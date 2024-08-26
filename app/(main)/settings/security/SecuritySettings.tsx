@@ -9,6 +9,7 @@ import {
 	FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { authService } from '@/services/auth/auth.service';
 import {
 	ChangeEmailDto,
@@ -41,13 +42,27 @@ export default function SecuritySettings() {
 		mode: 'onChange',
 		disabled: !currentUser
 	});
+	const { toast } = useToast();
 	const changeEmail = useMutation({
 		mutationKey: ['change-email'],
-		mutationFn: (dto: ChangeEmailDto) => authService.changeEmail(dto)
+		mutationFn: (dto: ChangeEmailDto) => authService.changeEmail(dto),
+		onSuccess: () => {
+			toast({ title: 'Email updated' });
+		},
+		onError: (error) => {
+			toast({ title: `${error.message}`, variant: 'destructive' });
+		}
 	});
 	const changePassword = useMutation({
 		mutationKey: ['change-password'],
-		mutationFn: (dto: ChangePasswordDto) => authService.changePassword(dto)
+		mutationFn: (dto: ChangePasswordDto) => authService.changePassword(dto),
+		onSuccess: () => {
+			changePasswordForm.reset();
+			toast({ title: 'Password updated' });
+		},
+		onError: (error) => {
+			toast({ title: `${error.message}`, variant: 'destructive' });
+		}
 	});
 
 	useEffect(() => {

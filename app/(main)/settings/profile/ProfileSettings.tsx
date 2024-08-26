@@ -9,12 +9,13 @@ import {
 	FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { userService } from '@/services/user/user.service';
 import { UpdateUserDto, UpdateUserSchema } from '@/services/user/user.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ProfileSettings() {
@@ -37,15 +38,29 @@ export default function ProfileSettings() {
 		mode: 'onSubmit',
 		disabled: !currentUser
 	});
-	const changeUsername = useMutation({
+	const changeUsernameMutation = useMutation({
 		mutationKey: ['change-username'],
 		mutationFn: (dto: UpdateUserDto) => userService.update(dto),
-		onSuccess: () => {} // Update current user
+		onSuccess: () => {
+			toast({ title: 'Username updated' });
+			currentUserQuery.refetch();
+		},
+		onError: (error) => {
+			toast({ title: `${error.message}`, variant: 'destructive' });
+		}
 	});
-	const changeImage = useMutation({
+	const changeImageMutation = useMutation({
 		mutationKey: ['change-avatar'],
-		mutationFn: (dto: UpdateUserDto) => userService.update(dto)
+		mutationFn: (dto: UpdateUserDto) => userService.update(dto),
+		onSuccess: () => {
+			toast({ title: 'Image updated' });
+			currentUserQuery.refetch();
+		},
+		onError: (error) => {
+			toast({ title: `${error.message}`, variant: 'destructive' });
+		}
 	});
+	const { toast } = useToast();
 
 	useEffect(() => {
 		if (currentUser) {
@@ -66,7 +81,7 @@ export default function ProfileSettings() {
 					<FormProvider {...changeUsernameForm}>
 						<form
 							onSubmit={changeUsernameForm.handleSubmit((dto) =>
-								changeUsername.mutate(dto)
+								changeUsernameMutation.mutate(dto)
 							)}
 							className='grid gap-4'
 						>
@@ -97,7 +112,7 @@ export default function ProfileSettings() {
 					<FormProvider {...changeImageForm}>
 						<form
 							onSubmit={changeImageForm.handleSubmit((dto) =>
-								changeImage.mutate(dto)
+								changeImageMutation.mutate(dto)
 							)}
 							className='grid gap-4'
 						>
@@ -110,15 +125,13 @@ export default function ProfileSettings() {
 											Image
 										</FormLabel>
 										<FormControl>
-											<div className='flex h-10 items-center rounded-md border border-border px-2'>
-												<Input
-													type='file'
-													id='image'
-													placeholder='image'
-													required
-													{...field}
-												/>
-											</div>
+											<Input
+												type='file'
+												id='image'
+												required
+												{...field}
+												className='flex h-min items-center rounded-md border border-border p-2'
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>

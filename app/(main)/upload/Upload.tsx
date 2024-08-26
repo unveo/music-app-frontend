@@ -47,7 +47,7 @@ export default function Upload() {
 	}
 
 	return (
-		<Card>
+		<Card className='w-96'>
 			<CardHeader>
 				<CardTitle className='text-xl'>Upload track</CardTitle>
 			</CardHeader>
@@ -137,7 +137,7 @@ export default function Upload() {
 								</FormItem>
 							)}
 						/>
-						<Button type='submit' className='mt-2 w-full'>
+						<Button type='submit' className='mt-2 w-min'>
 							Upload track
 						</Button>
 					</form>

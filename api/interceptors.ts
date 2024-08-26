@@ -1,13 +1,23 @@
-import axios, { CreateAxiosDefaults } from 'axios';
+import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
 
 export const REFRESH_TOKEN = 'refreshToken';
 
 const options: CreateAxiosDefaults = {
-  baseURL: 'http://localhost:5000/api',
-  withCredentials: true
+	baseURL: 'http://localhost:5000/api',
+	withCredentials: true
 };
 
 const api = axios.create(options);
+
+api.interceptors.response.use(
+	(config) => config,
+	async (error: AxiosError) => {
+		if (error.response) {
+			throw error.response.data;
+		}
+		throw error;
+	}
+);
 
 // api.interceptors.response.use(
 //   (config) => config,

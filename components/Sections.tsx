@@ -16,7 +16,6 @@ import { playlistService } from '@/services/playlist/playlist.service';
 import { trackService } from '@/services/track/track.service';
 import { followService } from '@/services/user/follow/follow.service';
 import { useCardsCountStore } from '@/stores/cards-count.store';
-import { useEffect } from 'react';
 import { albumService } from '@/services/album/album.service';
 
 export function Section({
@@ -77,9 +76,7 @@ export function ListeningHistorySection() {
 		queryFn: () => listeningHistoryService.get(7)
 	});
 	const listeningHistory = listeningHistoryQuery.data?.data;
-	useEffect(() => {
-		console.log(cardsCount);
-	});
+
 	if (listeningHistoryQuery.isLoading) {
 		return <SectionSkeleton></SectionSkeleton>;
 	}
@@ -347,7 +344,7 @@ export function FollowersSection({ username }: { username: string }) {
 	const { cardsCount } = useCardsCountStore();
 	const followersQuery = useQuery({
 		queryKey: ['followers', userId],
-		queryFn: () => followService.getManyFollowers(userId as number, 7),
+		queryFn: () => followService.getManyFollowers(userId!, 7),
 		enabled: !!userId
 	});
 	const followers = followersQuery.data?.data;
@@ -392,7 +389,7 @@ export function FollowingSection({ username }: { username: string }) {
 	const { cardsCount } = useCardsCountStore();
 	const followingQuery = useQuery({
 		queryKey: ['following', userId],
-		queryFn: () => followService.getManyFollowing(userId as number, 7),
+		queryFn: () => followService.getManyFollowing(userId!, 7),
 		enabled: !!userId
 	});
 	const following = followingQuery.data?.data;
