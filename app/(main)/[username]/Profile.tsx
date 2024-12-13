@@ -13,8 +13,8 @@ import {
 import { nFormatter } from '@/lib/utils';
 import { followService } from '@/services/user/follow/follow.service';
 import { userService } from '@/services/user/user.service';
-import useCardsCount from '@/hooks/cards-count.hook';
 import NotFound from '@/components/NotFound';
+import useCardsCount from '@/lib/hooks/cards-count';
 
 export default function Profile({ username }: { username: string }) {
 	useCardsCount();
@@ -39,7 +39,7 @@ export default function Profile({ username }: { username: string }) {
 	const isFollowed = isFollowedQuery.data?.data;
 	const followersQuery = useQuery({
 		queryKey: ['followers', userId],
-		queryFn: () => followService.getManyFollowers(userId!, 6),
+		queryFn: () => followService.getManyFollowers(userId!, 7),
 		enabled: !!userId
 	});
 	const followMutation = useMutation({
@@ -99,11 +99,7 @@ export default function Profile({ username }: { username: string }) {
 								Unfollow
 							</Button>
 						) : (
-							<Button
-								onClick={() => followMutation.mutate()}
-								variant='secondary'
-								className='border shadow-sm'
-							>
+							<Button onClick={() => followMutation.mutate()} variant='outline'>
 								Follow
 							</Button>
 						)}

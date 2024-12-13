@@ -1,7 +1,15 @@
 export const AUDIO_FILE_LIMIT = 52428800;
 export const IMAGE_FILE_LIMIT = 10485760;
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
-export const ACCEPTED_AUDIO_TYPES = ['audio/mpeg'];
+export const ACCEPTED_AUDIO_TYPES = [
+	'audio/mpeg',
+	'audio/aac',
+	'audio/mp4',
+	'audio/flac',
+	'audio/wav',
+	'audio/aiff',
+	'audio/webm'
+]; // m4a check, webm check
 export const restrictedUsernames = [
 	'login',
 	'signup',

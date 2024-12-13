@@ -1,5 +1,5 @@
-import { TracksList } from '@/components/Lists';
 import { Metadata } from 'next';
+import Tracks from './Tracks';
 
 export const metadata: Metadata = {
 	title: { default: 'Username tracks', template: '' },
@@ -11,5 +11,5 @@ export default function TracksPage({
 }: {
 	params: { username: string };
 }) {
-	return <TracksList username={params.username}></TracksList>;
+	return <Tracks username={params.username}></Tracks>;
 }

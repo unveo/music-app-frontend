@@ -70,6 +70,9 @@
 	main {
 		@apply flex flex-grow flex-col items-center bg-muted/40;
 	}
+	div[data-part='thumb'][data-dragging] {
+		opacity: 1;
+	}
 }
 
 @layer components {

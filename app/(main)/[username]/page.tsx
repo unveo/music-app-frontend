@@ -6,10 +6,11 @@ export const metadata: Metadata = {
 	description: ''
 };
 
-export default function ProfilePage({
+export default async function ProfilePage({
 	params
 }: {
 	params: { username: string };
 }) {
-	return <Profile username={params.username}></Profile>;
+	const { username } = await params;
+	return <Profile username={username}></Profile>;
 }

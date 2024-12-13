@@ -6,16 +6,30 @@ import {
 	FormItem,
 	FormLabel,
 	FormControl,
-	FormMessage
+	FormMessage,
+	Form
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import {
+	ACCEPTED_AUDIO_TYPES,
+	ACCEPTED_IMAGE_TYPES,
+	IMAGE_FILE_LIMIT
+} from '@/config';
+import { validateImage } from '@/lib/utils';
 import { userService } from '@/services/user/user.service';
-import { UpdateUserDto, UpdateUserSchema } from '@/services/user/user.types';
+import {
+	ChangeImageDto,
+	ChangeImageSchema,
+	ChangeUsernameDto,
+	ChangeUsernameSchema
+} from '@/services/user/user.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { ImageUp } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default function ProfileSettings() {
@@ -25,22 +39,24 @@ export default function ProfileSettings() {
 	});
 	const currentUser = currentUserQuery.data?.data;
 
-	const changeUsernameForm = useForm<UpdateUserDto>({
-		resolver: zodResolver(UpdateUserSchema),
+	const changeUsernameForm = useForm<ChangeUsernameDto>({
+		resolver: zodResolver(ChangeUsernameSchema),
 		defaultValues: { username: currentUser?.username },
 		mode: 'onChange',
 		disabled: !currentUser
 	});
-	const changeImageForm = useForm<UpdateUserDto>({
-		// TODO
-		resolver: zodResolver(UpdateUserSchema),
-		defaultValues: { image: '' },
-		mode: 'onSubmit',
+	const changeImageForm = useForm<ChangeImageDto>({
+		resolver: zodResolver(ChangeImageSchema),
+		defaultValues: { image: undefined },
 		disabled: !currentUser
 	});
+
+	const [imageUrl, setImageUrl] = useState<string | null>(null);
+	const { toast } = useToast();
+
 	const changeUsernameMutation = useMutation({
 		mutationKey: ['change-username'],
-		mutationFn: (dto: UpdateUserDto) => userService.update(dto),
+		mutationFn: (dto: ChangeUsernameDto) => userService.update(dto),
 		onSuccess: () => {
 			toast({ title: 'Username updated' });
 			currentUserQuery.refetch();
@@ -51,22 +67,45 @@ export default function ProfileSettings() {
 	});
 	const changeImageMutation = useMutation({
 		mutationKey: ['change-avatar'],
-		mutationFn: (dto: UpdateUserDto) => userService.update(dto),
+		mutationFn: (dto: FormData) =>
+			userService.update(dto as unknown as ChangeImageDto),
 		onSuccess: () => {
 			toast({ title: 'Image updated' });
+			URL.revokeObjectURL(imageUrl!);
+			setImageUrl(null);
+			changeImageForm.setValue('image', undefined); // TODO
 			currentUserQuery.refetch();
 		},
 		onError: (error) => {
 			toast({ title: `${error.message}`, variant: 'destructive' });
 		}
 	});
-	const { toast } = useToast();
 
 	useEffect(() => {
 		if (currentUser) {
 			changeUsernameForm.setValue('username', currentUser.username);
 		}
-	}, [currentUser?.username]);
+	}, [currentUser?.username, currentUser, changeUsernameForm]);
+
+	function handleImage(file?: File) {
+		if (file) {
+			try {
+				validateImage(file);
+			} catch (err: any) {
+				toast({
+					title: err.message,
+					variant: 'destructive'
+				});
+				return;
+			}
+			const imageUrlUrl = URL.createObjectURL(file);
+			setImageUrl(imageUrlUrl);
+			changeImageForm.setValue('image', file);
+		} else {
+			setImageUrl(null);
+			changeImageForm.setValue('image', undefined);
+		}
+	}
 
 	return (
 		<>
@@ -80,17 +119,17 @@ export default function ProfileSettings() {
 				<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
 					<FormProvider {...changeUsernameForm}>
 						<form
-							onSubmit={changeUsernameForm.handleSubmit((dto) =>
-								changeUsernameMutation.mutate(dto)
-							)}
+							onSubmit={changeUsernameForm.handleSubmit((dto) => {
+								changeUsernameMutation.mutate(dto);
+							})}
 							className='grid gap-4'
 						>
 							<FormField
 								control={changeUsernameForm.control}
 								name='username'
 								render={({ field }) => (
-									<FormItem className='grid gap-2'>
-										<FormLabel htmlFor='username' className='text-lg'>
+									<FormItem className='grid'>
+										<FormLabel htmlFor='username' className='w-min text-lg'>
 											Username
 										</FormLabel>
 										<FormControl>
@@ -109,30 +148,63 @@ export default function ProfileSettings() {
 					</FormProvider>
 				</div>
 				<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
-					<FormProvider {...changeImageForm}>
+					<Form {...changeImageForm}>
 						<form
-							onSubmit={changeImageForm.handleSubmit((dto) =>
-								changeImageMutation.mutate(dto)
-							)}
-							className='grid gap-4'
+							onSubmit={changeImageForm.handleSubmit((dto) => {
+								const formData = new FormData();
+								formData.append('image', dto.image);
+								changeImageMutation.mutate(formData);
+							})}
+							className='flex flex-col justify-between gap-4'
 						>
 							<FormField
 								control={changeImageForm.control}
 								name='image'
-								render={({ field }) => (
-									<FormItem className='grid gap-2'>
-										<FormLabel htmlFor='image' className='text-lg'>
+								render={() => (
+									<FormItem className='grid'>
+										<FormLabel htmlFor='image' className='w-min text-lg'>
 											Image
 										</FormLabel>
-										<FormControl>
-											<Input
-												type='file'
-												id='image'
-												required
-												{...field}
-												className='flex h-min items-center rounded-md border border-border p-2'
-											/>
-										</FormControl>
+										<div className='min-size-52 group relative size-52 rounded-md border'>
+											{imageUrl ? (
+												<FormLabel
+													htmlFor='image'
+													className='absolute bottom-2 right-2 z-10 flex h-10 cursor-pointer items-center rounded-md border border-input bg-background px-4 py-2 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100'
+												>
+													Edit
+												</FormLabel>
+											) : (
+												<FormLabel
+													htmlFor='image'
+													className='flex size-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md p-6'
+												>
+													<ImageUp className='size-8'></ImageUp>
+													<span>Click to upload image</span>
+													<span className='text-xs'>JPG or PNG</span>
+												</FormLabel>
+											)}
+											<FormControl>
+												<Input
+													type='file'
+													id='image'
+													required
+													accept={`.jpg, .png, ${ACCEPTED_IMAGE_TYPES.join(', ')}`}
+													onChange={(e) => handleImage(e.target.files?.[0])}
+													className='hidden'
+												/>
+											</FormControl>
+											{imageUrl && (
+												<div className='absolute top-0 size-52 min-h-52 min-w-52'>
+													<Image
+														src={imageUrl}
+														alt='Image imageUrl'
+														className='aspect-square size-52 rounded-md object-cover'
+														width={500}
+														height={500}
+													/>
+												</div>
+											)}
+										</div>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -141,7 +213,7 @@ export default function ProfileSettings() {
 								Save
 							</Button>
 						</form>
-					</FormProvider>
+					</Form>
 				</div>
 			</div>
 		</>

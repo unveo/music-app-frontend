@@ -1,21 +1,12 @@
-'use client';
-
+import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { useQuery } from '@tanstack/react-query';
-import { userService } from '@/services/user/user.service';
-import { Toaster } from '@/components/ui/toaster';
 
 export default function MainLayout({
 	children
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	useQuery({
-		queryKey: ['current-user'],
-		queryFn: () => userService.getCurrent()
-	});
-
 	return (
 		<>
 			<Header></Header>

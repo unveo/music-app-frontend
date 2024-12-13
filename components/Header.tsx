@@ -29,19 +29,15 @@ export default function Header() {
 				</div>
 				<div className='hidden h-full w-80 items-center md:flex'>
 					<div className='group flex h-8 w-full items-center rounded-md border border-foreground transition-colors hover:border-primary'>
-						<Search className='mx-1.5 size-[1.20rem]' />
+						<Search className='mx-1.5 size-5' />
 						<Input type='search' placeholder='Search' />
 					</div>
 				</div>
 				<div className='flex h-full items-center justify-end gap-2 px-2 md:w-40'>
 					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger asChild>
-							<Button
-								variant='ghost'
-								size='icon'
-								className='size-8 p-0 md:hidden'
-							>
-								<Search className='size-[1.20rem]' />
+							<Button variant='ghost' size='icon' className='md:hidden'>
+								<Search className='size-5' />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end' className='w-64 md:hidden'>
@@ -56,12 +52,12 @@ export default function Header() {
 						href='/upload'
 						className='flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
 					>
-						<ArrowUpFromLine className='size-[1.20rem]' />
+						<ArrowUpFromLine className='size-5' />
 					</Link>
 					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger asChild>
-							<Button variant='ghost' size='icon' className='size-8 p-0'>
-								<Bell className='size-[1.20rem]' />
+							<Button variant='ghost' size='icon'>
+								<Bell className='size-5' />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end' className='w-96'>

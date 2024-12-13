@@ -1,9 +1,7 @@
 import api from '@/api/interceptors';
 
 export const fileService = {
-  async getAudio(filename: string) {
-    return await api.get<any>(`/file/${filename}`);
-  }
+	// async getAudioDuration(dto: GetAudioDurationDto) {
+	// 	return await api.post<number>('/file/duration', dto);
+	// }
 };
-
-// todo

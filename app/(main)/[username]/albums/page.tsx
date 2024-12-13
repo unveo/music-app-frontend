@@ -1,5 +1,5 @@
-import { AlbumsList, TracksList } from '@/components/Lists';
 import { Metadata } from 'next';
+import Albums from './Albums';
 
 export const metadata: Metadata = {
 	title: { default: 'Username tracks', template: '' },
@@ -11,5 +11,5 @@ export default function TracksPage({
 }: {
 	params: { username: string };
 }) {
-	return <AlbumsList username={params.username}></AlbumsList>;
+	return <Albums username={params.username}></Albums>;
 }

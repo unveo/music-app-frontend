@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { Play } from 'lucide-react';
+import { Pause, Play } from 'lucide-react';
 import { cn, nFormatter } from '@/lib/utils';
 import type { AlbumWithUsername } from '@/services/album/album.types';
 import type { PlaylistWithUsername } from '@/services/playlist/playlist.types';
@@ -10,6 +10,12 @@ import type {
 	UserPublic,
 	UserWithoutFollowingCount
 } from '@/services/user/user.types';
+import { useTrackStore } from '@/stores/track.store';
+import { useTrackLocalStore } from '@/stores/track-local.store';
+import { useQuery } from '@tanstack/react-query';
+import { trackService } from '@/services/track/track.service';
+import { useEffect } from 'react';
+import { useSettingsStore } from '@/stores/settings.store';
 
 export function Card({
 	title,
@@ -19,7 +25,8 @@ export function Card({
 	imageSrc,
 	centered,
 	roundedFull,
-	playButton
+	playButton,
+	track
 }: {
 	title: string;
 	desc?: string;
@@ -29,8 +36,10 @@ export function Card({
 	centered?: boolean;
 	roundedFull?: boolean;
 	playButton?: boolean;
+	track?: TrackWithUsername;
 }) {
 	const roundedClass = roundedFull ? 'rounded-full' : 'rounded-md';
+
 	return (
 		<li className='flex flex-col gap-2'>
 			<div className={cn(roundedClass, 'group relative border')}>
@@ -56,16 +65,7 @@ export function Card({
 						)}
 					></Image>
 				)}
-				{playButton ? (
-					<Button
-						variant='ghost'
-						className='absolute bottom-0 right-0 m-2 size-12 rounded-full border bg-background p-0 opacity-0 shadow-sm transition-opacity group-hover:opacity-100'
-					>
-						<Play className='size-5 fill-foreground'></Play>
-					</Button>
-				) : (
-					<></>
-				)}
+				{playButton && track && <PlayButton track={track!} />}
 			</div>
 			<div className={cn(centered && 'items-center', 'flex flex-col')}>
 				{titleHref ? (
@@ -93,6 +93,69 @@ export function Card({
 				)}
 			</div>
 		</li>
+	);
+}
+
+function PlayButton({ track }: { track: TrackWithUsername }) {
+	const {
+		trackInfo,
+		isPlaying,
+		audio,
+		audioReady,
+		progress,
+		setTrackInfo,
+		setIsPlaying,
+		setAudio,
+		setAudioReady,
+		setProgress
+	} = useTrackStore();
+	const { trackId, setTrackId, setCurrentTime } = useTrackLocalStore();
+
+	function onCanPlayThrough(this: HTMLAudioElement) {
+		setAudioReady(true);
+		this.play();
+		setIsPlaying(true);
+	}
+
+	return (
+		<Button
+			variant='outline'
+			size='icon-lg'
+			className='absolute bottom-0 right-0 m-2 opacity-0 shadow-sm transition-opacity group-hover:opacity-100'
+			onClick={() => {
+				if (!trackInfo || trackInfo.id !== track.id) {
+					if (isPlaying && audio) {
+						audio.pause();
+					}
+					const newAudio = new Audio(
+						`http://localhost:5000/api/track/stream/${track.id}`
+					);
+					setAudioReady(false);
+					setCurrentTime(0);
+					setProgress(0);
+					setAudio(newAudio);
+					setTrackInfo(track);
+					setTrackId(track.id);
+					newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+				} else {
+					if (audio) {
+						if (!isPlaying) {
+							audio.play();
+							setIsPlaying(true);
+						} else {
+							audio.pause();
+							setIsPlaying(false);
+						}
+					}
+				}
+			}}
+		>
+			{isPlaying && trackId === track.id ? (
+				<Pause className='size-5 fill-foreground' />
+			) : (
+				<Play className='size-5 fill-foreground' />
+			)}
+		</Button>
 	);
 }
 
@@ -125,12 +188,13 @@ export function UserCard({
 	);
 }
 
-export function TrackCard({ track }: { track: Track }) {
+export function TrackCard({ track }: { track: TrackWithUsername }) {
 	return (
 		<Card
 			title={track.title}
 			desc={track.createdAt.slice(0, 4)}
 			imageSrc={`http:localhost:5000/${track.image}`}
+			track={track}
 			playButton
 		></Card>
 	);
@@ -143,6 +207,7 @@ export function ListeningHistoryCard({ track }: { track: TrackWithUsername }) {
 			desc={track.user.username}
 			descHref={`/${track.user.username}`}
 			imageSrc={`http:localhost:5000/${track.image}`}
+			track={track}
 			playButton
 		></Card>
 	);

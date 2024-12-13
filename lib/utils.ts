@@ -1,3 +1,9 @@
+import {
+	ACCEPTED_AUDIO_TYPES,
+	ACCEPTED_IMAGE_TYPES,
+	AUDIO_FILE_LIMIT,
+	IMAGE_FILE_LIMIT
+} from '@/config';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -19,14 +25,32 @@ export function nFormatter(num: number) {
 		: '0';
 }
 
-export function getTake(innerWidth: number) {
-	if (innerWidth >= 1024) {
-		return 6;
-	} else if (innerWidth >= 768) {
-		return 5;
-	} else if (innerWidth >= 640) {
-		return 4;
-	} else {
-		return 3;
+export function formatTime(time: number) {
+	const truncatedTime = Math.trunc(time);
+	const minutes = Math.trunc(truncatedTime / 60);
+	let seconds = (truncatedTime % 60).toString();
+	if (seconds.length === 1) {
+		seconds = '0' + seconds;
+	}
+	return minutes + ':' + seconds;
+}
+
+export function validateImage(file: File) {
+	if (file.size > IMAGE_FILE_LIMIT) {
+		throw new Error('Max image file size is 10MB');
+	}
+	if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+		throw new Error('Only jpg and png files are supported');
+	}
+}
+
+export function validateAudio(file: File) {
+	if (file.size > AUDIO_FILE_LIMIT) {
+		throw new Error('Max audio file size is 50MB');
+	}
+	if (!ACCEPTED_AUDIO_TYPES.includes(file.type)) {
+		throw new Error(
+			'Only MP3, AAC, M4A, FLAC, WAV, AIFF, or WEBM files are supported'
+		);
 	}
 }

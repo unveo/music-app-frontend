@@ -5,7 +5,7 @@ import {
 	ListeningHistorySection,
 	UsersSection
 } from '@/components/Sections';
-import useCardsCount from '@/hooks/cards-count.hook';
+import useCardsCount from '@/lib/hooks/cards-count';
 
 export default function Home() {
 	useCardsCount();

@@ -6,7 +6,6 @@ import type {
 	RegisterDto
 } from './auth.types';
 import type { UserPrivate } from '../user/user.types';
-import { AxiosError } from 'axios';
 
 export const authService = {
 	async register(dto: RegisterDto) {

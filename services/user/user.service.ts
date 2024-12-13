@@ -1,5 +1,10 @@
 import api from '@/api/interceptors';
-import type { UpdateUserDto, UserPrivate, UserPublic } from './user.types';
+import type {
+	ChangeImageDto,
+	ChangeUsernameDto,
+	UserPrivate,
+	UserPublic
+} from './user.types';
 
 export const userService = {
 	async getCurrent() {
@@ -14,8 +19,10 @@ export const userService = {
 		return await api.get<UserPublic[]>(`/user?take=${take && take}`);
 	},
 
-	async update(dto: UpdateUserDto) {
-		return await api.patch<void>('/user', dto);
+	async update(dto: ChangeImageDto | ChangeUsernameDto) {
+		return await api.patch<void>('/user', dto, {
+			headers: { 'Content-Type': 'multipart/form-data' }
+		});
 	},
 
 	async delete() {
