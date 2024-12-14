@@ -13,6 +13,12 @@ export const albumTrackService = {
 		);
 	},
 
+	async getManyIds(albumId: number, startPosition: number) {
+		return await api.get<number[]>(
+			`album/${albumId}/track/ids?startPosition=${startPosition}`
+		);
+	},
+
 	async addTrack(albumId: number, trackId: number, dto: AddTrackDto) {
 		return await api.post<AlbumTrackRelation>(
 			`album/${albumId}/track/${trackId}`,

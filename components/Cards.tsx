@@ -12,10 +12,8 @@ import type {
 } from '@/services/user/user.types';
 import { useTrackStore } from '@/stores/track.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
-import { useQuery } from '@tanstack/react-query';
 import { trackService } from '@/services/track/track.service';
-import { useEffect } from 'react';
-import { useSettingsStore } from '@/stores/settings.store';
+import { useQueueStore } from '@/stores/queue.store';
 
 export function Card({
 	title,
@@ -109,7 +107,9 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 		setAudioReady,
 		setProgress
 	} = useTrackStore();
-	const { trackId, setTrackId, setCurrentTime } = useTrackLocalStore();
+	const { trackId, currentTime, setTrackId, setCurrentTime } =
+		useTrackLocalStore();
+	const { queue, setQueue } = useQueueStore();
 
 	function onCanPlayThrough(this: HTMLAudioElement) {
 		setAudioReady(true);
@@ -117,13 +117,50 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 		setIsPlaying(true);
 	}
 
+	async function onEnded() {
+		const queue = useQueueStore.getState().queue;
+		if (!queue.length) {
+			setIsPlaying(false);
+			setAudioReady(false);
+			setCurrentTime(0);
+			setProgress(0);
+			setAudio(null);
+			setTrackInfo(null);
+			setTrackId(null);
+		} else {
+			const track = await trackService.getOne(queue[0]);
+			const newAudio = new Audio(
+				`http://localhost:5000/api/track/stream/${queue[0]}`
+			);
+			setAudioReady(false);
+			setCurrentTime(0);
+			setProgress(0);
+			setAudio(newAudio);
+			setTrackInfo(track.data);
+			setTrackId(queue[0]);
+			newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+			newAudio.addEventListener('ended', onEnded);
+			setQueue(queue.slice(1));
+		}
+	}
+
 	return (
 		<Button
 			variant='outline'
 			size='icon-lg'
 			className='absolute bottom-0 right-0 m-2 opacity-0 shadow-sm transition-opacity group-hover:opacity-100'
-			onClick={() => {
+			onClick={async () => {
 				if (!trackInfo || trackInfo.id !== track.id) {
+					console.log(
+						trackInfo,
+						isPlaying,
+						audio,
+						trackId,
+						useQueueStore.getState().queue,
+						audioReady,
+						progress,
+						currentTime
+					);
 					if (isPlaying && audio) {
 						audio.pause();
 					}
@@ -137,6 +174,9 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 					setTrackInfo(track);
 					setTrackId(track.id);
 					newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+					newAudio.addEventListener('ended', onEnded);
+					const ids = await trackService.getManyIds(track.userId, track.id - 1); //
+					setQueue(ids.data);
 				} else {
 					if (audio) {
 						if (!isPlaying) {

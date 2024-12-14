@@ -25,10 +25,12 @@ import { trackService } from '@/services/track/track.service';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
+import { useQueueStore } from '@/stores/queue.store';
 
 export default function Footer() {
 	const { volume, muted, setVolume, setMuted } = useSettingsStore();
-	const { trackId, currentTime, setCurrentTime } = useTrackLocalStore();
+	const { trackId, currentTime, setCurrentTime, setTrackId } =
+		useTrackLocalStore();
 	const {
 		trackInfo,
 		isPlaying,
@@ -42,6 +44,7 @@ export default function Footer() {
 		setProgress
 	} = useTrackStore();
 	const [isSeeking, setIsSeeking] = useState(false);
+	const { queue, setQueue } = useQueueStore();
 
 	const currentUserQuery = useQuery({
 		queryKey: ['current-user'],
@@ -51,14 +54,22 @@ export default function Footer() {
 
 	const currentTrackQuery = useQuery({
 		queryKey: ['current-track'],
-		queryFn: () => trackService.getOne(trackId!),
-		enabled: !!trackId,
+		queryFn: () => trackService.getOne(useTrackLocalStore.getState().trackId!),
+		enabled: false,
 		retry: false,
-		refetchOnMount: true,
+		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false
 	});
 	const currentTrack = currentTrackQuery.data?.data;
+
+	useEffect(() => {
+		console.log(useTrackLocalStore.getState().trackId);
+		if (useTrackLocalStore.getState().trackId) {
+			console.log('hekosda2');
+			currentTrackQuery.refetch();
+		}
+	}, []);
 
 	const updateTime = useCallback(() => {
 		console.log('UPDATE TIME');
@@ -68,8 +79,41 @@ export default function Footer() {
 		}
 	}, [isSeeking, audio]);
 
-	function onCanPlayThrough() {
+	function onCanPlayThroughFirstLoad() {
 		setAudioReady(true);
+	}
+
+	function onCanPlayThrough(this: HTMLAudioElement) {
+		setAudioReady(true);
+		this.play();
+		setIsPlaying(true);
+	}
+
+	async function onEnded() {
+		const queue = useQueueStore.getState().queue;
+		if (!queue.length) {
+			setIsPlaying(false);
+			setAudioReady(false);
+			setCurrentTime(0);
+			setProgress(0);
+			setAudio(null);
+			setTrackInfo(null);
+			setTrackId(null);
+		} else {
+			const track = await trackService.getOne(queue[0]);
+			const newAudio = new Audio(
+				`http://localhost:5000/api/track/stream/${queue[0]}`
+			);
+			setAudioReady(false);
+			setCurrentTime(0);
+			setProgress(0);
+			setAudio(newAudio);
+			setTrackInfo(track.data);
+			setTrackId(queue[0]);
+			newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+			newAudio.addEventListener('ended', onEnded);
+			setQueue(queue.slice(1));
+		}
 	}
 
 	useEffect(() => {
@@ -81,10 +125,12 @@ export default function Footer() {
 			);
 			setAudio(audio);
 			setTrackInfo(currentTrack);
-			audio.addEventListener('canplaythrough', onCanPlayThrough);
+			audio.addEventListener('canplaythrough', onCanPlayThroughFirstLoad);
+			audio.addEventListener('ended', onEnded);
 
 			return () => {
-				audio.removeEventListener('canplaythrough', onCanPlayThrough);
+				audio.removeEventListener('canplaythrough', onCanPlayThroughFirstLoad);
+				audio.removeEventListener('ended', onEnded);
 			};
 		}
 	}, [currentTrack]);
@@ -217,6 +263,25 @@ export default function Footer() {
 					</Button>
 					<Button
 						variant='clear'
+						onClick={async () => {
+							if (isPlaying) {
+								audio.pause();
+							}
+							const queue = useQueueStore.getState().queue;
+							const track = await trackService.getOne(queue[0]);
+							const newAudio = new Audio(
+								`http://localhost:5000/api/track/stream/${queue[0]}`
+							);
+							setAudioReady(false);
+							setCurrentTime(0);
+							setProgress(0);
+							setAudio(newAudio);
+							setTrackInfo(track.data);
+							setTrackId(queue[0]);
+							newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+							newAudio.addEventListener('ended', onEnded);
+							setQueue(queue.slice(1));
+						}}
 						size='icon'
 						disabled={audioReady ? false : true}
 					>

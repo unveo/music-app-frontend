@@ -14,12 +14,18 @@ export const trackService = {
 	},
 
 	async getOne(trackId: number) {
-		return await api.get<TrackWithUsername>(`/track/${trackId}`);
+		return await api.get<TrackWithUsername>(`/track/one/${trackId}`);
 	},
 
 	async getMany(userId?: number, take?: number) {
 		return await api.get<TrackWithUsername[]>(
 			`/track/?userId=${userId && userId}&take=${take && take}`
+		);
+	},
+
+	async getManyIds(userId: number, startId: number) {
+		return await api.get<number[]>(
+			`/track/ids/?userId=${userId}&startId=${startId}`
 		);
 	},
 
