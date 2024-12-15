@@ -44,7 +44,7 @@ export default function Footer() {
 		setProgress
 	} = useTrackStore();
 	const [isSeeking, setIsSeeking] = useState(false);
-	const { queue, setQueue } = useQueueStore();
+	const { setNext, setPrev } = useQueueStore();
 
 	const currentUserQuery = useQuery({
 		queryKey: ['current-user'],
@@ -84,35 +84,37 @@ export default function Footer() {
 	}
 
 	function onCanPlayThrough(this: HTMLAudioElement) {
-		setAudioReady(true);
-		this.play();
-		setIsPlaying(true);
+		if (!useTrackStore.getState().audioReady) {
+			setAudioReady(true);
+			this.play();
+			setIsPlaying(true);
+		}
 	}
 
-	async function onEnded() {
-		const queue = useQueueStore.getState().queue;
-		if (!queue.length) {
+	async function onEnded(this: HTMLAudioElement) {
+		const prev = useQueueStore.getState().prev;
+		const next = useQueueStore.getState().next;
+		const trackId = useTrackLocalStore.getState().trackId;
+		if (!next.length) {
 			setIsPlaying(false);
-			setAudioReady(false);
-			setCurrentTime(0);
-			setProgress(0);
-			setAudio(null);
-			setTrackInfo(null);
-			setTrackId(null);
+			this.currentTime = 0;
 		} else {
-			const track = await trackService.getOne(queue[0]);
+			const track = await trackService.getOne(next[0]);
 			const newAudio = new Audio(
-				`http://localhost:5000/api/track/stream/${queue[0]}`
+				`http://localhost:5000/api/track/stream/${next[0]}`
 			);
 			setAudioReady(false);
 			setCurrentTime(0);
 			setProgress(0);
 			setAudio(newAudio);
 			setTrackInfo(track.data);
-			setTrackId(queue[0]);
+			setTrackId(next[0]);
 			newAudio.addEventListener('canplaythrough', onCanPlayThrough);
 			newAudio.addEventListener('ended', onEnded);
-			setQueue(queue.slice(1));
+			setNext(next.slice(1));
+			if (trackId) {
+				setPrev([...prev, trackId]);
+			}
 		}
 	}
 
@@ -236,6 +238,38 @@ export default function Footer() {
 					</Button>
 					<Button
 						variant='clear'
+						onClick={async () => {
+							if (isPlaying) {
+								audio.pause();
+							}
+							const prev = useQueueStore.getState().prev;
+							const next = useQueueStore.getState().next;
+							const trackId = useTrackLocalStore.getState().trackId;
+							if (audio.currentTime >= 5) {
+								audio.currentTime = 0;
+								audio.play();
+							} else if (!prev.length) {
+								setIsPlaying(false);
+								audio.currentTime = 0;
+							} else {
+								const track = await trackService.getOne(prev[prev.length - 1]);
+								const newAudio = new Audio(
+									`http://localhost:5000/api/track/stream/${track.data.id}`
+								);
+								setAudioReady(false);
+								setCurrentTime(0);
+								setProgress(0);
+								setAudio(newAudio);
+								setTrackInfo(track.data);
+								setTrackId(track.data.id);
+								newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+								newAudio.addEventListener('ended', onEnded);
+								if (trackId) {
+									setNext([trackId, ...next]);
+								}
+								setPrev(prev.slice(0, -1));
+							}
+						}}
 						size='icon'
 						disabled={audioReady ? false : true}
 					>
@@ -267,20 +301,30 @@ export default function Footer() {
 							if (isPlaying) {
 								audio.pause();
 							}
-							const queue = useQueueStore.getState().queue;
-							const track = await trackService.getOne(queue[0]);
-							const newAudio = new Audio(
-								`http://localhost:5000/api/track/stream/${queue[0]}`
-							);
-							setAudioReady(false);
-							setCurrentTime(0);
-							setProgress(0);
-							setAudio(newAudio);
-							setTrackInfo(track.data);
-							setTrackId(queue[0]);
-							newAudio.addEventListener('canplaythrough', onCanPlayThrough);
-							newAudio.addEventListener('ended', onEnded);
-							setQueue(queue.slice(1));
+							const prev = useQueueStore.getState().prev;
+							const next = useQueueStore.getState().next;
+							const trackId = useTrackLocalStore.getState().trackId;
+							if (!next.length) {
+								setIsPlaying(false);
+								audio.currentTime = 0;
+							} else {
+								const track = await trackService.getOne(next[0]);
+								const newAudio = new Audio(
+									`http://localhost:5000/api/track/stream/${next[0]}`
+								);
+								setAudioReady(false);
+								setCurrentTime(0);
+								setProgress(0);
+								setAudio(newAudio);
+								setTrackInfo(track.data);
+								setTrackId(next[0]);
+								newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+								newAudio.addEventListener('ended', onEnded);
+								setNext(next.slice(1));
+								if (trackId) {
+									setPrev([...prev, trackId]);
+								}
+							}
 						}}
 						size='icon'
 						disabled={audioReady ? false : true}

@@ -13,9 +13,13 @@ export const playlistTrackService = {
 		);
 	},
 
-	async getManyIds(playlistId: number, startPosition: number) {
+	async getManyIds(
+		playlistId: number,
+		startPosition?: number,
+		lastPosition?: number
+	) {
 		return await api.get<number[]>(
-			`playlist/${playlistId}/track/ids?startPosition=${startPosition}`
+			`playlist/${playlistId}/track/ids?startPosition=${startPosition && startPosition}&lastPosition=${lastPosition && lastPosition}`
 		);
 	},
 

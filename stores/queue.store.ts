@@ -5,12 +5,16 @@ import { persist } from 'zustand/middleware';
 
 export const useQueueStore = create(
 	persist<{
-		queue: number[];
-		setQueue: (queue: number[]) => void;
+		prev: number[];
+		next: number[];
+		setPrev: (next: number[]) => void;
+		setNext: (next: number[]) => void;
 	}>(
 		(set) => ({
-			queue: [],
-			setQueue: (queue: number[]) => set(() => ({ queue }))
+			prev: [],
+			next: [],
+			setPrev: (prev: number[]) => set(() => ({ prev })),
+			setNext: (next: number[]) => set(() => ({ next }))
 		}),
 		{ name: 'queue' }
 	)

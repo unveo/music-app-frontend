@@ -23,9 +23,9 @@ export const trackService = {
 		);
 	},
 
-	async getManyIds(userId: number, startId: number) {
+	async getManyIds(userId: number, startId?: number, lastId?: number) {
 		return await api.get<number[]>(
-			`/track/ids/?userId=${userId}&startId=${startId}`
+			`/track/ids/?userId=${userId}&startId=${startId && startId}&lastId=${lastId && lastId}`
 		);
 	},
 

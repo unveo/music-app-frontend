@@ -13,9 +13,13 @@ export const albumTrackService = {
 		);
 	},
 
-	async getManyIds(albumId: number, startPosition: number) {
+	async getManyIds(
+		albumId: number,
+		startPosition?: number,
+		lastPosition?: number
+	) {
 		return await api.get<number[]>(
-			`album/${albumId}/track/ids?startPosition=${startPosition}`
+			`album/${albumId}/track/ids?startPosition=${startPosition && startPosition}&lastPosition=${lastPosition && lastPosition}`
 		);
 	},
 
