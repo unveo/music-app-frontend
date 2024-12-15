@@ -14,6 +14,10 @@ import { useTrackStore } from '@/stores/track.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
 import { trackService } from '@/services/track/track.service';
 import { useQueueStore } from '@/stores/queue.store';
+import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export function Card({
 	title,
@@ -108,6 +112,28 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 	const { trackId, setTrackId, setCurrentTime } = useTrackLocalStore();
 	const { setNext, setPrev } = useQueueStore();
 
+	const pathname = usePathname();
+
+	const listeningHistoryQuery = useQuery({
+		queryKey: ['listening-history'],
+		queryFn: () => listeningHistoryService.get(),
+		enabled: false,
+		retry: false,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false
+	});
+
+	const addToHistoryMutation = useMutation({
+		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
+		onSuccess: () => {
+			if (pathname === '/history' || pathname === '/library') {
+				console.log(pathname);
+				listeningHistoryQuery.refetch();
+			}
+		}
+	});
+
 	function onCanPlayThrough(this: HTMLAudioElement) {
 		if (!useTrackStore.getState().audioReady) {
 			setAudioReady(true);
@@ -175,6 +201,7 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 					); //
 					setPrev(prevIds.data);
 					setNext(nextIds.data);
+					addToHistoryMutation.mutate(track.id);
 				} else {
 					if (audio) {
 						if (!isPlaying) {

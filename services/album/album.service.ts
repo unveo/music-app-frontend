@@ -14,7 +14,7 @@ export const albumService = {
 
 	async getMany(userId?: number, take?: number) {
 		return await api.get<AlbumWithUsername[]>(
-			`/album/?userId=${userId && userId}&take=${take && take}`
+			`/album/?userId=${userId && userId}&take=${take ? take : ''}`
 		);
 	},
 

@@ -73,7 +73,8 @@ export function ListeningHistorySection() {
 	const { cardsCount } = useCardsCountStore();
 	const listeningHistoryQuery = useQuery({
 		queryKey: ['listening-history'],
-		queryFn: () => listeningHistoryService.get(7)
+		queryFn: () => listeningHistoryService.get(),
+		refetchOnMount: false
 	});
 	const listeningHistory = listeningHistoryQuery.data?.data;
 

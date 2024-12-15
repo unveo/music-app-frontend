@@ -9,7 +9,7 @@ import type {
 export const albumTrackService = {
 	async getManyTracks(albumId: number, take?: number) {
 		return await api.get<TrackInAlbum[]>(
-			`album/${albumId}/track?take=${take && take}`
+			`album/${albumId}/track?take=${take ? take : ''}`
 		);
 	},
 
@@ -19,7 +19,7 @@ export const albumTrackService = {
 		lastPosition?: number
 	) {
 		return await api.get<number[]>(
-			`album/${albumId}/track/ids?startPosition=${startPosition && startPosition}&lastPosition=${lastPosition && lastPosition}`
+			`album/${albumId}/track/ids?startPosition=${startPosition ? startPosition : ''}&lastPosition=${lastPosition ? lastPosition : ''}`
 		);
 	},
 

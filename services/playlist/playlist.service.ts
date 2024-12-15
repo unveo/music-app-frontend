@@ -14,7 +14,7 @@ export const playlistService = {
 
 	async getMany(userId?: number, take?: number) {
 		return await api.get<PlaylistWithUsername[]>(
-			`/playlist/?userId=${userId && userId}&take=${take && take}`
+			`/playlist/?userId=${userId && userId}&take=${take ? take : ''}`
 		);
 	},
 

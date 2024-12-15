@@ -17,7 +17,8 @@ export default function History() {
 
 	const listeningHistoryQuery = useQuery({
 		queryKey: ['listening-history'],
-		queryFn: () => listeningHistoryService.get()
+		queryFn: () => listeningHistoryService.get(),
+		refetchOnMount: false
 	});
 	const listeningHistory = listeningHistoryQuery.data?.data;
 

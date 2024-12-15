@@ -4,13 +4,13 @@ import type { Follower, Following } from './follow.types';
 export const followService = {
 	async getManyFollowers(userId: number, take?: number) {
 		return await api.get<Follower[]>(
-			`user/${userId}/followers?take=${take && take}`
+			`user/${userId}/followers?take=${take ? take : ''}`
 		);
 	},
 
 	async getManyFollowing(userId: number, take?: number) {
 		return await api.get<Following[]>(
-			`user/${userId}/following?take=${take && take}`
+			`user/${userId}/following?take=${take ? take : ''}`
 		);
 	},
 

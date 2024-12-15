@@ -9,7 +9,7 @@ import type {
 export const playlistTrackService = {
 	async getMany(playlistId: number, take?: number) {
 		return await api.get<TrackInPlaylist[]>(
-			`playlist/${playlistId}/track?take=${take && take}`
+			`playlist/${playlistId}/track?take=${take ? take : ''}`
 		);
 	},
 
@@ -19,7 +19,7 @@ export const playlistTrackService = {
 		lastPosition?: number
 	) {
 		return await api.get<number[]>(
-			`playlist/${playlistId}/track/ids?startPosition=${startPosition && startPosition}&lastPosition=${lastPosition && lastPosition}`
+			`playlist/${playlistId}/track/ids?startPosition=${startPosition ? startPosition : ''}&lastPosition=${lastPosition ? lastPosition : ''}`
 		);
 	},
 

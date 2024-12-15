@@ -16,7 +16,7 @@ export const userService = {
 	},
 
 	async getMany(take?: number) {
-		return await api.get<UserPublic[]>(`/user?take=${take && take}`);
+		return await api.get<UserPublic[]>(`/user?take=${take ? take : ''}`);
 	},
 
 	async update(dto: ChangeImageDto | ChangeUsernameDto) {

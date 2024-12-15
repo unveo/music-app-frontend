@@ -19,19 +19,19 @@ export const trackService = {
 
 	async getMany(userId?: number, take?: number) {
 		return await api.get<TrackWithUsername[]>(
-			`/track/?userId=${userId && userId}&take=${take && take}`
+			`/track/?userId=${userId && userId}&take=${take ? take : ''}`
 		);
 	},
 
 	async getManyIds(userId: number, startId?: number, lastId?: number) {
 		return await api.get<number[]>(
-			`/track/ids/?userId=${userId}&startId=${startId && startId}&lastId=${lastId && lastId}`
+			`/track/ids/?userId=${userId}&startId=${startId ? startId : ''}&lastId=${lastId ? lastId : ''}`
 		);
 	},
 
 	async getMostPopular(userId?: number, take?: number) {
 		return await api.get<TrackWithUsername[]>(
-			`/track/most-popular/?userId=${userId && userId}&take=${take && take}`
+			`/track/most-popular/?userId=${userId ? userId : ''}&take=${take ? take : ''}`
 		);
 	},
 

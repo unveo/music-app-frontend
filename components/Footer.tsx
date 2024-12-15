@@ -19,18 +19,21 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { formatTime } from '@/lib/utils';
 import { SliderValueChangeDetails } from '@ark-ui/react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userService } from '@/services/user/user.service';
 import { trackService } from '@/services/track/track.service';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
 import { useQueueStore } from '@/stores/queue.store';
+import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
+import { ListeningHistoryTrack } from '@/services/user/listening-history/listening-history.types';
+import { AxiosResponse } from 'axios';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
 	const { volume, muted, setVolume, setMuted } = useSettingsStore();
-	const { trackId, currentTime, setCurrentTime, setTrackId } =
-		useTrackLocalStore();
+	const { currentTime, setCurrentTime, setTrackId } = useTrackLocalStore();
 	const {
 		trackInfo,
 		isPlaying,
@@ -62,6 +65,28 @@ export default function Footer() {
 		refetchOnReconnect: false
 	});
 	const currentTrack = currentTrackQuery.data?.data;
+
+	const pathname = usePathname();
+
+	const listeningHistoryQuery = useQuery({
+		queryKey: ['listening-history'],
+		queryFn: () => listeningHistoryService.get(),
+		enabled: false,
+		retry: false,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false
+	});
+
+	const addToHistoryMutation = useMutation({
+		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
+		onSuccess: () => {
+			if (pathname === '/history' || pathname === '/library') {
+				console.log(2, pathname);
+				listeningHistoryQuery.refetch();
+			}
+		}
+	});
 
 	useEffect(() => {
 		console.log(useTrackLocalStore.getState().trackId);
@@ -268,6 +293,7 @@ export default function Footer() {
 									setNext([trackId, ...next]);
 								}
 								setPrev(prev.slice(0, -1));
+								addToHistoryMutation.mutate(track.data.id);
 							}
 						}}
 						size='icon'
@@ -324,6 +350,7 @@ export default function Footer() {
 								if (trackId) {
 									setPrev([...prev, trackId]);
 								}
+								addToHistoryMutation.mutate(next[0]);
 							}
 						}}
 						size='icon'
