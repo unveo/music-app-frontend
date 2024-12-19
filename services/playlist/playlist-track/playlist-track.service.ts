@@ -5,6 +5,7 @@ import type {
 	TrackInPlaylist,
 	UpdateTrackPositionDto
 } from './playlist-track.types';
+import { TracksIds } from '@/services/track/track.types';
 
 export const playlistTrackService = {
 	async getMany(playlistId: number, take?: number) {
@@ -13,13 +14,9 @@ export const playlistTrackService = {
 		);
 	},
 
-	async getManyIds(
-		playlistId: number,
-		startPosition?: number,
-		lastPosition?: number
-	) {
-		return await api.get<number[]>(
-			`playlist/${playlistId}/track/ids?startPosition=${startPosition ? startPosition : ''}&lastPosition=${lastPosition ? lastPosition : ''}`
+	async getManyIds(playlistId: number, positionToExclude: number) {
+		return await api.get<TracksIds>(
+			`playlist/${playlistId}/track/ids?positionToExclude=${positionToExclude ? positionToExclude : ''}`
 		);
 	},
 

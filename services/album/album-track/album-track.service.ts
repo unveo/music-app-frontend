@@ -5,6 +5,7 @@ import type {
 	TrackInAlbum,
 	UpdateTrackPositionDto
 } from './album-track.types';
+import { TracksIds } from '@/services/track/track.types';
 
 export const albumTrackService = {
 	async getManyTracks(albumId: number, take?: number) {
@@ -13,13 +14,9 @@ export const albumTrackService = {
 		);
 	},
 
-	async getManyIds(
-		albumId: number,
-		startPosition?: number,
-		lastPosition?: number
-	) {
-		return await api.get<number[]>(
-			`album/${albumId}/track/ids?startPosition=${startPosition ? startPosition : ''}&lastPosition=${lastPosition ? lastPosition : ''}`
+	async getManyIds(albumId: number, positionToExclude: number) {
+		return await api.get<TracksIds>(
+			`album/${albumId}/track/ids?positionToExclude=${positionToExclude ? positionToExclude : ''}`
 		);
 	},
 

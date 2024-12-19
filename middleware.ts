@@ -19,6 +19,11 @@ export function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL('/settings/profile', url));
 	}
 
+	if (url === 'http://localhost:3000/library') {
+		// TODO
+		return NextResponse.redirect(new URL('/library/tracks', url));
+	}
+
 	if (url === 'http://localhost:3000/upload') {
 		// TODO
 		return NextResponse.redirect(new URL('/upload/track', url));

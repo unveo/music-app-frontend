@@ -65,7 +65,7 @@
 		@apply border-border;
 	}
 	body {
-		@apply flex min-h-screen flex-col bg-background text-foreground;
+		@apply flex min-h-screen flex-col overflow-y-scroll bg-background text-foreground;
 	}
 	main {
 		@apply flex flex-grow flex-col items-center bg-muted/40;

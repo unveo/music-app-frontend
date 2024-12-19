@@ -1,5 +1,5 @@
-import type { Album } from '@/services/album/album.types';
+import type { AlbumWithUsername } from '@/services/album/album.types';
 
 export interface LikedAlbum {
-  album: Album;
+	album: AlbumWithUsername;
 }

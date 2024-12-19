@@ -2,6 +2,7 @@ import api from '@/api/interceptors';
 import type {
 	Track,
 	TracksCreatedCount,
+	TracksIds,
 	TrackWithUsername,
 	UpdateTrackDto,
 	UploadTrackDto,
@@ -17,21 +18,15 @@ export const trackService = {
 		return await api.get<TrackWithUsername>(`/track/one/${trackId}`);
 	},
 
-	async getMany(userId?: number, take?: number) {
+	async getMany(userId?: number, take?: number, sort?: 'popular') {
 		return await api.get<TrackWithUsername[]>(
-			`/track/?userId=${userId && userId}&take=${take ? take : ''}`
+			`/track/?userId=${userId && userId}&take=${take ? take : ''}&sort=${sort ? sort : ''}`
 		);
 	},
 
-	async getManyIds(userId: number, startId?: number, lastId?: number) {
-		return await api.get<number[]>(
-			`/track/ids/?userId=${userId}&startId=${startId ? startId : ''}&lastId=${lastId ? lastId : ''}`
-		);
-	},
-
-	async getMostPopular(userId?: number, take?: number) {
-		return await api.get<TrackWithUsername[]>(
-			`/track/most-popular/?userId=${userId ? userId : ''}&take=${take ? take : ''}`
+	async getManyIds(userId: number, trackIdToExclude: number) {
+		return await api.get<TracksIds>(
+			`/track/ids/?userId=${userId}&trackIdToExclude=${trackIdToExclude ? trackIdToExclude : ''}`
 		);
 	},
 

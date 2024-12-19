@@ -1,10 +1,4 @@
-import {
-	ACCEPTED_AUDIO_TYPES,
-	ACCEPTED_IMAGE_TYPES,
-	AUDIO_FILE_LIMIT,
-	IMAGE_FILE_LIMIT,
-	regex
-} from '@/config';
+import { ACCEPTED_IMAGE_TYPES, IMAGE_FILE_LIMIT, regex } from '@/config';
 import { z } from 'zod';
 
 export const UploadTrackSchema = z.object({
@@ -80,4 +74,9 @@ export interface TrackWithUsername extends Track {
 
 export interface TracksCreatedCount {
 	count: number;
+}
+
+export interface TracksIds {
+	prevIds: number[];
+	nextIds: number[];
 }

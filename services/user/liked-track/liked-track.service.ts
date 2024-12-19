@@ -1,10 +1,17 @@
 import api from '@/api/interceptors';
 import type { LikedTrack } from './liked-track.types';
+import { TracksIds } from '@/services/track/track.types';
 
 export const likedTrackService = {
 	async getMany(take?: number) {
 		return await api.get<LikedTrack[]>(
 			`user/liked-track?take=${take ? take : ''}`
+		);
+	},
+
+	async getManyIds(trackIdToExclude: number) {
+		return await api.get<TracksIds>(
+			`user/liked-track/ids?trackIdToExclude=${trackIdToExclude ? trackIdToExclude : ''}`
 		);
 	},
 

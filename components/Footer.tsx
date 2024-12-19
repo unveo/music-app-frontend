@@ -81,7 +81,7 @@ export default function Footer() {
 	const addToHistoryMutation = useMutation({
 		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
 		onSuccess: () => {
-			if (pathname === '/history' || pathname === '/library') {
+			if (pathname === '/library/history') {
 				console.log(2, pathname);
 				listeningHistoryQuery.refetch();
 			}

@@ -5,7 +5,10 @@ import { Pause, Play } from 'lucide-react';
 import { cn, nFormatter } from '@/lib/utils';
 import type { AlbumWithUsername } from '@/services/album/album.types';
 import type { PlaylistWithUsername } from '@/services/playlist/playlist.types';
-import type { Track, TrackWithUsername } from '@/services/track/track.types';
+import type {
+	TracksIds,
+	TrackWithUsername
+} from '@/services/track/track.types';
 import type {
 	UserPublic,
 	UserWithoutFollowingCount
@@ -17,7 +20,13 @@ import { useQueueStore } from '@/stores/queue.store';
 import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { AxiosResponse } from 'axios';
+import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
+import { albumTrackService } from '@/services/album/album-track/album-track.service';
+import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
+import { useEffect, useMemo } from 'react';
+
+type queue = 'user' | 'liked' | 'album' | 'playlist';
 
 export function Card({
 	title,
@@ -27,8 +36,9 @@ export function Card({
 	imageSrc,
 	centered,
 	roundedFull,
-	playButton,
-	track
+	queueType,
+	track,
+	trackPosition
 }: {
 	title: string;
 	desc?: string;
@@ -37,10 +47,14 @@ export function Card({
 	imageSrc: string;
 	centered?: boolean;
 	roundedFull?: boolean;
-	playButton?: boolean;
+	queueType?: queue;
 	track?: TrackWithUsername;
+	trackPosition?: number;
 }) {
-	const roundedClass = roundedFull ? 'rounded-full' : 'rounded-md';
+	const roundedClass = useMemo(
+		() => (roundedFull ? 'rounded-full' : 'rounded-md'),
+		[roundedFull]
+	);
 
 	return (
 		<li className='flex flex-col gap-2'>
@@ -67,7 +81,13 @@ export function Card({
 						)}
 					></Image>
 				)}
-				{playButton && track && <PlayButton track={track!} />}
+				{queueType && track && (
+					<PlayButton
+						track={track}
+						queueType={queueType}
+						trackPosition={trackPosition}
+					/>
+				)}
 			</div>
 			<div className={cn(centered && 'items-center', 'flex flex-col')}>
 				{titleHref ? (
@@ -98,7 +118,15 @@ export function Card({
 	);
 }
 
-function PlayButton({ track }: { track: TrackWithUsername }) {
+function PlayButton({
+	track,
+	queueType,
+	trackPosition
+}: {
+	track: TrackWithUsername;
+	queueType: 'user' | 'liked' | 'album' | 'playlist';
+	trackPosition?: number;
+}) {
 	const {
 		trackInfo,
 		isPlaying,
@@ -127,7 +155,7 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 	const addToHistoryMutation = useMutation({
 		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
 		onSuccess: () => {
-			if (pathname === '/history' || pathname === '/library') {
+			if (pathname === '/library/history') {
 				console.log(pathname);
 				listeningHistoryQuery.refetch();
 			}
@@ -190,17 +218,24 @@ function PlayButton({ track }: { track: TrackWithUsername }) {
 					setTrackId(track.id);
 					newAudio.addEventListener('canplaythrough', onCanPlayThrough);
 					newAudio.addEventListener('ended', onEnded);
-					const prevIds = await trackService.getManyIds(
-						track.userId,
-						undefined,
-						track.id + 1
-					); //
-					const nextIds = await trackService.getManyIds(
-						track.userId,
-						track.id - 1
-					); //
-					setPrev(prevIds.data);
-					setNext(nextIds.data);
+					let tracksIds: AxiosResponse<TracksIds, any>;
+					if (queueType === 'user') {
+						tracksIds = await trackService.getManyIds(track.userId, track.id);
+					} else if (queueType === 'album') {
+						tracksIds = await albumTrackService.getManyIds(
+							track.userId,
+							trackPosition ? trackPosition : 0
+						);
+					} else if (queueType === 'playlist') {
+						tracksIds = await playlistTrackService.getManyIds(
+							track.userId,
+							trackPosition ? trackPosition : 0
+						);
+					} else {
+						tracksIds = await likedTrackService.getManyIds(track.id);
+					}
+					setPrev(tracksIds.data.prevIds);
+					setNext(tracksIds.data.nextIds);
 					addToHistoryMutation.mutate(track.id);
 				} else {
 					if (audio) {
@@ -260,7 +295,20 @@ export function TrackCard({ track }: { track: TrackWithUsername }) {
 			desc={track.createdAt.slice(0, 4)}
 			imageSrc={`http:localhost:5000/${track.image}`}
 			track={track}
-			playButton
+			queueType='user'
+		></Card>
+	);
+}
+
+export function LikedTrackCard({ track }: { track: TrackWithUsername }) {
+	return (
+		<Card
+			title={track.title}
+			desc={track.user.username}
+			descHref={`/${track.user.username}`}
+			imageSrc={`http:localhost:5000/${track.image}`}
+			track={track}
+			queueType='liked'
 		></Card>
 	);
 }
@@ -273,7 +321,7 @@ export function ListeningHistoryCard({ track }: { track: TrackWithUsername }) {
 			descHref={`/${track.user.username}`}
 			imageSrc={`http:localhost:5000/${track.image}`}
 			track={track}
-			playButton
+			queueType='user'
 		></Card>
 	);
 }
@@ -282,11 +330,10 @@ export function PlaylistCard({ playlist }: { playlist: PlaylistWithUsername }) {
 	return (
 		<Card
 			title={playlist.title}
-			titleHref={`/${playlist.user.username}/playlists/${playlist.title}`}
+			titleHref={`/${playlist.user.username}/playlists/${playlist.changeableId}`}
 			desc={playlist.user.username}
 			descHref={`/${playlist.user.username}`}
 			imageSrc={`http:localhost:5000/${playlist.image}`}
-			playButton
 		></Card>
 	);
 }
@@ -295,7 +342,7 @@ export function AlbumCardProfile({ album }: { album: AlbumWithUsername }) {
 	return (
 		<Card
 			title={album.title}
-			titleHref={`/${album.user.username}/albums/${album.title}`}
+			titleHref={`/${album.user.username}/albums/${album.changeableId}`}
 			desc={
 				album.createdAt.slice(0, 4) +
 				' • ' +
@@ -311,7 +358,7 @@ export function AlbumCard({ album }: { album: AlbumWithUsername }) {
 	return (
 		<Card
 			title={album.title}
-			titleHref={`/${album.user.username}/albums/${album.title}`}
+			titleHref={`/${album.user.username}/albums/${album.changeableId}`}
 			desc={album.user.username}
 			descHref={`/${album.user.username}`}
 			imageSrc={`http:localhost:5000/${album.image}`}

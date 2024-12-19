@@ -49,29 +49,3 @@ export function ListSkeleton() {
 		</div>
 	);
 }
-
-export function ListLayout({
-	username,
-	children
-}: {
-	username: string;
-	children: React.ReactNode;
-}) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
-	const user = userQuery.data?.data;
-	const userId = user?.id;
-
-	if (userQuery.isLoading) {
-		return <></>;
-	}
-
-	if (userQuery.isError) {
-		return <NotFound></NotFound>;
-	}
-
-	return children;
-}
