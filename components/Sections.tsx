@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import {
 	AlbumCard,
+	AlbumCardProfile,
 	CardSkeleton,
 	ListeningHistoryCard,
 	PlaylistCard,
+	PlaylistCardProfile,
 	TrackCard,
 	UserCard
 } from './Cards';
@@ -264,7 +266,7 @@ export function AlbumsSection({ username }: { username: string }) {
 				return (
 					<Section href={`/${username}/albums`} name='Albums'>
 						{albums.slice(0, cardsCount).map((album) => (
-							<AlbumCard key={album.id} album={album}></AlbumCard>
+							<AlbumCardProfile key={album.id} album={album}></AlbumCardProfile>
 						))}
 					</Section>
 				);
@@ -272,7 +274,7 @@ export function AlbumsSection({ username }: { username: string }) {
 				return (
 					<Section name='Albums'>
 						{albums.slice(0, cardsCount).map((album) => (
-							<AlbumCard key={album.id} album={album}></AlbumCard>
+							<AlbumCardProfile key={album.id} album={album}></AlbumCardProfile>
 						))}
 					</Section>
 				);
@@ -309,10 +311,10 @@ export function PlaylistsSection({ username }: { username: string }) {
 				return (
 					<Section href={`/${username}/playlists`} name='Playlists'>
 						{playlists.slice(0, cardsCount).map((playlist) => (
-							<PlaylistCard
+							<PlaylistCardProfile
 								key={playlist.id}
 								playlist={playlist}
-							></PlaylistCard>
+							></PlaylistCardProfile>
 						))}
 					</Section>
 				);
@@ -320,10 +322,10 @@ export function PlaylistsSection({ username }: { username: string }) {
 				return (
 					<Section name='Playlists'>
 						{playlists.slice(0, cardsCount).map((playlist) => (
-							<PlaylistCard
+							<PlaylistCardProfile
 								key={playlist.id}
 								playlist={playlist}
-							></PlaylistCard>
+							></PlaylistCardProfile>
 						))}
 					</Section>
 				);

@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 import Followers from './Followers';
 
 export const metadata: Metadata = {
-	title: { default: 'Username tracks', template: '' },
+	title: { default: 'Username followers', template: '' },
 	description: ''
 };
 
-export default function TracksPage({
+export default function FollowersPage({
 	params
 }: {
 	params: { username: string };

@@ -19,7 +19,7 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { formatTime } from '@/lib/utils';
 import { SliderValueChangeDetails } from '@ark-ui/react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { userService } from '@/services/user/user.service';
 import { trackService } from '@/services/track/track.service';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -27,9 +27,8 @@ import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
 import { useQueueStore } from '@/stores/queue.store';
 import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
-import { ListeningHistoryTrack } from '@/services/user/listening-history/listening-history.types';
-import { AxiosResponse } from 'axios';
 import { usePathname } from 'next/navigation';
+import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 
 export default function Footer() {
 	const { volume, muted, setVolume, setMuted } = useSettingsStore();
@@ -82,8 +81,44 @@ export default function Footer() {
 		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
 		onSuccess: () => {
 			if (pathname === '/library/history') {
-				console.log(2, pathname);
 				listeningHistoryQuery.refetch();
+			}
+		}
+	});
+
+	const likedTracksQuery = useQuery({
+		queryKey: ['liked-tracks'],
+		queryFn: () => likedTrackService.getMany(),
+		enabled: false,
+		retry: false,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false
+	});
+
+	const addToLikedMutation = useMutation({
+		mutationFn: (trackId: number) => likedTrackService.add(trackId),
+		onSuccess: () => {
+			if (trackInfo) {
+				setTrackInfo({
+					...trackInfo,
+					likes: [{ addedAt: Date.now().toString() }]
+				});
+				if (pathname === '/library/tracks') {
+					likedTracksQuery.refetch();
+				}
+			}
+		}
+	});
+
+	const removeFromLikedMutation = useMutation({
+		mutationFn: (trackId: number) => likedTrackService.remove(trackId),
+		onSuccess: () => {
+			if (trackInfo) {
+				setTrackInfo({ ...trackInfo, likes: [] });
+				if (pathname === '/library/tracks') {
+					likedTracksQuery.refetch();
+				}
 			}
 		}
 	});
@@ -246,14 +281,26 @@ export default function Footer() {
 				<div className='flex max-w-20 flex-col text-sm lg:max-w-32'>
 					<span>{trackInfo.title}</span>
 					<Link
-						href={trackInfo.user.username}
+						href={`/${trackInfo.username}`}
 						className='text-muted-foreground'
 					>
-						{trackInfo.user.username}
+						{trackInfo.username}
 					</Link>
 				</div>
-				<Button variant='ghost' size='icon'>
-					<Heart className='size-5' />
+				<Button
+					variant='ghost'
+					onClick={async () => {
+						trackInfo.likes.length
+							? removeFromLikedMutation.mutate(trackInfo.id)
+							: addToLikedMutation.mutate(trackInfo.id);
+					}}
+					size='icon'
+				>
+					{trackInfo.likes.length ? (
+						<Heart className='size-5 fill-foreground' />
+					) : (
+						<Heart className='size-5' />
+					)}
 				</Button>
 			</div>
 			<div className='col-start-2 col-end-5 flex flex-col pt-1'>

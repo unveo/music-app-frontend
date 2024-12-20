@@ -64,12 +64,10 @@ export interface Track {
 	audio: string;
 	image: string;
 	userId: number;
+	username: string;
+	likes: { addedAt: string }[];
 	createdAt: string;
 	updatedAt: string;
-}
-
-export interface TrackWithUsername extends Track {
-	user: { username: string };
 }
 
 export interface TracksCreatedCount {

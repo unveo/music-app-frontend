@@ -2,7 +2,6 @@ import api from '@/api/interceptors';
 import type {
 	Album,
 	AlbumFull,
-	AlbumWithUsername,
 	CreateAlbumDto,
 	UpdateAlbumDto
 } from './album.types';
@@ -13,7 +12,7 @@ export const albumService = {
 	},
 
 	async getMany(userId?: number, take?: number) {
-		return await api.get<AlbumWithUsername[]>(
+		return await api.get<Album[]>(
 			`/album/?userId=${userId && userId}&take=${take ? take : ''}`
 		);
 	},

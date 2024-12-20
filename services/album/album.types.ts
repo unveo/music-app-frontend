@@ -78,14 +78,9 @@ export interface Album {
 	image: string;
 	type: AlbumType;
 	userId: number;
+	username: string;
 	createdAt: string;
 	updatedAt: string;
-}
-
-export interface AlbumWithUsername extends Album {
-	user: {
-		username: string;
-	};
 }
 
 export interface AlbumFull extends Album {

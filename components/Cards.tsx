@@ -3,12 +3,9 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { Pause, Play } from 'lucide-react';
 import { cn, nFormatter } from '@/lib/utils';
-import type { AlbumWithUsername } from '@/services/album/album.types';
-import type { PlaylistWithUsername } from '@/services/playlist/playlist.types';
-import type {
-	TracksIds,
-	TrackWithUsername
-} from '@/services/track/track.types';
+import type { Album } from '@/services/album/album.types';
+import type { Playlist } from '@/services/playlist/playlist.types';
+import type { TracksIds, Track } from '@/services/track/track.types';
 import type {
 	UserPublic,
 	UserWithoutFollowingCount
@@ -24,7 +21,7 @@ import { AxiosResponse } from 'axios';
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import { albumTrackService } from '@/services/album/album-track/album-track.service';
 import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 type queue = 'user' | 'liked' | 'album' | 'playlist';
 
@@ -48,7 +45,7 @@ export function Card({
 	centered?: boolean;
 	roundedFull?: boolean;
 	queueType?: queue;
-	track?: TrackWithUsername;
+	track?: Track;
 	trackPosition?: number;
 }) {
 	const roundedClass = useMemo(
@@ -123,7 +120,7 @@ function PlayButton({
 	queueType,
 	trackPosition
 }: {
-	track: TrackWithUsername;
+	track: Track;
 	queueType: 'user' | 'liked' | 'album' | 'playlist';
 	trackPosition?: number;
 }) {
@@ -288,7 +285,7 @@ export function UserCard({
 	);
 }
 
-export function TrackCard({ track }: { track: TrackWithUsername }) {
+export function TrackCard({ track }: { track: Track }) {
 	return (
 		<Card
 			title={track.title}
@@ -300,12 +297,12 @@ export function TrackCard({ track }: { track: TrackWithUsername }) {
 	);
 }
 
-export function LikedTrackCard({ track }: { track: TrackWithUsername }) {
+export function LikedTrackCard({ track }: { track: Track }) {
 	return (
 		<Card
 			title={track.title}
-			desc={track.user.username}
-			descHref={`/${track.user.username}`}
+			desc={track.username}
+			descHref={`/${track.username}`}
 			imageSrc={`http:localhost:5000/${track.image}`}
 			track={track}
 			queueType='liked'
@@ -313,12 +310,12 @@ export function LikedTrackCard({ track }: { track: TrackWithUsername }) {
 	);
 }
 
-export function ListeningHistoryCard({ track }: { track: TrackWithUsername }) {
+export function ListeningHistoryCard({ track }: { track: Track }) {
 	return (
 		<Card
 			title={track.title}
-			desc={track.user.username}
-			descHref={`/${track.user.username}`}
+			desc={track.username}
+			descHref={`/${track.username}`}
 			imageSrc={`http:localhost:5000/${track.image}`}
 			track={track}
 			queueType='user'
@@ -326,41 +323,53 @@ export function ListeningHistoryCard({ track }: { track: TrackWithUsername }) {
 	);
 }
 
-export function PlaylistCard({ playlist }: { playlist: PlaylistWithUsername }) {
+export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
 	return (
 		<Card
 			title={playlist.title}
-			titleHref={`/${playlist.user.username}/playlists/${playlist.changeableId}`}
-			desc={playlist.user.username}
-			descHref={`/${playlist.user.username}`}
+			titleHref={`/${playlist.username}/playlists/${playlist.changeableId}`}
+			desc={playlist.createdAt.slice(0, 4)}
 			imageSrc={`http:localhost:5000/${playlist.image}`}
 		></Card>
 	);
 }
 
-export function AlbumCardProfile({ album }: { album: AlbumWithUsername }) {
+export function PlaylistCard({ playlist }: { playlist: Playlist }) {
+	return (
+		<Card
+			title={playlist.title}
+			titleHref={`/${playlist.username}/playlists/${playlist.changeableId}`}
+			desc={playlist.username}
+			descHref={`/${playlist.username}`}
+			imageSrc={`http:localhost:5000/${playlist.image}`}
+		></Card>
+	);
+}
+
+export function AlbumCardProfile({ album }: { album: Album }) {
 	return (
 		<Card
 			title={album.title}
-			titleHref={`/${album.user.username}/albums/${album.changeableId}`}
+			titleHref={`/${album.username}/albums/${album.changeableId}`}
 			desc={
 				album.createdAt.slice(0, 4) +
 				' • ' +
-				album.type[0].toUpperCase() +
-				album.type.slice(1)
+				(album.type === 'ep'
+					? album.type.toUpperCase()
+					: album.type[0].toUpperCase() + album.type.slice(1))
 			}
 			imageSrc={`http:localhost:5000/${album.image}`}
 		></Card>
 	);
 }
 
-export function AlbumCard({ album }: { album: AlbumWithUsername }) {
+export function AlbumCard({ album }: { album: Album }) {
 	return (
 		<Card
 			title={album.title}
-			titleHref={`/${album.user.username}/albums/${album.changeableId}`}
-			desc={album.user.username}
-			descHref={`/${album.user.username}`}
+			titleHref={`/${album.username}/albums/${album.changeableId}`}
+			desc={album.username}
+			descHref={`/${album.username}`}
 			imageSrc={`http:localhost:5000/${album.image}`}
 		></Card>
 	);

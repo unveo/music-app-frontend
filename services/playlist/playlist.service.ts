@@ -3,17 +3,18 @@ import type {
 	CreatePlaylistDto,
 	Playlist,
 	PlaylistFull,
-	PlaylistWithUsername,
 	UpdatePlaylistDto
 } from './playlist.types';
 
 export const playlistService = {
-	async getOneFull(playlistId: number) {
-		return await api.get<PlaylistFull>(`/playlist/${playlistId}`);
+	async getOneFull(username: string, changeableId: string) {
+		return await api.get<PlaylistFull>(
+			`/playlist/?username=${username ? username : ''}&changeableId=${changeableId ? changeableId : ''}`
+		);
 	},
 
 	async getMany(userId?: number, take?: number) {
-		return await api.get<PlaylistWithUsername[]>(
+		return await api.get<Playlist[]>(
 			`/playlist/?userId=${userId && userId}&take=${take ? take : ''}`
 		);
 	},
