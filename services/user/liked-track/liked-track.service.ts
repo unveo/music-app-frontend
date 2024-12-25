@@ -1,4 +1,4 @@
-import api from '@/api/interceptors';
+import { api } from '@/api/interceptors';
 import type { LikedTrack } from './liked-track.types';
 import { TracksIds } from '@/services/track/track.types';
 

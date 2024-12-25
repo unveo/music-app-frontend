@@ -2,8 +2,7 @@ import { Metadata } from 'next';
 import ProfileSettings from './ProfileSettings';
 
 export const metadata: Metadata = {
-	title: { default: 'Profile settings', template: '' },
-	description: ''
+	title: 'Profile settings'
 };
 
 export default function ProfileSettingsPage() {

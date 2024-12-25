@@ -1,15 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpFromLine, Bell, Search } from 'lucide-react';
-import { Button } from './ui/button';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger
-} from './ui/dropdown-menu';
-import { Input } from './ui/input';
+import { ArrowUpFromLine } from 'lucide-react';
 import { UserDropdownMenu } from './UserDropdownMenu';
 
 export default function Header() {
@@ -27,51 +17,13 @@ export default function Header() {
 						Library
 					</Link>
 				</div>
-				<div className='hidden h-full w-80 items-center md:flex'>
-					<div className='group flex h-8 w-full items-center rounded-md border border-foreground transition-colors hover:border-primary'>
-						<Search className='mx-1.5 size-5' />
-						<Input type='search' placeholder='Search' />
-					</div>
-				</div>
 				<div className='flex h-full items-center justify-end gap-2 px-2 md:w-40'>
-					<DropdownMenu modal={false}>
-						<DropdownMenuTrigger asChild>
-							<Button variant='ghost' size='icon' className='md:hidden'>
-								<Search className='size-5' />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align='end' className='w-64 md:hidden'>
-							<DropdownMenuItem onSelect={(event) => event.preventDefault()}>
-								<div className='group flex h-8 w-full items-center rounded-md border border-foreground pl-1.5 transition-colors hover:border-primary'>
-									<Input type='search' placeholder='Search' />
-								</div>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
 					<Link
 						href='/upload'
 						className='flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
 					>
 						<ArrowUpFromLine className='size-5' />
 					</Link>
-					<DropdownMenu modal={false}>
-						<DropdownMenuTrigger asChild>
-							<Button variant='ghost' size='icon'>
-								<Bell className='size-5' />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align='end' className='w-96'>
-							<DropdownMenuLabel>Notifications</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem className='px-2 py-1.5'>
-								Notification 1
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem className='px-2 py-1.5'>
-								Notification 2
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
 					<UserDropdownMenu></UserDropdownMenu>
 				</div>
 			</nav>

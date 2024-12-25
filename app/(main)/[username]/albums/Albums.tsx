@@ -32,7 +32,7 @@ export default function Albums({ username }: { username: string }) {
 	}
 
 	if (albumsQuery.isLoading) {
-		return <ListSkeleton></ListSkeleton>;
+		return <></>;
 	}
 
 	if (albums) {

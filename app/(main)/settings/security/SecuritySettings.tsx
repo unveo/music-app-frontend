@@ -32,7 +32,7 @@ export default function SecuritySettings() {
 	const currentUser = currentUserQuery.data?.data;
 	const changeEmailForm = useForm<ChangeEmailDto>({
 		resolver: zodResolver(ChangeEmailSchema),
-		defaultValues: { email: currentUser?.email },
+		defaultValues: { email: '' },
 		mode: 'onChange',
 		disabled: !currentUser
 	});
@@ -48,9 +48,6 @@ export default function SecuritySettings() {
 		mutationFn: (dto: ChangeEmailDto) => authService.changeEmail(dto),
 		onSuccess: () => {
 			toast({ title: 'Email updated' });
-		},
-		onError: (error) => {
-			toast({ title: `${error.message}`, variant: 'destructive' });
 		}
 	});
 	const changePassword = useMutation({
@@ -59,21 +56,12 @@ export default function SecuritySettings() {
 		onSuccess: () => {
 			changePasswordForm.reset();
 			toast({ title: 'Password updated' });
-		},
-		onError: (error) => {
-			toast({ title: `${error.message}`, variant: 'destructive' });
 		}
 	});
 
-	useEffect(() => {
-		if (currentUser) {
-			changeEmailForm.setValue('email', currentUser.email);
-		}
-	}, [currentUser?.email]);
-
 	return (
 		<>
-			<nav className='grid gap-4 text-muted-foreground'>
+			<nav className='grid gap-4 text-lg text-muted-foreground'>
 				<Link href='/settings/profile'>Profile</Link>
 				<Link href='/settings/security' className='font-semibold text-primary'>
 					Security
@@ -93,9 +81,19 @@ export default function SecuritySettings() {
 								name='email'
 								render={({ field }) => (
 									<FormItem className='grid gap-2'>
-										<FormLabel htmlFor='email' className='text-lg'>
-											Email
-										</FormLabel>
+										<div className='flex items-end justify-between'>
+											<FormLabel htmlFor='email' className='text-lg'>
+												Email
+											</FormLabel>
+											{currentUser?.email ? (
+												<div className='text-end text-zinc-400'>
+													Current email: {currentUser?.email}
+												</div>
+											) : (
+												<></>
+											)}
+										</div>
+
 										<FormControl>
 											<div className='flex h-10 items-center rounded-md border border-border px-2'>
 												<Input id='email' required {...field} />

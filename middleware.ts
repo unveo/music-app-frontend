@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { REFRESH_TOKEN } from './api/interceptors';
+import { baseUrl, REFRESH_TOKEN } from './config';
 
 export function middleware(request: NextRequest) {
 	const { url, cookies } = request;
 	const refreshToken = cookies.get(REFRESH_TOKEN)?.value;
-	const isAuthPage = url.includes('/login') || url.includes('/signup'); // TODO
+	const isAuthPage =
+		url === `${baseUrl.frontend}/login` || url === `${baseUrl.frontend}/signup`;
 
 	if (refreshToken && isAuthPage) {
 		return NextResponse.redirect(new URL('/', url));
@@ -14,18 +15,15 @@ export function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL('/login', url));
 	}
 
-	if (url === 'http://localhost:3000/settings') {
-		// TODO
+	if (url === `${baseUrl.frontend}/settings`) {
 		return NextResponse.redirect(new URL('/settings/profile', url));
 	}
 
-	if (url === 'http://localhost:3000/library') {
-		// TODO
+	if (url === `${baseUrl.frontend}/library`) {
 		return NextResponse.redirect(new URL('/library/tracks', url));
 	}
 
-	if (url === 'http://localhost:3000/upload') {
-		// TODO
+	if (url === `${baseUrl.frontend}/upload`) {
 		return NextResponse.redirect(new URL('/upload/track', url));
 	}
 

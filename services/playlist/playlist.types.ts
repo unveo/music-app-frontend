@@ -1,57 +1,50 @@
 import { z } from 'zod';
-import { ACCEPTED_IMAGE_TYPES, IMAGE_FILE_LIMIT, regex } from '@/config';
+import {
+	ACCEPTED_IMAGE_TYPES,
+	IMAGE_FILE_LIMIT,
+	messages,
+	regex
+} from '@/config';
 
 export const CreatePlaylistSchema = z.object({
 	title: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.title, regex.titleMessage),
+		.min(1, messages.required('Title'))
+		.max(20, messages.max('Title', 20))
+		.regex(regex.title, messages.titleRegex),
 	changeableId: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.changeableId, regex.changeableIdMessage),
+		.min(1, messages.required('ChangeableId'))
+		.max(20, messages.max('ChangeableId', 20))
+		.regex(regex.changeableId, messages.changeableIdRegex),
 	image: z
-		.any()
-		.refine((files) => {
-			files?.length === 1;
-		}, 'Image is required')
+		.instanceof(File, { message: messages.required('Image') })
+		.refine((file) => file.size <= IMAGE_FILE_LIMIT, messages.imageMaxSize)
 		.refine(
-			(files) => files?.[0]?.size <= IMAGE_FILE_LIMIT,
-			`Max image file size is 10MB.`
-		)
-		.refine(
-			(files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-			'only jpg and png files are supported'
+			(file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+			messages.imageTypes
 		)
 });
 
 export const UpdatePlaylistSchema = z.object({
 	title: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.title, regex.titleMessage)
+		.min(1, messages.required('Title'))
+		.max(20, messages.max('Title', 20))
+		.regex(regex.title, messages.titleRegex)
 		.optional(),
 	changeableId: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.changeableId, regex.changeableIdMessage)
+		.min(1, messages.required('ChangeableId'))
+		.max(20, messages.max('ChangeableId', 20))
+		.regex(regex.changeableId, messages.changeableIdRegex)
 		.optional(),
 	image: z
-		.any()
-		.refine((files) => {
-			files?.length === 1;
-		}, 'Image is required')
+		.instanceof(File, { message: messages.required('Image') })
+		.refine((file) => file.size <= IMAGE_FILE_LIMIT, messages.imageMaxSize)
 		.refine(
-			(files) => files?.[0]?.size <= IMAGE_FILE_LIMIT,
-			`Max image file size is 10MB.`
-		)
-		.refine(
-			(files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-			'only jpg and png files are supported'
+			(file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+			messages.imageTypes
 		)
 		.optional()
 });

@@ -32,7 +32,7 @@ export default function Playlists({ username }: { username: string }) {
 	}
 
 	if (playlistsQuery.isLoading) {
-		return <ListSkeleton></ListSkeleton>;
+		return <></>;
 	}
 
 	if (playlists) {

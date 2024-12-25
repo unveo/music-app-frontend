@@ -1,15 +1,18 @@
 import { Metadata } from 'next';
 import Profile from './Profile';
 
-export const metadata: Metadata = {
-	title: { default: 'Username', template: '' },
-	description: ''
-}; // username TODO
+type Props = {
+	params: Promise<{ username: string }>;
+};
 
-export default async function ProfilePage({
-	params
-}: {
-	params: { username: string };
-}) {
-	return <Profile username={params.username}></Profile>;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { username } = await params;
+	return {
+		title: `${username}`
+	};
+}
+
+export default async function ProfilePage({ params }: Props) {
+	const { username } = await params;
+	return <Profile username={username}></Profile>;
 }

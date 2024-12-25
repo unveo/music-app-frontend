@@ -11,11 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import {
-	ACCEPTED_AUDIO_TYPES,
-	ACCEPTED_IMAGE_TYPES,
-	IMAGE_FILE_LIMIT
-} from '@/config';
+import { ACCEPTED_IMAGE_TYPES } from '@/config';
 import { validateImage } from '@/lib/utils';
 import { userService } from '@/services/user/user.service';
 import {
@@ -26,13 +22,16 @@ import {
 } from '@/services/user/user.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ImageUp } from 'lucide-react';
+import { ImageUp, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { ControllerRenderProps, FormProvider, useForm } from 'react-hook-form';
 
 export default function ProfileSettings() {
+	const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+	const { toast } = useToast();
+
 	const currentUserQuery = useQuery({
 		queryKey: ['current-user'],
 		queryFn: () => userService.getCurrent()
@@ -41,7 +40,7 @@ export default function ProfileSettings() {
 
 	const changeUsernameForm = useForm<ChangeUsernameDto>({
 		resolver: zodResolver(ChangeUsernameSchema),
-		defaultValues: { username: currentUser?.username },
+		defaultValues: { username: '' },
 		mode: 'onChange',
 		disabled: !currentUser
 	});
@@ -51,18 +50,12 @@ export default function ProfileSettings() {
 		disabled: !currentUser
 	});
 
-	const [imageUrl, setImageUrl] = useState<string | null>(null);
-	const { toast } = useToast();
-
 	const changeUsernameMutation = useMutation({
 		mutationKey: ['change-username'],
 		mutationFn: (dto: ChangeUsernameDto) => userService.update(dto),
 		onSuccess: () => {
 			toast({ title: 'Username updated' });
 			currentUserQuery.refetch();
-		},
-		onError: (error) => {
-			toast({ title: `${error.message}`, variant: 'destructive' });
 		}
 	});
 	const changeImageMutation = useMutation({
@@ -71,45 +64,41 @@ export default function ProfileSettings() {
 			userService.update(dto as unknown as ChangeImageDto),
 		onSuccess: () => {
 			toast({ title: 'Image updated' });
-			URL.revokeObjectURL(imageUrl!);
-			setImageUrl(null);
-			changeImageForm.setValue('image', undefined); // TODO
+			if (imageUrl) {
+				URL.revokeObjectURL(imageUrl);
+			}
+			setImageUrl(undefined);
+			changeImageForm.reset({ image: undefined });
 			currentUserQuery.refetch();
-		},
-		onError: (error) => {
-			toast({ title: `${error.message}`, variant: 'destructive' });
 		}
 	});
 
-	useEffect(() => {
-		if (currentUser) {
-			changeUsernameForm.setValue('username', currentUser.username);
+	function handleImage(
+		field: ControllerRenderProps<
+			{
+				image: File;
+			},
+			'image'
+		>,
+		file: File
+	) {
+		try {
+			validateImage(file);
+		} catch (err: any) {
+			toast({
+				title: err.message,
+				variant: 'destructive'
+			});
+			return;
 		}
-	}, [currentUser?.username, currentUser, changeUsernameForm]);
-
-	function handleImage(file?: File) {
-		if (file) {
-			try {
-				validateImage(file);
-			} catch (err: any) {
-				toast({
-					title: err.message,
-					variant: 'destructive'
-				});
-				return;
-			}
-			const imageUrlUrl = URL.createObjectURL(file);
-			setImageUrl(imageUrlUrl);
-			changeImageForm.setValue('image', file);
-		} else {
-			setImageUrl(null);
-			changeImageForm.setValue('image', undefined);
-		}
+		const imageUrl = URL.createObjectURL(file);
+		setImageUrl(imageUrl);
+		field.onChange(file);
 	}
 
 	return (
 		<>
-			<nav className='grid gap-4 text-muted-foreground'>
+			<nav className='grid gap-4 text-lg text-muted-foreground'>
 				<Link href='/settings/profile' className='font-semibold text-primary'>
 					Profile
 				</Link>
@@ -122,6 +111,7 @@ export default function ProfileSettings() {
 							onSubmit={changeUsernameForm.handleSubmit((dto) => {
 								changeUsernameMutation.mutate(dto);
 							})}
+							noValidate
 							className='grid gap-4'
 						>
 							<FormField
@@ -129,9 +119,18 @@ export default function ProfileSettings() {
 								name='username'
 								render={({ field }) => (
 									<FormItem className='grid'>
-										<FormLabel htmlFor='username' className='w-min text-lg'>
-											Username
-										</FormLabel>
+										<div className='flex items-end justify-between'>
+											<FormLabel htmlFor='username' className='w-min text-lg'>
+												Username
+											</FormLabel>
+											{currentUser?.username ? (
+												<div className='text-end text-zinc-400'>
+													Current username: {currentUser?.username}
+												</div>
+											) : (
+												<></>
+											)}
+										</div>
 										<FormControl>
 											<div className='flex h-10 items-center rounded-md border border-border px-2'>
 												<Input id='username' required {...field} />
@@ -160,19 +159,33 @@ export default function ProfileSettings() {
 							<FormField
 								control={changeImageForm.control}
 								name='image'
-								render={() => (
+								render={({ field }) => (
 									<FormItem className='grid'>
 										<FormLabel htmlFor='image' className='w-min text-lg'>
 											Image
 										</FormLabel>
 										<div className='min-size-52 group relative size-52 rounded-md border'>
 											{imageUrl ? (
-												<FormLabel
-													htmlFor='image'
-													className='absolute bottom-2 right-2 z-10 flex h-10 cursor-pointer items-center rounded-md border border-input bg-background px-4 py-2 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100'
-												>
-													Edit
-												</FormLabel>
+												<>
+													<Button
+														variant='outline'
+														size='icon'
+														type='button'
+														className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
+														onClick={() => {
+															setImageUrl(undefined);
+															field.onChange(undefined);
+														}}
+													>
+														<X className='size-5' />
+													</Button>
+													<FormLabel
+														htmlFor='image'
+														className='absolute bottom-2 right-2 z-10 flex h-10 cursor-pointer items-center rounded-md border border-input bg-background px-4 py-2 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100'
+													>
+														Edit
+													</FormLabel>
+												</>
 											) : (
 												<FormLabel
 													htmlFor='image'
@@ -187,9 +200,12 @@ export default function ProfileSettings() {
 												<Input
 													type='file'
 													id='image'
-													required
 													accept={`.jpg, .png, ${ACCEPTED_IMAGE_TYPES.join(', ')}`}
-													onChange={(e) => handleImage(e.target.files?.[0])}
+													onChange={(e) => {
+														if (e.target.files?.[0]) {
+															handleImage(field, e.target.files[0]);
+														}
+													}}
 													className='hidden'
 												/>
 											</FormControl>
@@ -197,10 +213,10 @@ export default function ProfileSettings() {
 												<div className='absolute top-0 size-52 min-h-52 min-w-52'>
 													<Image
 														src={imageUrl}
-														alt='Image imageUrl'
-														className='aspect-square size-52 rounded-md object-cover'
-														width={500}
-														height={500}
+														alt='New image'
+														className='aspect-square rounded-md object-cover'
+														width={250}
+														height={250}
 													/>
 												</div>
 											)}

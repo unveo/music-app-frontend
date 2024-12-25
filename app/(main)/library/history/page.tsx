@@ -2,8 +2,7 @@ import History from './History';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-	title: { default: 'History', template: '' },
-	description: ''
+	title: 'History'
 };
 
 export default function HistoryPage() {

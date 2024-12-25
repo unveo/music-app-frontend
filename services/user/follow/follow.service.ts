@@ -1,4 +1,4 @@
-import api from '@/api/interceptors';
+import { api } from '@/api/interceptors';
 import type { Follower, Following } from './follow.types';
 
 export const followService = {

@@ -1,12 +1,12 @@
-import type { TrackWithUsername } from '@/services/track/track.types';
+import type { Track } from '@/services/track/track.types';
 
 export interface ListeningHistoryTrack {
-  track: TrackWithUsername;
+	track: Track;
 }
 
 export interface ListeningHistoryRelation {
-  id: string;
-  userId: number;
-  trackId: number;
-  playedAt: string;
+	id: string;
+	userId: number;
+	trackId: number;
+	playedAt: string;
 }

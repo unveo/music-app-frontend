@@ -29,6 +29,8 @@ import { useQueueStore } from '@/stores/queue.store';
 import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
 import { usePathname } from 'next/navigation';
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
+import { baseUrl, imageFormat, msToAddListen } from '@/config';
+import { useListenTimeStore } from '@/stores/listen-time.store';
 
 export default function Footer() {
 	const { volume, muted, setVolume, setMuted } = useSettingsStore();
@@ -47,6 +49,8 @@ export default function Footer() {
 	} = useTrackStore();
 	const [isSeeking, setIsSeeking] = useState(false);
 	const { setNext, setPrev } = useQueueStore();
+	const { listenTime, startTime, setListenTime, setStartTime } =
+		useListenTimeStore();
 
 	const currentUserQuery = useQuery({
 		queryKey: ['current-user'],
@@ -124,15 +128,12 @@ export default function Footer() {
 	});
 
 	useEffect(() => {
-		console.log(useTrackLocalStore.getState().trackId);
 		if (useTrackLocalStore.getState().trackId) {
-			console.log('hekosda2');
 			currentTrackQuery.refetch();
 		}
 	}, []);
 
 	const updateTime = useCallback(() => {
-		console.log('UPDATE TIME');
 		if (audio && !isSeeking) {
 			setCurrentTime(audio.currentTime);
 			setProgress(audio.currentTime / audio.duration);
@@ -161,7 +162,7 @@ export default function Footer() {
 		} else {
 			const track = await trackService.getOne(next[0]);
 			const newAudio = new Audio(
-				`http://localhost:5000/api/track/stream/${next[0]}`
+				`${baseUrl.backend}/api/track/stream/${next[0]}`
 			);
 			setAudioReady(false);
 			setCurrentTime(0);
@@ -179,11 +180,9 @@ export default function Footer() {
 	}
 
 	useEffect(() => {
-		console.log('currentTrack EFFECT', currentTrack);
 		if (currentTrack) {
-			console.log('currentTrack AUDIO CREATE');
 			const audio = new Audio(
-				`http://localhost:5000/api/track/stream/${currentTrack.id}`
+				`${baseUrl.backend}/api/track/stream/${currentTrack.id}`
 			);
 			setAudio(audio);
 			setTrackInfo(currentTrack);
@@ -198,13 +197,11 @@ export default function Footer() {
 	}, [currentTrack]);
 
 	useEffect(() => {
-		console.log(audioReady, 'AUDIO READY CHANGE');
 		if (audio && audioReady) {
 			if (currentTime > 0 && currentTime < audio.duration) {
 				audio.currentTime = currentTime;
 			}
 			if (volume >= 0 && volume <= 1) {
-				console.log('VOLUME CHANGE');
 				if (muted) {
 					audio.volume = 0;
 				} else {
@@ -223,9 +220,44 @@ export default function Footer() {
 		}
 	}, [audio, updateTime]);
 
+	useEffect(() => {
+		console.log(isPlaying);
+	}, [isPlaying]);
+
+	useEffect(() => {
+		if (trackInfo && typeof listenTime === 'number') {
+			if (isPlaying && !startTime) {
+				setStartTime(new Date().getTime());
+			} else if (!isPlaying && startTime) {
+				const newListenTime = new Date().getTime() - startTime + listenTime;
+				if (newListenTime >= msToAddListen) {
+					trackService.addPlay(trackInfo.id);
+					setListenTime(true);
+				} else {
+					setListenTime(newListenTime);
+				}
+				setStartTime(undefined);
+			}
+		}
+	}, [isPlaying, trackInfo]);
+
+	useEffect(() => {
+		console.log('EFFECT');
+		if (trackInfo && typeof listenTime === 'number' && isPlaying && startTime) {
+			const intervalId = setInterval(() => {
+				console.log('interval');
+				if (new Date().getTime() - startTime + listenTime >= msToAddListen) {
+					trackService.addPlay(trackInfo.id);
+					setListenTime(true);
+					setStartTime(undefined);
+				}
+			}, 1000);
+			return () => clearInterval(intervalId);
+		}
+	}, [isPlaying, listenTime, startTime, trackInfo]);
+
 	function onPointerDown() {
 		if (audio) {
-			console.log('pointer down');
 			setIsSeeking(true);
 			audio.removeEventListener('timeupdate', updateTime);
 		}
@@ -233,7 +265,6 @@ export default function Footer() {
 
 	function onTrackSliderChange(details: SliderValueChangeDetails) {
 		if (audio) {
-			console.log('change');
 			setCurrentTime(details.value[0] * audio.duration);
 			setProgress(details.value[0]);
 		}
@@ -241,7 +272,6 @@ export default function Footer() {
 
 	function onTrackSliderChangeEnd(details: SliderValueChangeDetails) {
 		if (audio) {
-			console.log('commit');
 			setIsSeeking(false);
 			audio.currentTime = details.value[0] * audio.duration;
 		}
@@ -258,13 +288,6 @@ export default function Footer() {
 	}
 
 	if (!currentUser || !trackInfo || !audio) {
-		console.log(
-			!!currentUser,
-			!!currentTrack,
-			!!trackInfo,
-			audio,
-			!!audioReady
-		);
 		return <FooterLayout></FooterLayout>;
 	}
 
@@ -273,10 +296,10 @@ export default function Footer() {
 			<div className='flex items-center gap-4'>
 				<Image
 					alt='cover'
-					src={`http://localhost:5000/${trackInfo.image}`}
-					width={100}
-					height={100}
-					className='aspect-square size-12 rounded-md border object-cover'
+					src={`${baseUrl.backend}/${trackInfo.image}_50x50${imageFormat}`}
+					width={50}
+					height={50}
+					className='aspect-square size-12 rounded-md border'
 				/>
 				<div className='flex max-w-20 flex-col text-sm lg:max-w-32'>
 					<span>{trackInfo.title}</span>
@@ -326,7 +349,7 @@ export default function Footer() {
 							} else {
 								const track = await trackService.getOne(prev[prev.length - 1]);
 								const newAudio = new Audio(
-									`http://localhost:5000/api/track/stream/${track.data.id}`
+									`${baseUrl.backend}/api/track/stream/${track.data.id}`
 								);
 								setAudioReady(false);
 								setCurrentTime(0);
@@ -334,6 +357,8 @@ export default function Footer() {
 								setAudio(newAudio);
 								setTrackInfo(track.data);
 								setTrackId(track.data.id);
+								setListenTime(0);
+								setStartTime(undefined);
 								newAudio.addEventListener('canplaythrough', onCanPlayThrough);
 								newAudio.addEventListener('ended', onEnded);
 								if (trackId) {
@@ -383,7 +408,7 @@ export default function Footer() {
 							} else {
 								const track = await trackService.getOne(next[0]);
 								const newAudio = new Audio(
-									`http://localhost:5000/api/track/stream/${next[0]}`
+									`${baseUrl.backend}/api/track/stream/${next[0]}`
 								);
 								setAudioReady(false);
 								setCurrentTime(0);
@@ -391,6 +416,8 @@ export default function Footer() {
 								setAudio(newAudio);
 								setTrackInfo(track.data);
 								setTrackId(next[0]);
+								setListenTime(0);
+								setStartTime(undefined);
 								newAudio.addEventListener('canplaythrough', onCanPlayThrough);
 								newAudio.addEventListener('ended', onEnded);
 								setNext(next.slice(1));

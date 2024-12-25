@@ -2,7 +2,8 @@ import {
 	ACCEPTED_AUDIO_TYPES,
 	ACCEPTED_IMAGE_TYPES,
 	AUDIO_FILE_LIMIT,
-	IMAGE_FILE_LIMIT
+	IMAGE_FILE_LIMIT,
+	messages
 } from '@/config';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -37,20 +38,18 @@ export function formatTime(time: number) {
 
 export function validateImage(file: File) {
 	if (file.size > IMAGE_FILE_LIMIT) {
-		throw new Error('Max image file size is 10MB');
+		throw new Error(messages.imageMaxSize);
 	}
 	if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-		throw new Error('Only jpg and png files are supported');
+		throw new Error(messages.imageTypes);
 	}
 }
 
 export function validateAudio(file: File) {
 	if (file.size > AUDIO_FILE_LIMIT) {
-		throw new Error('Max audio file size is 50MB');
+		throw new Error(messages.audioMaxSize);
 	}
 	if (!ACCEPTED_AUDIO_TYPES.includes(file.type)) {
-		throw new Error(
-			'Only MP3, AAC, M4A, FLAC, WAV, AIFF, or WEBM files are supported'
-		);
+		throw new Error(messages.audioTypes);
 	}
 }

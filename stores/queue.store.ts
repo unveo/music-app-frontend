@@ -19,12 +19,3 @@ export const useQueueStore = create(
 		{ name: 'queue' }
 	)
 );
-// type: 'album' | 'playlist' | 'liked' | null;
-// id: number | null;
-// setType: (type: 'album' | 'playlist' | 'liked') => void;
-// setId: (id: number) => void;
-
-// type: null,
-// id: null,
-// setType: (type: 'album' | 'playlist' | 'liked') => set(() => ({ type })),
-// setId: (id: number) => set(() => ({ id }))

@@ -1,4 +1,4 @@
-import api from '@/api/interceptors';
+import { api } from '@/api/interceptors';
 import type {
 	CreatePlaylistDto,
 	Playlist,
@@ -15,7 +15,7 @@ export const playlistService = {
 
 	async getMany(userId?: number, take?: number) {
 		return await api.get<Playlist[]>(
-			`/playlist/?userId=${userId && userId}&take=${take ? take : ''}`
+			`/playlist/?userId=${userId ? userId : ''}&take=${take ? take : ''}`
 		);
 	},
 

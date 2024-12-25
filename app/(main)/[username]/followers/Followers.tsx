@@ -32,7 +32,7 @@ export default function Followers({ username }: { username: string }) {
 	}
 
 	if (followersQuery.isLoading) {
-		return <ListSkeleton></ListSkeleton>;
+		return <></>;
 	}
 
 	if (followers) {

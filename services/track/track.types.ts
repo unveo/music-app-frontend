@@ -1,58 +1,64 @@
-import { ACCEPTED_IMAGE_TYPES, IMAGE_FILE_LIMIT, regex } from '@/config';
+import {
+	ACCEPTED_AUDIO_TYPES,
+	ACCEPTED_IMAGE_TYPES,
+	AUDIO_FILE_LIMIT,
+	IMAGE_FILE_LIMIT,
+	messages,
+	regex
+} from '@/config';
 import { z } from 'zod';
 
 export const UploadTrackSchema = z.object({
 	title: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.title, regex.titleMessage),
+		.min(1, messages.required('Title'))
+		.max(20, messages.max('Title', 20))
+		.regex(regex.title, messages.titleRegex),
 	changeableId: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.changeableId, regex.changeableIdMessage),
-	image: z.any().refine((file) => file, 'Image is required'),
-	audio: z.any().refine((file) => file, 'Audio is required')
-});
-
-export const UploadTracksSchema = z.object({
-	tracks: z.array(UploadTrackSchema),
-	audios: z.any() // TODO
+		.min(1, messages.required('ChangeableId'))
+		.max(20, messages.max('ChangeableId', 20))
+		.regex(regex.changeableId, messages.changeableIdRegex),
+	image: z
+		.instanceof(File, { message: messages.required('Image') })
+		.refine((file) => file.size <= IMAGE_FILE_LIMIT, messages.imageMaxSize)
+		.refine(
+			(file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+			messages.imageTypes
+		),
+	audio: z
+		.instanceof(File, { message: messages.required('Audio') })
+		.refine((file) => file.size <= AUDIO_FILE_LIMIT, messages.audioMaxSize)
+		.refine(
+			(file) => ACCEPTED_AUDIO_TYPES.includes(file.type),
+			messages.audioTypes
+		)
 });
 
 export const UpdateTrackSchema = z.object({
 	title: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.title, regex.titleMessage)
+		.min(1, messages.required('Title'))
+		.max(20, messages.max('Title', 20))
+		.regex(regex.title, messages.titleRegex)
 		.optional(),
 	changeableId: z
 		.string()
-		.min(1, 'This field is required')
-		.max(20, 'Max characters - 20')
-		.regex(regex.changeableId, regex.changeableIdMessage)
+		.min(1, messages.required('ChangeableId'))
+		.max(20, messages.max('ChangeableId', 20))
+		.regex(regex.changeableId, messages.changeableIdRegex)
 		.optional(),
 	image: z
-		.any()
-		.refine((files) => {
-			console.log(typeof files);
-			files?.length === 1;
-		}, 'Image is required')
+		.instanceof(File, { message: messages.required('Image') })
+		.refine((file) => file.size <= IMAGE_FILE_LIMIT, messages.imageMaxSize)
 		.refine(
-			(files) => files?.[0]?.size <= IMAGE_FILE_LIMIT,
-			`Max image file size is 10MB.`
-		)
-		.refine(
-			(files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-			'only jpg and png files are supported'
+			(file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+			messages.imageTypes
 		)
 		.optional()
 });
 
 export type UploadTrackDto = z.infer<typeof UploadTrackSchema>;
-export type UploadTracksDto = z.infer<typeof UploadTracksSchema>;
 export type UpdateTrackDto = z.infer<typeof UpdateTrackSchema>;
 
 export interface Track {

@@ -1,4 +1,4 @@
-import api from '@/api/interceptors';
+import { api, apiWithoutAuth } from '@/api/interceptors';
 import type {
 	ChangeEmailDto,
 	ChangePasswordDto,
@@ -9,11 +9,11 @@ import type { UserPrivate } from '../user/user.types';
 
 export const authService = {
 	async register(dto: RegisterDto) {
-		return await api.post<UserPrivate>('/auth/register', dto);
+		return await apiWithoutAuth.post<UserPrivate>('/auth/register', dto);
 	},
 
 	async login(dto: LoginDto) {
-		return await api.post<UserPrivate>('/auth/login', dto);
+		return await apiWithoutAuth.post<UserPrivate>('/auth/login', dto);
 	},
 
 	async logout() {
@@ -25,7 +25,7 @@ export const authService = {
 	},
 
 	async refresh() {
-		return await api.post<UserPrivate>('/auth/login/refresh');
+		return await apiWithoutAuth.post<UserPrivate>('/auth/login/refresh');
 	},
 
 	async changeEmail(dto: ChangeEmailDto) {

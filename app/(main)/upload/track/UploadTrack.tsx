@@ -12,7 +12,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { useForm, type UseFormReturn } from 'react-hook-form';
+import { ControllerRenderProps, useForm } from 'react-hook-form';
 import {
 	type UploadTrackDto,
 	UploadTrackSchema
@@ -23,12 +23,13 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Image from 'next/image';
-import { FileCheck, FileUp, ImageUp } from 'lucide-react';
+import { FileCheck, FileUp, ImageUp, X } from 'lucide-react';
 import { validateAudio, validateImage } from '@/lib/utils';
 import { ACCEPTED_AUDIO_TYPES, ACCEPTED_IMAGE_TYPES } from '@/config';
 
 export default function UploadTrack() {
 	const [imageUrl, setImageUrl] = useState<string | undefined>();
+	const [audio, setAudio] = useState<File | undefined>();
 	const { toast } = useToast();
 
 	const currentUserQuery = useQuery({
@@ -45,7 +46,6 @@ export default function UploadTrack() {
 			changeableId: '',
 			title: ''
 		},
-		mode: 'onChange',
 		disabled: !currentUser
 	});
 
@@ -55,53 +55,69 @@ export default function UploadTrack() {
 			trackService.upload(dto as unknown as UploadTrackDto),
 		onSuccess: () => {
 			toast({ title: 'Track uploaded' });
-			URL.revokeObjectURL(imageUrl!);
+			if (imageUrl) {
+				URL.revokeObjectURL(imageUrl);
+			}
 			setImageUrl(undefined);
-			uploadForm.setValue('title', ''); // TODO
-			uploadForm.setValue('changeableId', ''); // TODO
-			uploadForm.setValue('image', undefined); // TODO
-			uploadForm.setValue('audio', undefined); // TODO
-		},
-		onError: (error) => {
-			toast({ title: `${error.message}`, variant: 'destructive' });
+			setAudio(undefined);
+			uploadForm.reset({
+				audio: undefined,
+				image: undefined,
+				changeableId: '',
+				title: ''
+			});
 		}
 	});
 
-	function handleAudio(file?: File) {
-		if (file) {
-			try {
-				validateAudio(file);
-			} catch (err: any) {
-				toast({
-					title: err.message,
-					variant: 'destructive'
-				});
-				return;
-			}
-			uploadForm.setValue('audio', file);
-		} else {
-			uploadForm.setValue('audio', undefined);
+	function handleAudio(
+		field: ControllerRenderProps<
+			{
+				title: string;
+				changeableId: string;
+				image: File;
+				audio: File;
+			},
+			'audio'
+		>,
+		file: File
+	) {
+		try {
+			validateAudio(file);
+		} catch (err: any) {
+			toast({
+				title: err.message,
+				variant: 'destructive'
+			});
+			return;
 		}
+		setAudio(file);
+		field.onChange(file);
 	}
 
-	function handleImage(file?: File) {
-		if (file) {
-			try {
-				validateImage(file);
-			} catch (err: any) {
-				toast({
-					title: err.message,
-					variant: 'destructive'
-				});
-				return;
-			}
-			uploadForm.setValue('image', file);
-			const imageUrl = URL.createObjectURL(file);
-			setImageUrl(imageUrl);
-		} else {
-			uploadForm.setValue('image', undefined);
-			setImageUrl(undefined);
+	function handleImage(
+		field: ControllerRenderProps<
+			{
+				title: string;
+				changeableId: string;
+				image: File;
+				audio: File;
+			},
+			'image'
+		>,
+		file: File
+	) {
+		try {
+			validateImage(file);
+		} catch (err: any) {
+			toast({
+				title: err.message,
+				variant: 'destructive'
+			});
+			return;
 		}
+		const imageUrl = URL.createObjectURL(file);
+		setImageUrl(imageUrl);
+		field.onChange(file);
 	}
 
 	function onSubmit(dto: UploadTrackDto) {
@@ -115,7 +131,7 @@ export default function UploadTrack() {
 
 	return (
 		<>
-			<nav className='grid gap-4 text-muted-foreground'>
+			<nav className='grid gap-4 text-lg text-muted-foreground'>
 				<Link href='/upload/track' className='font-semibold text-primary'>
 					Track
 				</Link>
@@ -126,6 +142,7 @@ export default function UploadTrack() {
 					<Form {...uploadForm}>
 						<form
 							onSubmit={uploadForm.handleSubmit(onSubmit)}
+							noValidate
 							className='flex flex-col gap-6'
 						>
 							<div className='flex gap-4'>
@@ -148,8 +165,8 @@ export default function UploadTrack() {
 																/>
 															</div>
 														</FormControl>
-														<FormMessage />
 													</div>
+													<FormMessage />
 												</div>
 											</FormItem>
 										)}
@@ -172,8 +189,8 @@ export default function UploadTrack() {
 																/>
 															</div>
 														</FormControl>
-														<FormMessage className='w-64' />
 													</div>
+													<FormMessage />
 												</div>
 											</FormItem>
 										)}
@@ -181,19 +198,31 @@ export default function UploadTrack() {
 									<FormField
 										control={uploadForm.control}
 										name='audio'
-										render={() => (
-											<FormItem className='flex gap-2'>
-												<div className='h-28 w-full rounded-md'>
-													{uploadForm.getValues('audio') ? (
-														<FormLabel
-															htmlFor='audio'
-															className='flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border py-4'
-														>
-															<FileCheck className='size-8'></FileCheck>
-															<span className='text-base'>
-																{uploadForm.getValues('audio').name}
-															</span>
-														</FormLabel>
+										render={({ field }) => (
+											<FormItem className='grid gap-2'>
+												<div className='group relative h-28 w-full rounded-md'>
+													{audio ? (
+														<>
+															<Button
+																variant='outline'
+																size='icon'
+																type='button'
+																className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
+																onClick={() => {
+																	setAudio(undefined);
+																	field.onChange(undefined);
+																}}
+															>
+																<X className='size-5' />
+															</Button>
+															<FormLabel
+																htmlFor='audio'
+																className='flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border py-4'
+															>
+																<FileCheck className='size-8'></FileCheck>
+																<span className='text-base'>{audio.name}</span>
+															</FormLabel>
+														</>
 													) : (
 														<FormLabel
 															htmlFor='audio'
@@ -211,9 +240,12 @@ export default function UploadTrack() {
 															type='file'
 															id='audio'
 															className='hidden'
-															required
-															accept={`.mp3, .aac, .m4a, .flac, .wav, .aiff, .webm, ${ACCEPTED_AUDIO_TYPES.join(', ')}`}
-															onChange={(e) => handleAudio(e.target.files?.[0])}
+															accept={`.mp3, .aac, .m4a, .flac, .wav, .aiff, .webm, ${ACCEPTED_AUDIO_TYPES.join(', ')}`} //
+															onChange={(e) => {
+																if (e.target.files?.[0]) {
+																	handleAudio(field, e.target.files[0]);
+																}
+															}}
 														/>
 													</FormControl>
 												</div>
@@ -225,16 +257,30 @@ export default function UploadTrack() {
 								<FormField
 									control={uploadForm.control}
 									name='image'
-									render={() => (
-										<FormItem className='flex gap-2'>
-											<div className='min-size-52 group relative size-52 rounded-md border'>
+									render={({ field }) => (
+										<FormItem>
+											<div className='min-size-52 group relative mb-2 size-52 rounded-md border'>
 												{imageUrl ? (
-													<FormLabel
-														htmlFor='image'
-														className='absolute bottom-2 right-2 z-10 flex h-10 cursor-pointer items-center rounded-md border border-input bg-background px-4 py-2 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100'
-													>
-														Edit
-													</FormLabel>
+													<>
+														<Button
+															variant='outline'
+															size='icon'
+															type='button'
+															className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
+															onClick={() => {
+																setImageUrl(undefined);
+																field.onChange(undefined);
+															}}
+														>
+															<X className='size-5' />
+														</Button>
+														<FormLabel
+															htmlFor='image'
+															className='absolute bottom-2 right-2 z-10 flex h-10 cursor-pointer items-center rounded-md border border-input bg-background px-4 py-2 opacity-0 transition-opacity hover:bg-accent hover:text-accent-foreground group-hover:opacity-100'
+														>
+															Edit
+														</FormLabel>
+													</>
 												) : (
 													<FormLabel
 														htmlFor='image'
@@ -249,9 +295,12 @@ export default function UploadTrack() {
 													<Input
 														type='file'
 														id='image'
-														required
 														accept={`.jpg, .png, ${ACCEPTED_IMAGE_TYPES.join(', ')}`}
-														onChange={(e) => handleImage(e.target.files?.[0])}
+														onChange={(e) => {
+															if (e.target.files?.[0]) {
+																handleImage(field, e.target.files[0]);
+															}
+														}}
 														className='hidden'
 													/>
 												</FormControl>
@@ -260,9 +309,9 @@ export default function UploadTrack() {
 														<Image
 															src={imageUrl}
 															alt='Image preview'
-															className='aspect-square size-52 rounded-md object-cover'
-															width={500}
-															height={500}
+															className='aspect-square rounded-md object-cover'
+															width={250}
+															height={250}
 														/>
 													</div>
 												)}

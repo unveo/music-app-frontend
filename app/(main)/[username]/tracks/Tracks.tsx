@@ -32,7 +32,7 @@ export default function Tracks({ username }: { username: string }) {
 	}
 
 	if (tracksQuery.isLoading) {
-		return <ListSkeleton></ListSkeleton>;
+		return <></>;
 	}
 
 	if (tracks) {

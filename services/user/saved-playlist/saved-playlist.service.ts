@@ -1,4 +1,4 @@
-import api from '@/api/interceptors';
+import { api } from '@/api/interceptors';
 import { SavedPlaylist } from './saved-playlist.types';
 
 export const savedPlaylistService = {

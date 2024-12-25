@@ -2,8 +2,7 @@ import LikedAlbums from './LikedAlbums';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-	title: { default: 'Liked albums', template: '' },
-	description: ''
+	title: 'Liked albums'
 };
 
 export default function LikedAlbumsPage() {

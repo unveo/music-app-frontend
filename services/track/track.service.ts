@@ -1,11 +1,10 @@
-import api from '@/api/interceptors';
+import { api } from '@/api/interceptors';
 import type {
 	Track,
 	TracksCreatedCount,
 	TracksIds,
 	UpdateTrackDto,
-	UploadTrackDto,
-	UploadTracksDto
+	UploadTrackDto
 } from './track.types';
 
 export const trackService = {
@@ -31,10 +30,6 @@ export const trackService = {
 
 	async upload(dto: UploadTrackDto) {
 		return await api.post<Track>('/track', dto);
-	},
-
-	async uploadForAlbum(dto: UploadTracksDto) {
-		return await api.post<TracksCreatedCount>('/track/for-album', dto);
 	},
 
 	async addPlay(trackId: number) {

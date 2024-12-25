@@ -11,18 +11,18 @@ export default function Playlist({
 	username: string;
 	playlist: string;
 }) {
-	const playlistQuery = useQuery({
-		queryKey: ['playlist', playlistId],
-		queryFn: () => playlistService.getOneFull(playlistId)
-	});
-	const playlist = playlistQuery.data?.data;
-	const playlistTracksQuery = useQuery({
-		queryKey: ['playlist-tracks', playlistId],
-		queryFn: () => playlistTrackService.getMany(playlistId)
-	});
-	const playlistTracks = playlistTracksQuery.data?.data;
-
-	if (!playlist || !playlistTracks) {
-		return <>loading</>;
-	}
+	// const playlistQuery = useQuery({
+	// 	queryKey: ['playlist', playlist],
+	// 	queryFn: () => playlistService.getOneFull(playlist)
+	// });
+	// const playlist1 = playlistQuery.data?.data;
+	// const playlistTracksQuery = useQuery({
+	// 	queryKey: ['playlist-tracks', playlist],
+	// 	queryFn: () => playlistTrackService.getMany(playlist)
+	// });
+	// const playlistTracks = playlistTracksQuery.data?.data;
+	// if (!playlist || !playlistTracks) {
+	// 	return <>loading</>;
+	// }
+	return <></>;
 }

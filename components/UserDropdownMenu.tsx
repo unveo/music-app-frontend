@@ -13,6 +13,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/auth/auth.service';
 import { userService } from '@/services/user/user.service';
+import { baseUrl, imageFormat } from '@/config';
 
 export function UserDropdownMenu() {
 	const { push } = useRouter();
@@ -35,7 +36,7 @@ export function UserDropdownMenu() {
 						<></>
 					) : (
 						<Image
-							src={`http:localhost:5000/${currentUser?.image}`}
+							src={`${baseUrl.backend}/${currentUser?.image}_50x50${imageFormat}`}
 							width={100}
 							height={100}
 							alt='avatar'

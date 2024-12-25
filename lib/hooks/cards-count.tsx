@@ -1,15 +1,19 @@
+'use client';
+
 import { useEffect } from 'react';
 import { useCardsCountStore } from '@/stores/cards-count.store';
 
 export default function useCardsCount() {
 	const { setCardsCount } = useCardsCountStore();
 	useEffect(() => {
+		if (typeof window === 'undefined') return;
 		function handleResize() {
 			setCardsCount(getTake(window.innerWidth));
 		}
+		handleResize();
 		window.addEventListener('resize', handleResize);
 		return () => window.removeEventListener('resize', handleResize);
-	}); // [] нужно или нет?
+	}, [setCardsCount]);
 }
 
 function getTake(innerWidth: number) {

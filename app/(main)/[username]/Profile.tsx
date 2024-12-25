@@ -15,6 +15,7 @@ import { followService } from '@/services/user/follow/follow.service';
 import { userService } from '@/services/user/user.service';
 import NotFound from '@/components/NotFound';
 import useCardsCount from '@/lib/hooks/cards-count';
+import { baseUrl, imageFormat } from '@/config';
 
 export default function Profile({ username }: { username: string }) {
 	useCardsCount();
@@ -77,11 +78,12 @@ export default function Profile({ username }: { username: string }) {
 						<div className='p-4'>
 							<button className='size-52 rounded-full border shadow-sm'>
 								<Image
-									alt='avatar'
-									src={`http:localhost:5000/${user.image}`}
-									width={500}
-									height={500}
-									className='aspect-square rounded-full object-cover'
+									alt='Avatar'
+									src={`${baseUrl.backend}/${user.image}_250x250${imageFormat}`}
+									width={250}
+									height={250}
+									priority
+									className='aspect-square rounded-full'
 								></Image>
 							</button>
 						</div>

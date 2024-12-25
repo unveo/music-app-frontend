@@ -2,8 +2,7 @@ import Home from './Home';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-	title: { absolute: 'Music app' },
-	description: ''
+	title: 'Home'
 };
 
 export default function HomePage() {

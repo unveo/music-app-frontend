@@ -32,7 +32,7 @@ export default function Following({ username }: { username: string }) {
 	}
 
 	if (followingQuery.isLoading) {
-		return <ListSkeleton></ListSkeleton>;
+		return <></>;
 	}
 
 	if (following) {

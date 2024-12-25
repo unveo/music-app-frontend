@@ -2,10 +2,9 @@ import Signup from './Signup';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: { default: 'Sign up', template: '' },
-  description: ''
+	title: 'Sign up'
 };
 
 export default function SignupPage() {
-  return <Signup></Signup>;
+	return <Signup></Signup>;
 }

@@ -1,16 +1,31 @@
-import { regex, restrictedUsernames } from '@/config';
+import {
+	ACCEPTED_IMAGE_TYPES,
+	IMAGE_FILE_LIMIT,
+	messages,
+	regex,
+	restrictedUsernames
+} from '@/config';
 import { z } from 'zod';
 
 export const ChangeUsernameSchema = z.object({
 	username: z
 		.string()
-		.min(1)
-		.max(20)
-		.regex(regex.username, regex.usernameMessage)
-		.refine((username) => !restrictedUsernames.includes(username))
+		.min(1, messages.required('Username'))
+		.max(20, messages.max('Username', 20))
+		.regex(regex.username, messages.usernameRegex)
+		.refine(
+			(username) => !restrictedUsernames.includes(username),
+			messages.restrictedUsername
+		)
 });
 export const ChangeImageSchema = z.object({
-	image: z.any().refine((file) => file, { message: 'Image is required' })
+	image: z
+		.instanceof(File, { message: messages.required('Image') })
+		.refine((file) => file.size <= IMAGE_FILE_LIMIT, messages.imageMaxSize)
+		.refine(
+			(file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+			messages.imageTypes
+		)
 });
 
 export type ChangeUsernameDto = z.infer<typeof ChangeUsernameSchema>;

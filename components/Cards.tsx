@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
@@ -22,6 +24,8 @@ import { likedTrackService } from '@/services/user/liked-track/liked-track.servi
 import { albumTrackService } from '@/services/album/album-track/album-track.service';
 import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { useMemo } from 'react';
+import { baseUrl, imageFormat } from '@/config';
+import { useListenTimeStore } from '@/stores/listen-time.store';
 
 type queue = 'user' | 'liked' | 'album' | 'playlist';
 
@@ -59,23 +63,22 @@ export function Card({
 				{titleHref ? (
 					<Link href={titleHref} className={cn(roundedClass, 'aspect-square')}>
 						<Image
-							alt='track-image'
+							alt='Track image'
 							src={imageSrc}
-							width={500}
-							height={500}
-							className={cn(roundedClass, 'aspect-square object-cover')}
+							width={250}
+							height={250}
+							priority
+							className={cn(roundedClass, 'aspect-square')}
 						></Image>
 					</Link>
 				) : (
 					<Image
-						alt='track-image'
+						alt='Track image'
 						src={imageSrc}
-						width={500}
-						height={500}
-						className={cn(
-							roundedClass,
-							'aspect-square cursor-pointer object-cover'
-						)}
+						width={250}
+						height={250}
+						priority
+						className={cn(roundedClass, 'aspect-square cursor-pointer')}
 					></Image>
 				)}
 				{queueType && track && (
@@ -136,6 +139,7 @@ function PlayButton({
 	} = useTrackStore();
 	const { trackId, setTrackId, setCurrentTime } = useTrackLocalStore();
 	const { setNext, setPrev } = useQueueStore();
+	const { setListenTime, setStartTime } = useListenTimeStore();
 
 	const pathname = usePathname();
 
@@ -153,7 +157,6 @@ function PlayButton({
 		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
 		onSuccess: () => {
 			if (pathname === '/library/history') {
-				console.log(pathname);
 				listeningHistoryQuery.refetch();
 			}
 		}
@@ -177,7 +180,7 @@ function PlayButton({
 		} else {
 			const track = await trackService.getOne(next[0]);
 			const newAudio = new Audio(
-				`http://localhost:5000/api/track/stream/${next[0]}`
+				`${baseUrl.backend}/api/track/stream/${next[0]}`
 			);
 			setAudioReady(false);
 			setCurrentTime(0);
@@ -205,7 +208,7 @@ function PlayButton({
 						audio.pause();
 					}
 					const newAudio = new Audio(
-						`http://localhost:5000/api/track/stream/${track.id}`
+						`${baseUrl.backend}/api/track/stream/${track.id}`
 					);
 					setAudioReady(false);
 					setCurrentTime(0);
@@ -213,6 +216,8 @@ function PlayButton({
 					setAudio(newAudio);
 					setTrackInfo(track);
 					setTrackId(track.id);
+					setListenTime(0);
+					setStartTime(undefined);
 					newAudio.addEventListener('canplaythrough', onCanPlayThrough);
 					newAudio.addEventListener('ended', onEnded);
 					let tracksIds: AxiosResponse<TracksIds, any>;
@@ -278,7 +283,7 @@ export function UserCard({
 			title={user.username}
 			titleHref={`/${user.username}`}
 			desc={`${nFormatter(user._count.followers)} followers`}
-			imageSrc={`http:localhost:5000/${user.image}`}
+			imageSrc={`${baseUrl.backend}/${user.image}_250x250${imageFormat}`}
 			centered
 			roundedFull
 		></Card>
@@ -290,7 +295,7 @@ export function TrackCard({ track }: { track: Track }) {
 		<Card
 			title={track.title}
 			desc={track.createdAt.slice(0, 4)}
-			imageSrc={`http:localhost:5000/${track.image}`}
+			imageSrc={`${baseUrl.backend}/${track.image}_250x250${imageFormat}`}
 			track={track}
 			queueType='user'
 		></Card>
@@ -303,7 +308,7 @@ export function LikedTrackCard({ track }: { track: Track }) {
 			title={track.title}
 			desc={track.username}
 			descHref={`/${track.username}`}
-			imageSrc={`http:localhost:5000/${track.image}`}
+			imageSrc={`${baseUrl.backend}/${track.image}_250x250${imageFormat}`}
 			track={track}
 			queueType='liked'
 		></Card>
@@ -316,7 +321,7 @@ export function ListeningHistoryCard({ track }: { track: Track }) {
 			title={track.title}
 			desc={track.username}
 			descHref={`/${track.username}`}
-			imageSrc={`http:localhost:5000/${track.image}`}
+			imageSrc={`${baseUrl.backend}/${track.image}_250x250${imageFormat}`}
 			track={track}
 			queueType='user'
 		></Card>
@@ -329,7 +334,7 @@ export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
 			title={playlist.title}
 			titleHref={`/${playlist.username}/playlists/${playlist.changeableId}`}
 			desc={playlist.createdAt.slice(0, 4)}
-			imageSrc={`http:localhost:5000/${playlist.image}`}
+			imageSrc={`${baseUrl.backend}/${playlist.image}_250x250${imageFormat}`}
 		></Card>
 	);
 }
@@ -341,7 +346,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
 			titleHref={`/${playlist.username}/playlists/${playlist.changeableId}`}
 			desc={playlist.username}
 			descHref={`/${playlist.username}`}
-			imageSrc={`http:localhost:5000/${playlist.image}`}
+			imageSrc={`${baseUrl.backend}/${playlist.image}_250x250${imageFormat}`}
 		></Card>
 	);
 }
@@ -358,7 +363,7 @@ export function AlbumCardProfile({ album }: { album: Album }) {
 					? album.type.toUpperCase()
 					: album.type[0].toUpperCase() + album.type.slice(1))
 			}
-			imageSrc={`http:localhost:5000/${album.image}`}
+			imageSrc={`${baseUrl.backend}/${album.image}_250x250${imageFormat}`}
 		></Card>
 	);
 }
@@ -370,7 +375,7 @@ export function AlbumCard({ album }: { album: Album }) {
 			titleHref={`/${album.username}/albums/${album.changeableId}`}
 			desc={album.username}
 			descHref={`/${album.username}`}
-			imageSrc={`http:localhost:5000/${album.image}`}
+			imageSrc={`${baseUrl.backend}/${album.image}_250x250${imageFormat}`}
 		></Card>
 	);
 }

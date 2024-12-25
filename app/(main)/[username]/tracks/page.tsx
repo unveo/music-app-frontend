@@ -1,15 +1,18 @@
 import { Metadata } from 'next';
 import Tracks from './Tracks';
 
-export const metadata: Metadata = {
-	title: { default: 'Username tracks', template: '' },
-	description: ''
+type Props = {
+	params: Promise<{ username: string }>;
 };
 
-export default function TracksPage({
-	params
-}: {
-	params: { username: string };
-}) {
-	return <Tracks username={params.username}></Tracks>;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { username } = await params;
+	return {
+		title: `${username} tracks`
+	};
+}
+
+export default async function TracksPage({ params }: Props) {
+	const { username } = await params;
+	return <Tracks username={username}></Tracks>;
 }

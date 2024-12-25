@@ -1,15 +1,18 @@
 import { Metadata } from 'next';
 import Playlists from './Playlists';
 
-export const metadata: Metadata = {
-	title: { default: 'Username playlists', template: '' },
-	description: ''
+type Props = {
+	params: Promise<{ username: string }>;
 };
 
-export default function PlaylistsPage({
-	params
-}: {
-	params: { username: string };
-}) {
-	return <Playlists username={params.username}></Playlists>;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+	const { username } = await params;
+	return {
+		title: `${username} playlists`
+	};
+}
+
+export default async function PlaylistsPage({ params }: Props) {
+	const { username } = await params;
+	return <Playlists username={username}></Playlists>;
 }
