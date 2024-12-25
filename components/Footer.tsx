@@ -9,6 +9,7 @@ import {
 	Pause,
 	Play,
 	Repeat,
+	Repeat1,
 	Shuffle,
 	SkipBack,
 	SkipForward,
@@ -17,7 +18,7 @@ import {
 	VolumeX
 } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
-import { formatTime } from '@/lib/utils';
+import { formatTime, shuffleArray } from '@/lib/utils';
 import { SliderValueChangeDetails } from '@ark-ui/react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { userService } from '@/services/user/user.service';
@@ -33,7 +34,16 @@ import { baseUrl, imageFormat, msToAddListen } from '@/config';
 import { useListenTimeStore } from '@/stores/listen-time.store';
 
 export default function Footer() {
-	const { volume, muted, setVolume, setMuted } = useSettingsStore();
+	const {
+		volume,
+		muted,
+		repeat,
+		shuffle,
+		setVolume,
+		setMuted,
+		setRepeat,
+		setShuffle
+	} = useSettingsStore();
 	const { currentTime, setCurrentTime, setTrackId } = useTrackLocalStore();
 	const {
 		trackInfo,
@@ -48,7 +58,7 @@ export default function Footer() {
 		setProgress
 	} = useTrackStore();
 	const [isSeeking, setIsSeeking] = useState(false);
-	const { setNext, setPrev } = useQueueStore();
+	const { all, setNext, setPrev, setAll } = useQueueStore();
 	const { listenTime, startTime, setListenTime, setStartTime } =
 		useListenTimeStore();
 
@@ -156,9 +166,37 @@ export default function Footer() {
 		const prev = useQueueStore.getState().prev;
 		const next = useQueueStore.getState().next;
 		const trackId = useTrackLocalStore.getState().trackId;
+		const audio = useTrackStore.getState().audio;
+		const repeat = useSettingsStore.getState().repeat;
+		if (repeat === 'one' && audio) {
+			audio.play();
+			return;
+		}
 		if (!next.length) {
-			setIsPlaying(false);
-			this.currentTime = 0;
+			if (repeat === 'full') {
+				const track = await trackService.getOne(prev[0]);
+				const newAudio = new Audio(
+					`${baseUrl.backend}/api/track/stream/${prev[0]}`
+				);
+				setAudioReady(false);
+				setCurrentTime(0);
+				setProgress(0);
+				setAudio(newAudio);
+				setTrackInfo(track.data);
+				setTrackId(prev[0]);
+				setListenTime(0);
+				setStartTime(undefined);
+				newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+				newAudio.addEventListener('ended', onEnded);
+				if (trackId) {
+					setNext([...prev.slice(1), trackId]);
+				}
+				setPrev([]);
+				addToHistoryMutation.mutate(prev[0]);
+			} else {
+				setIsPlaying(false);
+				this.currentTime = 0;
+			}
 		} else {
 			const track = await trackService.getOne(next[0]);
 			const newAudio = new Audio(
@@ -221,10 +259,6 @@ export default function Footer() {
 	}, [audio, updateTime]);
 
 	useEffect(() => {
-		console.log(isPlaying);
-	}, [isPlaying]);
-
-	useEffect(() => {
 		if (trackInfo && typeof listenTime === 'number') {
 			if (isPlaying && !startTime) {
 				setStartTime(new Date().getTime());
@@ -242,10 +276,8 @@ export default function Footer() {
 	}, [isPlaying, trackInfo]);
 
 	useEffect(() => {
-		console.log('EFFECT');
 		if (trackInfo && typeof listenTime === 'number' && isPlaying && startTime) {
 			const intervalId = setInterval(() => {
-				console.log('interval');
 				if (new Date().getTime() - startTime + listenTime >= msToAddListen) {
 					trackService.addPlay(trackInfo.id);
 					setListenTime(true);
@@ -328,8 +360,39 @@ export default function Footer() {
 			</div>
 			<div className='col-start-2 col-end-5 flex flex-col pt-1'>
 				<div className='flex justify-center gap-2'>
-					<Button variant='clear' size='icon'>
-						<Shuffle className='size-5' />
+					<Button
+						variant='clear'
+						size='icon'
+						onClick={() => {
+							const trackId = useTrackLocalStore.getState().trackId;
+							if (shuffle) {
+								setShuffle(false);
+								const all = useQueueStore.getState().all;
+								if (trackId) {
+									const trackIndex = all.indexOf(trackId);
+									setPrev(all.slice(0, trackIndex));
+									setNext(all.slice(trackIndex + 1));
+								}
+								setAll([]);
+							} else {
+								setShuffle(true);
+								const prev = useQueueStore.getState().prev;
+								const next = useQueueStore.getState().next;
+								let newNext = [...prev, ...next];
+								shuffleArray(newNext);
+								setPrev([]);
+								setNext(newNext);
+								if (trackId) {
+									setAll([...prev, trackId, ...next]);
+								}
+							}
+						}}
+					>
+						{shuffle ? (
+							<Shuffle className='size-5 text-primary' />
+						) : (
+							<Shuffle className='size-5' />
+						)}
 					</Button>
 					<Button
 						variant='clear'
@@ -340,12 +403,39 @@ export default function Footer() {
 							const prev = useQueueStore.getState().prev;
 							const next = useQueueStore.getState().next;
 							const trackId = useTrackLocalStore.getState().trackId;
+							const repeat = useSettingsStore.getState().repeat;
 							if (audio.currentTime >= 5) {
 								audio.currentTime = 0;
 								audio.play();
 							} else if (!prev.length) {
-								setIsPlaying(false);
-								audio.currentTime = 0;
+								if (repeat === 'full') {
+									const track = await trackService.getOne(
+										next[next.length - 1]
+									);
+									const newAudio = new Audio(
+										`${baseUrl.backend}/api/track/stream/${track.data.id}`
+									);
+									setAudioReady(false);
+									setCurrentTime(0);
+									setProgress(0);
+									setAudio(newAudio);
+									setTrackInfo(track.data);
+									setTrackId(track.data.id);
+									setListenTime(0);
+									setStartTime(undefined);
+									newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+									newAudio.addEventListener('ended', onEnded);
+									setNext([]);
+									if (trackId) {
+										let newPrev = [trackId, ...next];
+										newPrev.pop();
+										setPrev(newPrev);
+									}
+									addToHistoryMutation.mutate(track.data.id);
+								} else {
+									audio.currentTime = 0;
+									audio.play();
+								}
 							} else {
 								const track = await trackService.getOne(prev[prev.length - 1]);
 								const newAudio = new Audio(
@@ -402,9 +492,32 @@ export default function Footer() {
 							const prev = useQueueStore.getState().prev;
 							const next = useQueueStore.getState().next;
 							const trackId = useTrackLocalStore.getState().trackId;
+							const repeat = useSettingsStore.getState().repeat;
 							if (!next.length) {
-								setIsPlaying(false);
-								audio.currentTime = 0;
+								if (repeat === 'full') {
+									const track = await trackService.getOne(prev[0]);
+									const newAudio = new Audio(
+										`${baseUrl.backend}/api/track/stream/${prev[0]}`
+									);
+									setAudioReady(false);
+									setCurrentTime(0);
+									setProgress(0);
+									setAudio(newAudio);
+									setTrackInfo(track.data);
+									setTrackId(prev[0]);
+									setListenTime(0);
+									setStartTime(undefined);
+									newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+									newAudio.addEventListener('ended', onEnded);
+									if (trackId) {
+										setNext([...prev.slice(1), trackId]);
+									}
+									setPrev([]);
+									addToHistoryMutation.mutate(prev[0]);
+								} else {
+									setIsPlaying(false);
+									audio.currentTime = 0;
+								}
 							} else {
 								const track = await trackService.getOne(next[0]);
 								const newAudio = new Audio(
@@ -432,8 +545,27 @@ export default function Footer() {
 					>
 						<SkipForward className='size-5 fill-foreground' />
 					</Button>
-					<Button variant='clear' size='icon'>
-						<Repeat className='size-5' />
+					<Button
+						variant='clear'
+						size='icon'
+						onClick={() => {
+							const repeat = useSettingsStore.getState().repeat;
+							if (!repeat) {
+								setRepeat('full');
+							} else if (repeat === 'full') {
+								setRepeat('one');
+							} else {
+								setRepeat(false);
+							}
+						}}
+					>
+						{repeat === 'full' ? (
+							<Repeat className='size-5 text-primary' />
+						) : repeat === 'one' ? (
+							<Repeat1 className='size-5 text-primary' />
+						) : (
+							<Repeat className='size-5' />
+						)}
 					</Button>
 				</div>
 				<div className='flex items-center justify-center gap-2 text-xs'>

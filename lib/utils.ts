@@ -36,6 +36,13 @@ export function formatTime(time: number) {
 	return minutes + ':' + seconds;
 }
 
+export function shuffleArray(array: number[]) {
+	for (let i = array.length - 1; i > 0; i--) {
+		let j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
 export function validateImage(file: File) {
 	if (file.size > IMAGE_FILE_LIMIT) {
 		throw new Error(messages.imageMaxSize);

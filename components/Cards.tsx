@@ -26,6 +26,7 @@ import { playlistTrackService } from '@/services/playlist/playlist-track/playlis
 import { useMemo } from 'react';
 import { baseUrl, imageFormat } from '@/config';
 import { useListenTimeStore } from '@/stores/listen-time.store';
+import { useSettingsStore } from '@/stores/settings.store';
 
 type queue = 'user' | 'liked' | 'album' | 'playlist';
 
@@ -174,9 +175,37 @@ function PlayButton({
 		const prev = useQueueStore.getState().prev;
 		const next = useQueueStore.getState().next;
 		const trackId = useTrackLocalStore.getState().trackId;
+		const audio = useTrackStore.getState().audio;
+		const repeat = useSettingsStore.getState().repeat;
+		if (repeat === 'one' && audio) {
+			audio.play();
+			return;
+		}
 		if (!next.length) {
-			setIsPlaying(false);
-			this.currentTime = 0;
+			if (repeat === 'full') {
+				const track = await trackService.getOne(prev[0]);
+				const newAudio = new Audio(
+					`${baseUrl.backend}/api/track/stream/${prev[0]}`
+				);
+				setAudioReady(false);
+				setCurrentTime(0);
+				setProgress(0);
+				setAudio(newAudio);
+				setTrackInfo(track.data);
+				setTrackId(prev[0]);
+				setListenTime(0);
+				setStartTime(undefined);
+				newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+				newAudio.addEventListener('ended', onEnded);
+				if (trackId) {
+					setNext([...prev.slice(1), trackId]);
+				}
+				setPrev([]);
+				addToHistoryMutation.mutate(prev[0]);
+			} else {
+				setIsPlaying(false);
+				this.currentTime = 0;
+			}
 		} else {
 			const track = await trackService.getOne(next[0]);
 			const newAudio = new Audio(
