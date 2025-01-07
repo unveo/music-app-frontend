@@ -58,6 +58,27 @@ export const UpdateTrackSchema = z.object({
 		.optional()
 });
 
+export const TrackForAlbumSchema = z.object({
+	title: z
+		.string()
+		.min(1, messages.required('Title'))
+		.max(20, messages.max('Title', 20))
+		.regex(regex.title, messages.titleRegex),
+	changeableId: z
+		.string()
+		.min(1, messages.required('ChangeableId'))
+		.max(20, messages.max('ChangeableId', 20))
+		.regex(regex.changeableId, messages.changeableIdRegex),
+	audio: z
+		.instanceof(File, { message: messages.required('Audio') })
+		.refine((file) => file.size <= AUDIO_FILE_LIMIT, messages.audioMaxSize)
+		.refine(
+			(file) => ACCEPTED_AUDIO_TYPES.includes(file.type),
+			messages.audioTypes
+		)
+		.optional()
+});
+
 export type UploadTrackDto = z.infer<typeof UploadTrackSchema>;
 export type UpdateTrackDto = z.infer<typeof UpdateTrackSchema>;
 
@@ -74,6 +95,10 @@ export interface Track {
 	likes: { addedAt: string }[];
 	createdAt: string;
 	updatedAt: string;
+}
+
+export interface TrackWithLiked extends Track {
+	likes: { addedAt: string }[];
 }
 
 export interface TracksCreatedCount {

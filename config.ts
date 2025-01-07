@@ -42,7 +42,8 @@ export const messages = {
 	audioTypes:
 		'Only mp3, aac, m4a, flac, wav, aiff and webm files are supported',
 	restrictedUsername: 'This username is not available',
-	emailValid: 'This email is not valid'
+	emailValid: 'This email is not valid',
+	albumTracks: 'There must be at least two tracks'
 };
 export const baseUrl = {
 	frontend: 'http://localhost:3000',

@@ -156,7 +156,7 @@ export function GlobalPlaylistsSection() {
 	const { cardsCount } = useCardsCountStore();
 	const playlistsQuery = useQuery({
 		queryKey: ['playlists'],
-		queryFn: () => playlistService.getMany(undefined, 7)
+		queryFn: () => playlistService.getMany(1, 7) //
 	});
 	const playlists = playlistsQuery.data?.data;
 
@@ -206,7 +206,7 @@ export function TracksSection({ username }: { username: string }) {
 	const { cardsCount } = useCardsCountStore();
 	const tracksQuery = useQuery({
 		queryKey: ['tracks', userId],
-		queryFn: () => trackService.getMany(userId, 7),
+		queryFn: () => trackService.getMany(userId!, 7),
 		enabled: !!userId
 	});
 	const tracks = tracksQuery.data?.data;
@@ -251,7 +251,7 @@ export function AlbumsSection({ username }: { username: string }) {
 	const { cardsCount } = useCardsCountStore();
 	const albumsQuery = useQuery({
 		queryKey: ['albums', userId],
-		queryFn: () => albumService.getMany(userId, 7),
+		queryFn: () => albumService.getMany(userId!, 7),
 		enabled: !!userId
 	});
 	const albums = albumsQuery.data?.data;
@@ -286,6 +286,8 @@ export function AlbumsSection({ username }: { username: string }) {
 }
 
 export function PlaylistsSection({ username }: { username: string }) {
+	const { cardsCount } = useCardsCountStore();
+
 	const userQuery = useQuery({
 		queryKey: ['user', username],
 		queryFn: () => userService.getByName(username),
@@ -293,10 +295,10 @@ export function PlaylistsSection({ username }: { username: string }) {
 	});
 	const user = userQuery.data?.data;
 	const userId = user?.id;
-	const { cardsCount } = useCardsCountStore();
+
 	const playlistsQuery = useQuery({
 		queryKey: ['playlists', userId],
-		queryFn: () => playlistService.getMany(userId, 7),
+		queryFn: () => playlistService.getMany(userId!, 7),
 		enabled: !!userId
 	});
 	const playlists = playlistsQuery.data?.data;

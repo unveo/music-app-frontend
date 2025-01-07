@@ -7,6 +7,7 @@ import {
 	messages,
 	regex
 } from '@/config';
+import { TrackForAlbumSchema } from '../track/track.types';
 
 type AlbumType = 'lp' | 'ep';
 const AlbumTypes = ['lp', 'ep'] as const;
@@ -29,7 +30,30 @@ export const CreateAlbumSchema = z.object({
 		.refine(
 			(file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
 			messages.imageTypes
+		),
+	tracks: z
+		.array(TrackForAlbumSchema)
+		.min(2, messages.albumTracks)
+		.refine(
+			(tracks) => tracks.every((track) => track.audio),
+			'Each track must have an audio file'
 		)
+		.refine((tracks) => {
+			const titles: string[] = [];
+			const changeableIds: string[] = [];
+
+			tracks.map((track) => {
+				titles.push(track.title), changeableIds.push(track.changeableId);
+			});
+
+			if (
+				new Set(titles).size !== titles.length ||
+				new Set(changeableIds).size !== changeableIds.length
+			) {
+				return false;
+			}
+			return true;
+		}, 'Track titles and ids must be unique')
 });
 
 export const UpdateAlbumSchema = z.object({
@@ -56,28 +80,7 @@ export const UpdateAlbumSchema = z.object({
 		.optional()
 });
 
-export const TrackForAlbumSchema = z.object({
-	title: z
-		.string()
-		.min(1, messages.required('Title'))
-		.max(20, messages.max('Title', 20))
-		.regex(regex.title, messages.titleRegex),
-	changeableId: z
-		.string()
-		.min(1, messages.required('ChangeableId'))
-		.max(20, messages.max('ChangeableId', 20))
-		.regex(regex.changeableId, messages.changeableIdRegex),
-	audio: z
-		.instanceof(File, { message: messages.required('Audio') })
-		.refine((file) => file.size <= AUDIO_FILE_LIMIT, messages.audioMaxSize)
-		.refine(
-			(file) => ACCEPTED_AUDIO_TYPES.includes(file.type),
-			messages.audioTypes
-		)
-});
-
 export type CreateAlbumDto = z.infer<typeof CreateAlbumSchema>;
-export type TrackForAlbumDto = z.infer<typeof TrackForAlbumSchema>;
 export type UpdateAlbumDto = z.infer<typeof UpdateAlbumSchema>;
 
 export interface Album {
@@ -93,5 +96,6 @@ export interface Album {
 }
 
 export interface AlbumFull extends Album {
-	_count: { likes: number; tracks: number };
+	_count: { tracks: number };
+	likes: { addedAt: string }[];
 }

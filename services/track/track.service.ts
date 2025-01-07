@@ -3,6 +3,7 @@ import type {
 	Track,
 	TracksCreatedCount,
 	TracksIds,
+	TrackWithLiked,
 	UpdateTrackDto,
 	UploadTrackDto
 } from './track.types';
@@ -12,13 +13,25 @@ export const trackService = {
 		return await api.get(`/track/stream/${trackId}`);
 	},
 
-	async getOne(trackId: number) {
-		return await api.get<Track>(`/track/one/${trackId}`);
+	async getOneById(trackId: number) {
+		return await api.get<TrackWithLiked>(`/track/oneById/${trackId}`);
 	},
 
-	async getMany(userId?: number, take?: number, sort?: 'popular') {
-		return await api.get<Track[]>(
-			`/track/?userId=${userId && userId}&take=${take ? take : ''}&sort=${sort ? sort : ''}`
+	async getOne(username: string, changeableId: string) {
+		return await api.get<TrackWithLiked>(
+			`/track/one/?username=${username}&changeableId=${changeableId}`
+		);
+	},
+
+	async getMany(userId: number, take?: number, lastId?: number) {
+		return await api.get<TrackWithLiked[]>(
+			`/track/?userId=${userId}&take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
+		);
+	},
+
+	async getManyPopular(userId: number, take?: number, lastId?: number) {
+		return await api.get<TrackWithLiked[]>(
+			`/track/popular/?userId=${userId}&take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
 		);
 	},
 
@@ -33,7 +46,7 @@ export const trackService = {
 	},
 
 	async addPlay(trackId: number) {
-		return await api.post<void>(`/track/${trackId}/add-play`);
+		return await api.patch<void>(`/track/${trackId}/add-play`);
 	},
 
 	async update(trackId: number, dto: UpdateTrackDto) {

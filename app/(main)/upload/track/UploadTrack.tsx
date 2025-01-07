@@ -26,6 +26,7 @@ import Image from 'next/image';
 import { FileCheck, FileUp, ImageUp, X } from 'lucide-react';
 import { validateAudio, validateImage } from '@/lib/utils';
 import { ACCEPTED_AUDIO_TYPES, ACCEPTED_IMAGE_TYPES } from '@/config';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function UploadTrack() {
 	const [imageUrl, setImageUrl] = useState<string | undefined>();
@@ -161,6 +162,7 @@ export default function UploadTrack() {
 																	id='title'
 																	placeholder='Title'
 																	required
+																	maxLength={20}
 																	{...field}
 																/>
 															</div>
@@ -185,6 +187,7 @@ export default function UploadTrack() {
 																	id='changeableId'
 																	required
 																	placeholder='Track id'
+																	maxLength={20}
 																	{...field}
 																/>
 															</div>
@@ -305,15 +308,13 @@ export default function UploadTrack() {
 													/>
 												</FormControl>
 												{imageUrl && (
-													<div className='absolute top-0 size-52 min-h-52 min-w-52'>
-														<Image
-															src={imageUrl}
-															alt='Image preview'
-															className='aspect-square rounded-md object-cover'
-															width={250}
-															height={250}
-														/>
-													</div>
+													<Image
+														src={imageUrl}
+														alt='Image preview'
+														className='absolute top-0 aspect-square size-full rounded-md object-cover'
+														width={250}
+														height={250}
+													/>
 												)}
 											</div>
 											<FormMessage />
@@ -321,9 +322,14 @@ export default function UploadTrack() {
 									)}
 								/>
 							</div>
-							<Button disabled={!currentUser} type='submit' className='w-min'>
-								Upload
-							</Button>
+							<div className='flex items-center gap-4'>
+								<Button disabled={!currentUser} type='submit' className='w-min'>
+									Upload
+								</Button>
+								<LoadingSpinner
+									className={uploadMutation.isPending ? 'opacity-100' : ''}
+								/>
+							</div>
 						</form>
 					</Form>
 				</div>

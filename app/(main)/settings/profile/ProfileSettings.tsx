@@ -210,15 +210,13 @@ export default function ProfileSettings() {
 												/>
 											</FormControl>
 											{imageUrl && (
-												<div className='absolute top-0 size-52 min-h-52 min-w-52'>
-													<Image
-														src={imageUrl}
-														alt='New image'
-														className='aspect-square rounded-md object-cover'
-														width={250}
-														height={250}
-													/>
-												</div>
+												<Image
+													src={imageUrl}
+													alt='New image'
+													className='object-coverr absolute top-0 aspect-square size-full rounded-md'
+													width={250}
+													height={250}
+												/>
 											)}
 										</div>
 										<FormMessage />

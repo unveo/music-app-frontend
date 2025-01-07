@@ -1,7 +1,7 @@
 'use client';
 
 import { GlobalPlaylistsSection, UsersSection } from '@/components/Sections';
-import useCardsCount from '@/lib/hooks/cards-count';
+import useCardsCount from '@/hooks/cards-count';
 
 export default function Home() {
 	useCardsCount();
@@ -10,7 +10,6 @@ export default function Home() {
 		<div className='p-8'>
 			<ul className='flex flex-col gap-12'>
 				<UsersSection></UsersSection>
-				<GlobalPlaylistsSection></GlobalPlaylistsSection>
 			</ul>
 		</div>
 	);

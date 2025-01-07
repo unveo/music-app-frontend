@@ -7,13 +7,15 @@ import type {
 } from './album.types';
 
 export const albumService = {
-	async getOneFull(albumId: number) {
-		return await api.get<AlbumFull>(`/album/${albumId}`);
+	async getOneFull(username: string, changeableId: string) {
+		return await api.get<AlbumFull>(
+			`/album/?username=${username}&changeableId=${changeableId}`
+		);
 	},
 
-	async getMany(userId?: number, take?: number) {
+	async getMany(userId: number, take?: number, lastId?: number) {
 		return await api.get<Album[]>(
-			`/album/?userId=${userId && userId}&take=${take ? take : ''}`
+			`/album/many/?userId=${userId}&take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
 		);
 	},
 

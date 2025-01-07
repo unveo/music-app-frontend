@@ -70,7 +70,8 @@ export default function Footer() {
 
 	const currentTrackQuery = useQuery({
 		queryKey: ['current-track'],
-		queryFn: () => trackService.getOne(useTrackLocalStore.getState().trackId!),
+		queryFn: () =>
+			trackService.getOneById(useTrackLocalStore.getState().trackId!),
 		enabled: false,
 		retry: false,
 		refetchOnMount: false,
@@ -174,7 +175,7 @@ export default function Footer() {
 		}
 		if (!next.length) {
 			if (repeat === 'full') {
-				const track = await trackService.getOne(prev[0]);
+				const track = await trackService.getOneById(prev[0]);
 				const newAudio = new Audio(
 					`${baseUrl.backend}/api/track/stream/${prev[0]}`
 				);
@@ -198,7 +199,7 @@ export default function Footer() {
 				this.currentTime = 0;
 			}
 		} else {
-			const track = await trackService.getOne(next[0]);
+			const track = await trackService.getOneById(next[0]);
 			const newAudio = new Audio(
 				`${baseUrl.backend}/api/track/stream/${next[0]}`
 			);
@@ -326,18 +327,28 @@ export default function Footer() {
 	return (
 		<FooterLayout>
 			<div className='flex items-center gap-4'>
-				<Image
-					alt='cover'
-					src={`${baseUrl.backend}/${trackInfo.image}_50x50${imageFormat}`}
-					width={50}
-					height={50}
-					className='aspect-square size-12 rounded-md border'
-				/>
-				<div className='flex max-w-20 flex-col text-sm lg:max-w-32'>
-					<span>{trackInfo.title}</span>
+				<Link
+					href={`/${trackInfo.username}/${trackInfo.changeableId}`}
+					className='min-h12 size-12 min-w-12 rounded-md border'
+				>
+					<Image
+						alt='cover'
+						src={`${baseUrl.backend}/${trackInfo.image}_50x50${imageFormat}`}
+						width={50}
+						height={50}
+						className='aspect-square size-12 rounded-md'
+					/>
+				</Link>
+				<div className='flex min-w-8 max-w-20 flex-col overflow-hidden text-sm lg:max-w-28'>
+					<Link
+						className='overflow-hidden whitespace-nowrap'
+						href={`/${trackInfo.username}/${trackInfo.changeableId}`}
+					>
+						{trackInfo.title}
+					</Link>
 					<Link
 						href={`/${trackInfo.username}`}
-						className='text-muted-foreground'
+						className='overflow-hidden whitespace-nowrap text-muted-foreground'
 					>
 						{trackInfo.username}
 					</Link>
@@ -409,7 +420,7 @@ export default function Footer() {
 								audio.play();
 							} else if (!prev.length) {
 								if (repeat === 'full') {
-									const track = await trackService.getOne(
+									const track = await trackService.getOneById(
 										next[next.length - 1]
 									);
 									const newAudio = new Audio(
@@ -437,7 +448,9 @@ export default function Footer() {
 									audio.play();
 								}
 							} else {
-								const track = await trackService.getOne(prev[prev.length - 1]);
+								const track = await trackService.getOneById(
+									prev[prev.length - 1]
+								);
 								const newAudio = new Audio(
 									`${baseUrl.backend}/api/track/stream/${track.data.id}`
 								);
@@ -495,7 +508,7 @@ export default function Footer() {
 							const repeat = useSettingsStore.getState().repeat;
 							if (!next.length) {
 								if (repeat === 'full') {
-									const track = await trackService.getOne(prev[0]);
+									const track = await trackService.getOneById(prev[0]);
 									const newAudio = new Audio(
 										`${baseUrl.backend}/api/track/stream/${prev[0]}`
 									);
@@ -519,7 +532,7 @@ export default function Footer() {
 									audio.currentTime = 0;
 								}
 							} else {
-								const track = await trackService.getOne(next[0]);
+								const track = await trackService.getOneById(next[0]);
 								const newAudio = new Audio(
 									`${baseUrl.backend}/api/track/stream/${next[0]}`
 								);

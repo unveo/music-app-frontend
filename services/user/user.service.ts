@@ -15,14 +15,14 @@ export const userService = {
 		return await api.get<UserPublic>(`/user/by-name/${username}`);
 	},
 
-	async getMany(take?: number) {
-		return await api.get<UserPublic[]>(`/user?take=${take ? take : ''}`);
+	async getMany(take?: number, lastId?: number) {
+		return await api.get<UserPublic[]>(
+			`/user?take=${take ? take : ''}?lastId=${lastId ? lastId : ''}`
+		);
 	},
 
 	async update(dto: ChangeImageDto | ChangeUsernameDto) {
-		return await api.patch<void>('/user', dto, {
-			headers: { 'Content-Type': 'multipart/form-data' }
-		});
+		return await api.patch<void>('/user', dto);
 	},
 
 	async delete() {

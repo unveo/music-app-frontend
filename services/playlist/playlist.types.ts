@@ -65,5 +65,6 @@ export interface Playlist {
 }
 
 export interface PlaylistFull extends Playlist {
-	_count: { savedByUsers: number; tracks: number };
+	_count: { tracks: number };
+	savedByUsers: { addedAt: string }[];
 }

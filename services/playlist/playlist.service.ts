@@ -9,13 +9,13 @@ import type {
 export const playlistService = {
 	async getOneFull(username: string, changeableId: string) {
 		return await api.get<PlaylistFull>(
-			`/playlist/?username=${username ? username : ''}&changeableId=${changeableId ? changeableId : ''}`
+			`/playlist/?username=${username}&changeableId=${changeableId}`
 		);
 	},
 
-	async getMany(userId?: number, take?: number) {
+	async getMany(userId: number, take?: number, lastId?: number) {
 		return await api.get<Playlist[]>(
-			`/playlist/?userId=${userId ? userId : ''}&take=${take ? take : ''}`
+			`/playlist/many/?userId=${userId}&take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
 		);
 	},
 

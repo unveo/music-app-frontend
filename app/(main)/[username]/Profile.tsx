@@ -14,11 +14,12 @@ import { nFormatter } from '@/lib/utils';
 import { followService } from '@/services/user/follow/follow.service';
 import { userService } from '@/services/user/user.service';
 import NotFound from '@/components/NotFound';
-import useCardsCount from '@/lib/hooks/cards-count';
+import useCardsCount from '@/hooks/cards-count';
 import { baseUrl, imageFormat } from '@/config';
 
 export default function Profile({ username }: { username: string }) {
 	useCardsCount();
+
 	const currentUserQuery = useQuery({
 		queryKey: ['current-user'],
 		queryFn: () => userService.getCurrent()
@@ -35,7 +36,7 @@ export default function Profile({ username }: { username: string }) {
 	const isFollowedQuery = useQuery({
 		queryKey: ['is-followed', userId],
 		queryFn: () => followService.check(userId!),
-		enabled: !!userId
+		enabled: !!userId && !isCurrentUser
 	});
 	const isFollowed = isFollowedQuery.data?.data;
 	const followersQuery = useQuery({
@@ -76,16 +77,14 @@ export default function Profile({ username }: { username: string }) {
 				<div className='flex bg-skeleton p-6'>
 					<div className='flex gap-4'>
 						<div className='p-4'>
-							<button className='size-52 rounded-full border shadow-sm'>
-								<Image
-									alt='Avatar'
-									src={`${baseUrl.backend}/${user.image}_250x250${imageFormat}`}
-									width={250}
-									height={250}
-									priority
-									className='aspect-square rounded-full'
-								></Image>
-							</button>
+							<Image
+								alt='Avatar'
+								src={`${baseUrl.backend}/${user.image}_250x250${imageFormat}`}
+								width={250}
+								height={250}
+								priority
+								className='aspect-square size-52 cursor-pointer rounded-full border shadow-sm'
+							></Image>
 						</div>
 						<div className='flex items-center'>
 							<span className='text-2xl font-semibold'>{user.username}</span>

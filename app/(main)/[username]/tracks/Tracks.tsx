@@ -1,7 +1,7 @@
 'use client';
 
 import { TrackCard } from '@/components/Cards';
-import { List, ListSkeleton } from '@/components/Lists';
+import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
 import { trackService } from '@/services/track/track.service';
 import { userService } from '@/services/user/user.service';
@@ -18,7 +18,7 @@ export default function Tracks({ username }: { username: string }) {
 	const userId = user?.id;
 	const tracksQuery = useQuery({
 		queryKey: ['tracks', userId],
-		queryFn: () => trackService.getMany(userId),
+		queryFn: () => trackService.getMany(userId!),
 		enabled: !!userId
 	});
 	const tracks = tracksQuery.data?.data;
