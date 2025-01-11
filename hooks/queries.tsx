@@ -2,6 +2,7 @@
 
 import { albumTrackService } from '@/services/album/album-track/album-track.service';
 import { albumService } from '@/services/album/album.service';
+import { notificationService } from '@/services/notification/notification.service';
 import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { playlistService } from '@/services/playlist/playlist.service';
 import { trackService } from '@/services/track/track.service';
@@ -214,5 +215,12 @@ export function useCurrentTrackQuery(trackId: number) {
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false
+	});
+}
+
+export function useNotificationsQuery() {
+	return useQuery({
+		queryKey: ['notifications'],
+		queryFn: () => notificationService.getAll()
 	});
 }

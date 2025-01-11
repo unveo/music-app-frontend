@@ -39,6 +39,16 @@ export function formatTime(time: number) {
 	return minutes + ':' + seconds;
 }
 
+export function formatDate(dateString: string) {
+	const date = new Date(dateString);
+
+	return date.toLocaleDateString('en-US', {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	});
+}
+
 export function shuffleArray(array: number[]) {
 	for (let i = array.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));

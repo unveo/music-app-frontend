@@ -16,7 +16,7 @@ import {
 } from '@/services/track/track.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@/components/ui/label';
-import { validateImage } from '@/lib/utils';
+import { formatDate, validateImage } from '@/lib/utils';
 import { DeleteTrackButton } from '@/components/DeleteButtons';
 import {
 	type UpdatePlaylistDto,
@@ -261,7 +261,7 @@ export function TrackHero({
 							{track.username}
 						</Link>
 						{' • '}
-						<span className='font-semibold'>{track.createdAt.slice(0, 4)}</span>
+						<span>{formatDate(track.createdAt)}</span>
 					</div>
 				</div>
 				{track.userId === currentUser.id && (
@@ -503,9 +503,9 @@ export function PlaylistHero({
 							{playlist.username}
 						</Link>
 						{' • '}
-						<span className='font-semibold'>
-							{playlist.createdAt.slice(0, 4)}
-						</span>
+						<span>{formatDate(playlist.createdAt)}</span>
+						{' • '}
+						<span>{`${playlist._count.tracks} ${playlist._count.tracks === 1 ? 'song' : 'songs'}`}</span>
 					</div>
 				</div>
 				{playlist.userId === currentUser.id && (
@@ -747,7 +747,9 @@ export function AlbumHero({
 							{album.username}
 						</Link>
 						{' • '}
-						<span className='font-semibold'>{album.createdAt.slice(0, 4)}</span>
+						<span>{formatDate(album.createdAt)}</span>
+						{' • '}
+						<span>{`${album._count.tracks} ${album._count.tracks === 1 ? 'song' : 'songs'}`}</span>
 					</div>
 				</div>
 				{album.userId === currentUser.id && (

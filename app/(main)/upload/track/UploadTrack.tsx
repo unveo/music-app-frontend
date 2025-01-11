@@ -144,7 +144,7 @@ export default function UploadTrack() {
 										fieldState: { error }
 									}) => (
 										<div className='grid gap-2'>
-											<div className='group relative h-28 w-full rounded-md'>
+											<div className='group relative h-28 w-[30rem] rounded-md'>
 												{value ? (
 													<>
 														<Button
@@ -160,16 +160,18 @@ export default function UploadTrack() {
 														</Button>
 														<Label
 															htmlFor='audio'
-															className='flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border py-4'
+															className='flex h-full w-full cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden text-nowrap rounded-md border p-4'
 														>
 															<FileCheck className='size-8'></FileCheck>
-															<span className='text-base'>{value.name}</span>
+															<span className='max-w-full overflow-hidden text-nowrap text-base'>
+																{value.name}
+															</span>
 														</Label>
 													</>
 												) : (
 													<Label
 														htmlFor='audio'
-														className='flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border'
+														className='flex h-full w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md border'
 													>
 														<FileUp className='size-8'></FileUp>
 														<span>Click to upload audio</span>

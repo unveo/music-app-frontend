@@ -294,11 +294,7 @@ export function AlbumCardProfile({ album }: { album: Album }) {
 					{album.title}
 				</Link>
 				<p className='max-w-full truncate text-muted-foreground'>
-					{album.createdAt.slice(0, 4) +
-						' • ' +
-						(album.type === 'ep'
-							? album.type.toUpperCase()
-							: album.type[0].toUpperCase() + album.type.slice(1))}
+					{album.createdAt.slice(0, 4) + ' • ' + album.type.toUpperCase()}
 				</p>
 			</div>
 		</li>

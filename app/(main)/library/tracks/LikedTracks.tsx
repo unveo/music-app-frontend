@@ -14,8 +14,8 @@ export default function LikedTracks() {
 				<Link href='/library/tracks' className='text-primary'>
 					Liked Tracks
 				</Link>
-				<Link href='/library/playlists'>Playlists</Link>
-				<Link href='/library/albums'>Albums</Link>
+				<Link href='/library/playlists'>Saved Playlists</Link>
+				<Link href='/library/albums'>Liked Albums</Link>
 				<Link href='/library/history'>History</Link>
 				<Link href='/library/following'>Following</Link>
 				<Link href='/library/my-tracks'>My Tracks</Link>
