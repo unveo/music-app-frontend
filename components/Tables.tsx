@@ -13,6 +13,8 @@ import { LikeTrackButton } from './LikeButtons';
 import AddToPlaylistMenu from './AddToPlaylistMenu';
 import { formatTime, nFormatter, validateAudio } from '@/lib/utils';
 import {
+	useAlbumQuery,
+	useAlbumTracksQuery,
 	usePlaylistQuery,
 	usePlaylistTracksQuery,
 	useTrackQuery
@@ -37,8 +39,11 @@ import {
 } from '@dnd-kit/modifiers';
 import {
 	PlaylistSortableRow,
-	UploadAlbumSortableRow
-} from '@/components/SortableRows';
+	AlbumSortableRow,
+	UploadAlbumSortableRow,
+	AlbumRow,
+	PlaylistRow
+} from '@/components/TableRows';
 import {
 	Controller,
 	UseFieldArrayReturn,
@@ -48,14 +53,14 @@ import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
-import { ACCEPTED_AUDIO_TYPES, baseUrl, SMALL_IMAGE_ENDING } from '@/config';
+import { ACCEPTED_AUDIO_TYPES } from '@/config';
 import { useToast } from './ui/use-toast';
 import { UpdateTrackPositionDto } from '@/services/playlist/playlist-track/playlist-track.types';
 import { useMutation } from '@tanstack/react-query';
 import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { useQueueStore } from '@/stores/queue.store';
-import Image from 'next/image';
 import Link from 'next/link';
+import { albumTrackService } from '@/services/album/album-track/album-track.service';
 
 export function TrackTable({
 	username,
@@ -160,6 +165,66 @@ export function TrackTable({
 }
 
 export function PlaylistTable({
+	username,
+	changeableId
+}: {
+	username: string;
+	changeableId: string;
+}) {
+	const playlistQuery = usePlaylistQuery(username, changeableId);
+	const playlist = playlistQuery.data?.data;
+
+	const playlistTracksQuery = usePlaylistTracksQuery(
+		changeableId,
+		playlist?.id
+	);
+	const playlistTracks = playlistTracksQuery.data?.data;
+
+	if (!playlist) {
+		return null;
+	}
+
+	if (playlistTracksQuery.isLoading) {
+		return null;
+	}
+
+	if (!playlistTracks?.length) {
+		return (
+			<div className='flex h-60 w-full items-center justify-center text-2xl'>
+				This playlist doesn't have any tracks
+			</div>
+		);
+	}
+
+	return (
+		<Table className='mb-4'>
+			<TableHeader>
+				<TableRow>
+					<TableHead className='w-0'>#</TableHead>
+					<TableHead className='w-[32rem]'>Title</TableHead>
+					<TableHead className='w-[32rem]'>Date added</TableHead>
+					<TableHead>
+						<div className='flex justify-end gap-2'>
+							<span className='w-4'></span>
+							<p>Time</p>
+						</div>
+					</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{playlistTracks.map((playlistTrack) => (
+					<PlaylistRow
+						key={playlistTrack.track.id}
+						playlistId={playlist.id}
+						playlistTrack={playlistTrack}
+					></PlaylistRow>
+				))}
+			</TableBody>
+		</Table>
+	);
+}
+
+export function PlaylistSortableTable({
 	username,
 	changeableId
 }: {
@@ -295,6 +360,204 @@ export function PlaylistTable({
 								changeableId={changeableId}
 								playlistTrack={playlistTrack}
 							></PlaylistSortableRow>
+						))}
+					</TableBody>
+				</Table>
+			</SortableContext>
+		</DndContext>
+	);
+}
+
+export function AlbumTable({
+	username,
+	changeableId
+}: {
+	username: string;
+	changeableId: string;
+}) {
+	const albumQuery = useAlbumQuery(username, changeableId);
+	const album = albumQuery.data?.data;
+
+	const albumTracksQuery = useAlbumTracksQuery(changeableId, album?.id);
+	const albumTracks = albumTracksQuery.data?.data;
+
+	if (!album) {
+		return null;
+	}
+
+	if (albumTracksQuery.isLoading) {
+		return null;
+	}
+
+	if (!albumTracks?.length) {
+		return (
+			<div className='flex h-60 w-full items-center justify-center text-2xl'>
+				This album doesn't have any tracks
+			</div>
+		);
+	}
+
+	return (
+		<Table className='mb-4'>
+			<TableHeader>
+				<TableRow>
+					<TableHead className='w-0'>#</TableHead>
+					<TableHead className='w-96'>Title</TableHead>
+					<TableHead className='w-80 text-right'>Plays</TableHead>
+					<TableHead>
+						<div className='flex justify-end gap-2'>
+							<span className='w-4'></span>
+							<p>Time</p>
+						</div>
+					</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{albumTracks.map((albumTrack) => (
+					<AlbumRow
+						key={albumTrack.track.id}
+						albumId={album.id}
+						albumTrack={albumTrack}
+					></AlbumRow>
+				))}
+			</TableBody>
+		</Table>
+	);
+}
+
+export function AlbumSortableTable({
+	username,
+	changeableId
+}: {
+	username: string;
+	changeableId: string;
+}) {
+	const { trackId } = useTrackLocalStore();
+	const { type, queueId, setPrev, setNext } = useQueueStore();
+
+	const albumQuery = useAlbumQuery(username, changeableId);
+	const album = albumQuery.data?.data;
+
+	const albumTracksQuery = useAlbumTracksQuery(changeableId, album?.id);
+	const albumTracks = albumTracksQuery.data?.data;
+
+	const updatePositionMutation = useMutation({
+		mutationFn: (data: {
+			albumId: number;
+			trackId: number;
+			dto: UpdateTrackPositionDto;
+		}) =>
+			albumTrackService.updateTrackPosition(
+				data.albumId,
+				data.trackId,
+				data.dto
+			),
+		onSuccess: async () => {
+			const albumTracksQuery2 = await albumTracksQuery.refetch();
+			const albumTracks = albumTracksQuery2.data?.data;
+
+			if (!albumTracks) {
+				return;
+			}
+
+			if (album && type === 'album' && queueId === album.id) {
+				const relation = albumTracks.find(
+					(relation) => relation.track.id === trackId
+				);
+
+				if (!relation) {
+					return;
+				}
+
+				const tracksIds = await albumTrackService.getManyIds(
+					album.id,
+					relation.position
+				);
+
+				setPrev(tracksIds.data.prevIds);
+				setNext(tracksIds.data.nextIds);
+			}
+		}
+	});
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 10
+			}
+		})
+	);
+
+	const handleDragEnd = (event: DragEndEvent) => {
+		if (!album || !albumTracks) {
+			return;
+		}
+
+		const { active, over } = event;
+
+		if (active.id !== over?.id) {
+			const newIndex = albumTracks.findIndex(
+				(relation) => relation.track.id === over?.id
+			);
+
+			updatePositionMutation.mutate({
+				albumId: album.id,
+				trackId: active.id as number,
+				dto: { position: newIndex + 1 }
+			});
+		}
+	};
+
+	if (!album) {
+		return null;
+	}
+
+	if (albumTracksQuery.isLoading) {
+		return null;
+	}
+
+	if (!albumTracks?.length) {
+		return (
+			<div className='flex h-60 w-full items-center justify-center text-2xl'>
+				This album doesn't have any tracks
+			</div>
+		);
+	}
+
+	return (
+		<DndContext
+			sensors={sensors}
+			collisionDetection={closestCenter}
+			modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+			onDragEnd={handleDragEnd}
+		>
+			<SortableContext
+				items={albumTracks.map((relation) => relation.track.id)}
+				strategy={verticalListSortingStrategy}
+			>
+				<Table className='mb-4'>
+					<TableHeader>
+						<TableRow>
+							<TableHead className='w-0'>#</TableHead>
+							<TableHead className='w-96'>Title</TableHead>
+							<TableHead className='w-80 text-right'>Plays</TableHead>
+							<TableHead>
+								<div className='flex justify-end gap-2'>
+									<span className='w-10'></span>
+									<p>Time</p>
+								</div>
+							</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{albumTracks.map((albumTrack) => (
+							<AlbumSortableRow
+								key={albumTrack.track.id}
+								id={albumTrack.track.id}
+								albumId={album.id}
+								changeableId={changeableId}
+								albumTrack={albumTrack}
+							></AlbumSortableRow>
 						))}
 					</TableBody>
 				</Table>

@@ -6,11 +6,13 @@ import { useTrackStore } from '@/stores/track.store';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import {
+	useAlbumQuery,
 	useCurrentUserQuery,
 	usePlaylistQuery,
 	useTrackQuery
 } from '@/hooks/queries';
 import { savedPlaylistService } from '@/services/user/saved-playlist/saved-playlist.service';
+import { likedAlbumService } from '@/services/user/liked-album/liked-album.service';
 
 export function LikeTrackButton({
 	username,
@@ -142,6 +144,62 @@ export function SavePlaylistButton({
 			}}
 		>
 			{playlist.savedByUsers.length ? (
+				<Heart className='size-5 fill-foreground'></Heart>
+			) : (
+				<Heart className='size-5'></Heart>
+			)}
+		</Button>
+	);
+}
+
+export function LikeAlbumButton({
+	username,
+	changeableId
+}: {
+	username: string;
+	changeableId: string;
+}) {
+	const albumQuery = useAlbumQuery(username, changeableId);
+	const album = albumQuery.data?.data;
+
+	const queryClient = useQueryClient();
+
+	const addToLikedMutation = useMutation({
+		mutationFn: (albumId: number) => likedAlbumService.add(albumId),
+		onSuccess: () => {
+			queryClient.setQueryData(['album', changeableId], {
+				data: {
+					...album,
+					likes: [{ addedAt: Date.now().toString() }]
+				}
+			});
+		}
+	});
+
+	const removeFromLikedMutation = useMutation({
+		mutationFn: (albumId: number) => likedAlbumService.remove(albumId),
+		onSuccess: () => {
+			queryClient.setQueryData(['album', changeableId], {
+				data: { ...album, likes: [] }
+			});
+		}
+	});
+
+	if (!album) {
+		return null;
+	}
+
+	return (
+		<Button
+			variant='outline'
+			size='icon-lg'
+			onClick={() => {
+				album.likes.length
+					? removeFromLikedMutation.mutate(album.id)
+					: addToLikedMutation.mutate(album.id);
+			}}
+		>
+			{album.likes.length ? (
 				<Heart className='size-5 fill-foreground'></Heart>
 			) : (
 				<Heart className='size-5'></Heart>

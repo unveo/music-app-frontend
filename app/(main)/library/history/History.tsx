@@ -18,6 +18,8 @@ export default function History() {
 					History
 				</Link>
 				<Link href='/library/following'>Following</Link>
+				<Link href='/library/my-tracks'>My Tracks</Link>
+				<Link href='/library/my-albums'>My Albums</Link>
 			</nav>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
 				{listeningHistory &&

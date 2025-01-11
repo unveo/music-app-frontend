@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowUpFromLine } from 'lucide-react';
 import { UserDropdownMenu } from './UserDropdownMenu';
+import Notifications from './Notifications';
 
 export default function Header() {
 	return (
@@ -18,6 +19,7 @@ export default function Header() {
 					</Link>
 				</div>
 				<div className='flex h-full items-center justify-end px-2 md:w-40'>
+					<Notifications></Notifications>
 					<Link
 						href='/upload'
 						className='ml-1 mr-2 flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'

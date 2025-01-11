@@ -7,7 +7,7 @@ import {
 	usePlaylistTracksQuery
 } from '@/hooks/queries';
 import { SavePlaylistButton } from '@/components/LikeButtons';
-import { PlaylistTable } from '@/components/Tables';
+import { PlaylistSortableTable, PlaylistTable } from '@/components/Tables';
 import { PlaylistHero } from '@/components/Heroes';
 import { PlayPlaylistButton } from '@/components/PlayButtons';
 
@@ -62,10 +62,17 @@ export default function Playlist({
 						username={username}
 					></SavePlaylistButton>
 				</div>
-				<PlaylistTable
-					changeableId={changeableId}
-					username={username}
-				></PlaylistTable>
+				{playlist.userId === currentUser.id ? (
+					<PlaylistSortableTable
+						changeableId={changeableId}
+						username={username}
+					></PlaylistSortableTable>
+				) : (
+					<PlaylistTable
+						changeableId={changeableId}
+						username={username}
+					></PlaylistTable>
+				)}
 			</div>
 		</>
 	);

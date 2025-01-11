@@ -9,7 +9,7 @@ import { usePlaylistTracksQuery } from '@/hooks/queries';
 import { useQueueStore } from '@/stores/queue.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
 
-export default function RemoveFromPlaylistButton({
+export function RemoveFromPlaylistButton({
 	changeableId,
 	playlistId,
 	trackToRemoveId
