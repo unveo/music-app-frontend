@@ -9,34 +9,36 @@ import {
 	DropdownMenuSeparator
 } from './ui/dropdown-menu';
 import Link from 'next/link';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/auth/auth.service';
-import { userService } from '@/services/user/user.service';
-import { baseUrl, imageFormat } from '@/config';
+import { baseUrl, SMALL_IMAGE_ENDING } from '@/config';
+import { useCurrentUserQuery } from '@/hooks/queries';
+import { useTrackStore } from '@/stores/track.store';
 
 export function UserDropdownMenu() {
+	const { audio } = useTrackStore();
+
 	const { push } = useRouter();
-	const currentUserQuery = useQuery({
-		queryKey: ['current-user'],
-		queryFn: () => userService.getCurrent()
-	});
+
+	const currentUserQuery = useCurrentUserQuery();
 	const currentUser = currentUserQuery.data?.data;
+
 	const logoutMutation = useMutation({
-		mutationKey: ['logout'],
 		mutationFn: () => authService.logout(),
-		onSuccess: () => push('/login')
+		onSuccess: () => {
+			audio?.pause();
+			push('/login');
+		}
 	});
 
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<button className='size-8 rounded-full bg-muted outline-none'>
-					{currentUserQuery.isLoading ? (
-						<></>
-					) : (
+					{currentUserQuery.isLoading ? null : (
 						<Image
-							src={`${baseUrl.backend}/${currentUser?.image}_50x50${imageFormat}`}
+							src={`${baseUrl.backend}/${currentUser?.image}${SMALL_IMAGE_ENDING}`}
 							width={100}
 							height={100}
 							alt='avatar'

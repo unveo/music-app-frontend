@@ -1,15 +1,11 @@
 'use client';
 
 import { ListeningHistoryCard } from '@/components/Cards';
-import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
-import { useQuery } from '@tanstack/react-query';
+import { useHistoryQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function History() {
-	const listeningHistoryQuery = useQuery({
-		queryKey: ['listening-history'],
-		queryFn: () => listeningHistoryService.get()
-	});
+	const listeningHistoryQuery = useHistoryQuery();
 	const listeningHistory = listeningHistoryQuery.data?.data;
 
 	return (
@@ -21,6 +17,7 @@ export default function History() {
 				<Link href='/library/history' className='text-primary'>
 					History
 				</Link>
+				<Link href='/library/following'>Following</Link>
 			</nav>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
 				{listeningHistory &&

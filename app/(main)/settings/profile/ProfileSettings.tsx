@@ -12,30 +12,29 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { ACCEPTED_IMAGE_TYPES } from '@/config';
+import { useCurrentUserQuery } from '@/hooks/queries';
 import { validateImage } from '@/lib/utils';
 import { userService } from '@/services/user/user.service';
 import {
-	ChangeImageDto,
+	type ChangeImageDto,
 	ChangeImageSchema,
-	ChangeUsernameDto,
+	type ChangeUsernameDto,
 	ChangeUsernameSchema
 } from '@/services/user/user.types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { ImageUp, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ControllerRenderProps, FormProvider, useForm } from 'react-hook-form';
 
 export default function ProfileSettings() {
 	const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+
 	const { toast } = useToast();
 
-	const currentUserQuery = useQuery({
-		queryKey: ['current-user'],
-		queryFn: () => userService.getCurrent()
-	});
+	const currentUserQuery = useCurrentUserQuery();
 	const currentUser = currentUserQuery.data?.data;
 
 	const changeUsernameForm = useForm<ChangeUsernameDto>({
@@ -44,6 +43,7 @@ export default function ProfileSettings() {
 		mode: 'onChange',
 		disabled: !currentUser
 	});
+
 	const changeImageForm = useForm<ChangeImageDto>({
 		resolver: zodResolver(ChangeImageSchema),
 		defaultValues: { image: undefined },
@@ -51,50 +51,28 @@ export default function ProfileSettings() {
 	});
 
 	const changeUsernameMutation = useMutation({
-		mutationKey: ['change-username'],
 		mutationFn: (dto: ChangeUsernameDto) => userService.update(dto),
 		onSuccess: () => {
 			toast({ title: 'Username updated' });
 			currentUserQuery.refetch();
 		}
 	});
+
 	const changeImageMutation = useMutation({
-		mutationKey: ['change-avatar'],
 		mutationFn: (dto: FormData) =>
 			userService.update(dto as unknown as ChangeImageDto),
 		onSuccess: () => {
 			toast({ title: 'Image updated' });
+
 			if (imageUrl) {
 				URL.revokeObjectURL(imageUrl);
 			}
 			setImageUrl(undefined);
 			changeImageForm.reset({ image: undefined });
+
 			currentUserQuery.refetch();
 		}
 	});
-
-	function handleImage(
-		field: ControllerRenderProps<
-			{
-				image: File;
-			},
-			'image'
-		>,
-		file: File
-	) {
-		try {
-			validateImage(file);
-		} catch (err: any) {
-			toast({
-				title: err.message,
-				variant: 'destructive'
-			});
-			return;
-		}
-		const imageUrl = URL.createObjectURL(file);
-		setImageUrl(imageUrl);
-		field.onChange(file);
-	}
 
 	return (
 		<>
@@ -127,9 +105,7 @@ export default function ProfileSettings() {
 												<div className='text-end text-zinc-400'>
 													Current username: {currentUser?.username}
 												</div>
-											) : (
-												<></>
-											)}
+											) : null}
 										</div>
 										<FormControl>
 											<div className='flex h-10 items-center rounded-md border border-border px-2'>
@@ -202,8 +178,21 @@ export default function ProfileSettings() {
 													id='image'
 													accept={`.jpg, .png, ${ACCEPTED_IMAGE_TYPES.join(', ')}`}
 													onChange={(e) => {
-														if (e.target.files?.[0]) {
-															handleImage(field, e.target.files[0]);
+														const file = e.target.files?.[0];
+														if (file) {
+															try {
+																validateImage(file);
+															} catch (err: any) {
+																toast({
+																	title: err.message,
+																	variant: 'destructive'
+																});
+																return;
+															}
+
+															const imageUrl = URL.createObjectURL(file);
+															setImageUrl(imageUrl);
+															field.onChange(file);
 														}
 													}}
 													className='hidden'

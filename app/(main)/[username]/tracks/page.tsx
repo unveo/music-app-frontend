@@ -7,6 +7,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { username } = await params;
+
 	return {
 		title: `${username} tracks`
 	};
@@ -14,5 +15,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function TracksPage({ params }: Props) {
 	const { username } = await params;
+
 	return <Tracks username={username}></Tracks>;
 }

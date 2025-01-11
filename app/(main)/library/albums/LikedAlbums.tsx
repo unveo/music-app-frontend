@@ -1,15 +1,11 @@
 'use client';
 
 import { AlbumCard } from '@/components/Cards';
-import { likedAlbumService } from '@/services/user/liked-album/liked-album.service';
-import { useQuery } from '@tanstack/react-query';
+import { useLikedAlbumsQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function LikedAlbums() {
-	const likedAlbumsQuery = useQuery({
-		queryKey: ['liked-albums'],
-		queryFn: () => likedAlbumService.getMany()
-	});
+	const likedAlbumsQuery = useLikedAlbumsQuery();
 	const likedAlbums = likedAlbumsQuery.data?.data;
 
 	return (
@@ -21,6 +17,7 @@ export default function LikedAlbums() {
 					Albums
 				</Link>
 				<Link href='/library/history'>History</Link>
+				<Link href='/library/following'>Following</Link>
 			</nav>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
 				{likedAlbums &&

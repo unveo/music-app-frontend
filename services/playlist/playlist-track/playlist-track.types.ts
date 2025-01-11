@@ -1,22 +1,22 @@
-import { Track } from '@/services/track/track.types';
+import type { Track } from '@/services/track/track.types';
 
 export interface UpdateTrackPositionDto {
-  position: number;
+	position: number;
 }
 
 export interface AddTrackDto {
-  position?: number;
+	position?: number;
 }
 
 export interface TrackInPlaylist {
-  position: number;
-  track: Track;
-  addedAt: string;
+	position: number;
+	track: Track;
+	addedAt: string;
 }
 
 export interface PlaylistTrackRelation {
-  position: number;
-  trackId: number;
-  playlistId: number;
-  addedAt: string;
+	position: number;
+	trackId: number;
+	playlistId: number;
+	addedAt: string;
 }

@@ -1,15 +1,11 @@
 'use client';
 
 import { LikedTrackCard } from '@/components/Cards';
-import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
-import { useQuery } from '@tanstack/react-query';
+import { useLikedTracksQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function LikedTracks() {
-	const likedTracksQuery = useQuery({
-		queryKey: ['liked-tracks'],
-		queryFn: () => likedTrackService.getMany()
-	});
+	const likedTracksQuery = useLikedTracksQuery();
 	const likedTracks = likedTracksQuery.data?.data;
 
 	return (
@@ -21,6 +17,7 @@ export default function LikedTracks() {
 				<Link href='/library/playlists'>Playlists</Link>
 				<Link href='/library/albums'>Albums</Link>
 				<Link href='/library/history'>History</Link>
+				<Link href='/library/following'>Following</Link>
 			</nav>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
 				{likedTracks &&

@@ -1,6 +1,6 @@
 'use client';
 
-import { GlobalPlaylistsSection, UsersSection } from '@/components/Sections';
+import { UsersSection } from '@/components/Sections';
 import useCardsCount from '@/hooks/cards-count';
 
 export default function Home() {

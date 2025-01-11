@@ -7,6 +7,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { album } = await params;
+
 	return {
 		title: `${album} album`
 	};
@@ -14,5 +15,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AlbumPage({ params }: Props) {
 	const { username, album } = await params;
-	return <Album username={username} album={album}></Album>;
+
+	return <Album username={username} changeableId={album}></Album>;
 }

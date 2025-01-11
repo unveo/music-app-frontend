@@ -10,7 +10,7 @@ export const ACCEPTED_AUDIO_TYPES = [
 	'audio/aiff',
 	'audio/webm'
 ]; // m4a check, webm check
-export const restrictedUsernames = [
+export const RESTRICTED_USERNAMES = [
 	'login',
 	'signup',
 	'logout',
@@ -43,12 +43,17 @@ export const messages = {
 		'Only mp3, aac, m4a, flac, wav, aiff and webm files are supported',
 	restrictedUsername: 'This username is not available',
 	emailValid: 'This email is not valid',
-	albumTracks: 'There must be at least two tracks'
+	albumTracks: {
+		amount: 'There must be at least two tracks',
+		audios: 'Each track must have an audio file',
+		unique: 'Track titles and ids must be unique'
+	}
 };
 export const baseUrl = {
 	frontend: 'http://localhost:3000',
 	backend: 'http://localhost:5000'
 };
 export const REFRESH_TOKEN = 'refreshToken';
-export const msToAddListen = 10000;
-export const imageFormat = '.jpg';
+export const MS_TO_ADD_LISTEN = 10000;
+export const SMALL_IMAGE_ENDING = '_50x50.jpg';
+export const LARGE_IMAGE_ENDING = '_250x250.jpg';

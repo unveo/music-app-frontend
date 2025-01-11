@@ -1,223 +1,288 @@
-import type { TracksIds, Track } from '@/services/track/track.types';
-import type { AxiosResponse } from 'axios';
+'use client';
+
+import type { Track } from '@/services/track/track.types';
 import { Button } from './ui/button';
 import { Pause, Play } from 'lucide-react';
-import { useTrackStore } from '@/stores/track.store';
-import { useTrackLocalStore } from '@/stores/track-local.store';
-import { trackService } from '@/services/track/track.service';
-import { useQueueStore } from '@/stores/queue.store';
-import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
-import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
-import { albumTrackService } from '@/services/album/album-track/album-track.service';
-import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
-import { baseUrl } from '@/config';
-import { useListenTimeStore } from '@/stores/listen-time.store';
-import { useSettingsStore } from '@/stores/settings.store';
-import { useEffect } from 'react';
+import { usePlayTrack } from '@/hooks/play-track';
 
-export function PlayButton({
+export function PlayUserTrackButton({
 	track,
-	queueInfo,
-	inTable,
-	forCard
+	variant
 }: {
 	track?: Track;
-	queueInfo: {
-		queueType: 'user' | 'liked' | 'album' | 'playlist';
-		playlistId?: number;
-		playlistTracks?: Track[];
-		albumId?: number;
-		trackPosition?: number;
-	};
-	playlistId?: number;
-	inTable?: boolean;
-	forCard?: boolean;
+	variant: 'card' | 'table' | 'set';
 }) {
-	const {
-		trackInfo,
-		isPlaying,
-		audio,
-		setTrackInfo,
-		setIsPlaying,
-		setAudio,
-		setAudioReady,
-		setProgress
-	} = useTrackStore();
-	const { trackId, setTrackId, setCurrentTime } = useTrackLocalStore();
-	const { setNext, setPrev } = useQueueStore();
-	const { setListenTime, setStartTime } = useListenTimeStore();
+	const { isPlaying, trackId, type, queueId, onClickUserTrack } =
+		usePlayTrack();
 
-	const pathname = usePathname();
-
-	const listeningHistoryQuery = useQuery({
-		queryKey: ['listening-history'],
-		queryFn: () => listeningHistoryService.get(),
-		enabled: false,
-		retry: false,
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false
-	});
-
-	const addToHistoryMutation = useMutation({
-		mutationFn: (trackId: number) => listeningHistoryService.add(trackId),
-		onSuccess: () => {
-			if (pathname === '/library/history') {
-				listeningHistoryQuery.refetch();
-			}
-		}
-	});
-
-	function onCanPlayThrough(this: HTMLAudioElement) {
-		if (!useTrackStore.getState().audioReady) {
-			setAudioReady(true);
-			this.play();
-			setIsPlaying(true);
-		}
+	if (!track) {
+		return null;
 	}
 
-	async function onEnded(this: HTMLAudioElement) {
-		const prev = useQueueStore.getState().prev;
-		const next = useQueueStore.getState().next;
-		const trackId = useTrackLocalStore.getState().trackId;
-		const audio = useTrackStore.getState().audio;
-		const repeat = useSettingsStore.getState().repeat;
-		if (repeat === 'one' && audio) {
-			audio.play();
-			return;
-		}
-		if (!next.length) {
-			if (repeat === 'full') {
-				const track = await trackService.getOneById(prev[0]);
-				const newAudio = new Audio(
-					`${baseUrl.backend}/api/track/stream/${prev[0]}`
-				);
-				setAudioReady(false);
-				setCurrentTime(0);
-				setProgress(0);
-				setAudio(newAudio);
-				setTrackInfo(track.data);
-				setTrackId(prev[0]);
-				setListenTime(0);
-				setStartTime(undefined);
-				newAudio.addEventListener('canplaythrough', onCanPlayThrough);
-				newAudio.addEventListener('ended', onEnded);
-				if (trackId) {
-					setNext([...prev.slice(1), trackId]);
-				}
-				setPrev([]);
-				addToHistoryMutation.mutate(prev[0]);
-			} else {
-				setIsPlaying(false);
-				this.currentTime = 0;
-			}
-		} else {
-			const track = await trackService.getOneById(next[0]);
-			const newAudio = new Audio(
-				`${baseUrl.backend}/api/track/stream/${next[0]}`
-			);
-			setAudioReady(false);
-			setCurrentTime(0);
-			setProgress(0);
-			setAudio(newAudio);
-			setTrackInfo(track.data);
-			setTrackId(next[0]);
-			newAudio.addEventListener('canplaythrough', onCanPlayThrough);
-			newAudio.addEventListener('ended', onEnded);
-			setNext(next.slice(1));
-			if (trackId) {
-				setPrev([...prev, trackId]);
-			}
-		}
+	let classes = '';
+
+	if (variant === 'table') {
+		classes = `${
+			isPlaying &&
+			trackId === track.id &&
+			type === 'user' &&
+			queueId === track.userId
+				? 'opacity-100'
+				: 'opacity-0'
+		} absolute transition-opacity group-hover:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2`;
+	} else if (variant === 'card') {
+		classes = `${
+			isPlaying &&
+			trackId === track.id &&
+			type === 'user' &&
+			queueId === track.userId
+				? 'opacity-100'
+				: 'opacity-0'
+		} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
 
-	if (track) {
-		return (
-			<Button
-				variant={inTable ? 'ghost' : 'outline'}
-				size={inTable ? 'icon-xs' : 'icon-lg'}
-				type='button'
-				className={
-					!forCard
-						? inTable
-							? 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform opacity-0 group-hover:opacity-100'
-							: ''
-						: `${isPlaying && trackId === track.id ? 'opacity-100' : 'opacity-0'} absolute bottom-0 right-0 m-2 shadow-sm transition-opacity group-hover:opacity-100`
-				}
-				onClick={async () => {
-					if (!trackInfo || trackInfo.id !== track.id) {
-						if (isPlaying && audio) {
-							audio.pause();
-						}
-						const newAudio = new Audio(
-							`${baseUrl.backend}/api/track/stream/${track.id}`
-						);
-						setAudioReady(false);
-						setCurrentTime(0);
-						setProgress(0);
-						setAudio(newAudio);
-						setTrackInfo(track);
-						setTrackId(track.id);
-						setListenTime(0);
-						setStartTime(undefined);
-						newAudio.addEventListener('canplaythrough', onCanPlayThrough);
-						newAudio.addEventListener('ended', onEnded);
-						let tracksIds: AxiosResponse<TracksIds, any>;
-						if (queueInfo.queueType === 'user') {
-							tracksIds = await trackService.getManyIds(track.userId, track.id);
-						} else if (queueInfo.queueType === 'album' && queueInfo.albumId) {
-							tracksIds = await albumTrackService.getManyIds(
-								queueInfo.albumId,
-								queueInfo.trackPosition ? queueInfo.trackPosition : 0
-							);
-						} else if (
-							queueInfo.queueType === 'playlist' &&
-							queueInfo.playlistId
-						) {
-							console.log('PRVET');
-							tracksIds = await playlistTrackService.getManyIds(
-								queueInfo.playlistId,
-								queueInfo.trackPosition ? queueInfo.trackPosition : 0
-							);
-						} else {
-							tracksIds = await likedTrackService.getManyIds(track.id); //
-						}
-						setPrev(tracksIds.data.prevIds);
-						setNext(tracksIds.data.nextIds);
-						addToHistoryMutation.mutate(track.id);
-					} else {
-						if (audio) {
-							if (!isPlaying) {
-								audio.play();
-								setIsPlaying(true);
-							} else {
-								audio.pause();
-								setIsPlaying(false);
-							}
-						}
-					}
-				}}
-			>
-				{isPlaying && trackId === track.id ? (
-					<Pause
-						className={
-							inTable
-								? 'w-full translate-y-[0.5px] fill-foreground'
-								: 'size-5 fill-foreground'
-						}
-					/>
-				) : (
-					<Play
-						className={
-							inTable
-								? 'w-full translate-y-[0.5px] fill-foreground'
-								: 'size-5 fill-foreground'
-						}
-					/>
-				)}
-			</Button>
-		);
+	return (
+		<Button
+			variant={variant === 'table' ? 'ghost' : 'outline'}
+			size={variant === 'table' ? 'icon-xs' : 'icon-lg'}
+			type='button'
+			className={classes}
+			onClick={() => onClickUserTrack(track)}
+		>
+			{isPlaying &&
+			trackId === track.id &&
+			type === 'user' &&
+			queueId === track.userId ? (
+				<Pause
+					className={`${variant === 'table' ? 'w-full translate-y-[0.5px] fill-foreground' : 'size-5'} fill-foreground`}
+				/>
+			) : (
+				<Play
+					className={`${variant === 'table' ? 'w-full translate-y-[0.5px] fill-foreground' : 'size-5'} fill-foreground`}
+				/>
+			)}
+		</Button>
+	);
+}
+
+export function PlayUserButton({
+	track,
+	variant
+}: {
+	track?: Track;
+	variant: 'card' | 'set';
+}) {
+	const { isPlaying, type, queueId, onClickUser } = usePlayTrack();
+
+	if (!track) {
+		return null;
 	}
+
+	let classes = '';
+
+	if (variant === 'card') {
+		classes += `${isPlaying && type === 'user' && queueId === track.userId ? 'opacity-100' : 'opacity-0'} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+	}
+
+	return (
+		<Button
+			variant='outline'
+			size='icon-lg'
+			type='button'
+			className={classes}
+			onClick={() => onClickUser(track)}
+		>
+			{isPlaying && type === 'user' && queueId === track.userId ? (
+				<Pause className='size-5 fill-foreground' />
+			) : (
+				<Play className='size-5 fill-foreground' />
+			)}
+		</Button>
+	);
+}
+
+export function PlayLikedTrackButton({ track }: { track?: Track }) {
+	const { isPlaying, trackId, type, onClickLikedTrack } = usePlayTrack();
+
+	if (!track) {
+		return null;
+	}
+
+	return (
+		<Button
+			variant='outline'
+			size='icon-lg'
+			type='button'
+			className={`${isPlaying && trackId === track.id && type === 'liked' ? 'opacity-100' : 'opacity-0'} absolute bottom-0 right-0 m-2 shadow-sm transition-opacity group-hover:opacity-100`}
+			onClick={() => onClickLikedTrack(track)}
+		>
+			{isPlaying && trackId === track.id && type === 'liked' ? (
+				<Pause className='size-5 fill-foreground' />
+			) : (
+				<Play className='size-5 fill-foreground' />
+			)}
+		</Button>
+	);
+}
+
+export function PlayPlaylistTrackButton({
+	track,
+	playlistId,
+	position
+}: {
+	track?: Track;
+	playlistId: number;
+	position: number;
+}) {
+	const { isPlaying, trackId, type, queueId, onClickPlaylistTrack } =
+		usePlayTrack();
+
+	if (!track) {
+		return null;
+	}
+
+	return (
+		<Button
+			variant='ghost'
+			size='icon-xs'
+			type='button'
+			className={`${
+				isPlaying &&
+				trackId === track.id &&
+				type === 'playlist' &&
+				queueId === playlistId
+					? 'opacity-100'
+					: 'opacity-0'
+			} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity group-hover:opacity-100`}
+			onClick={() => onClickPlaylistTrack(track, playlistId, position)}
+		>
+			{isPlaying &&
+			trackId === track.id &&
+			type === 'playlist' &&
+			queueId === playlistId ? (
+				<Pause className='w-full translate-y-[0.5px] fill-foreground' />
+			) : (
+				<Play className='w-full translate-y-[0.5px] fill-foreground' />
+			)}
+		</Button>
+	);
+}
+
+export function PlayPlaylistButton({
+	track,
+	playlistId,
+	variant
+}: {
+	track?: Track;
+	playlistId: number;
+	variant: 'card' | 'set';
+}) {
+	const { isPlaying, type, queueId, onClickPlaylist } = usePlayTrack();
+
+	if (!track) {
+		return null;
+	}
+
+	let classes = '';
+
+	if (variant === 'card') {
+		classes += `${isPlaying && type === 'playlist' && queueId === playlistId ? 'opacity-100' : 'opacity-0'} transition-opacity absolute group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+	}
+
+	return (
+		<Button
+			variant='outline'
+			size='icon-lg'
+			type='button'
+			className={classes}
+			onClick={() => onClickPlaylist(track, playlistId)}
+		>
+			{isPlaying && type === 'playlist' && queueId === playlistId ? (
+				<Pause className='size-5 fill-foreground' />
+			) : (
+				<Play className='size-5 fill-foreground' />
+			)}
+		</Button>
+	);
+}
+
+export function PlayAlbumTrackButton({
+	track,
+	albumId,
+	position
+}: {
+	track?: Track;
+	albumId: number;
+	position: number;
+}) {
+	const { isPlaying, trackId, type, queueId, onClickAlbumTrack } =
+		usePlayTrack();
+
+	if (!track) {
+		return null;
+	}
+
+	return (
+		<Button
+			variant='ghost'
+			size='icon-xs'
+			type='button'
+			className={`${
+				isPlaying &&
+				trackId === track.id &&
+				type === 'album' &&
+				queueId === albumId
+					? 'opacity-100'
+					: 'opacity-0'
+			} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity group-hover:opacity-100`}
+			onClick={() => onClickAlbumTrack(track, albumId, position)}
+		>
+			{isPlaying &&
+			trackId === track.id &&
+			type === 'album' &&
+			queueId === albumId ? (
+				<Pause className='w-full translate-y-[0.5px] fill-foreground' />
+			) : (
+				<Play className='w-full translate-y-[0.5px] fill-foreground' />
+			)}
+		</Button>
+	);
+}
+
+export function PlayAlbumButton({
+	track,
+	albumId,
+	variant
+}: {
+	track?: Track;
+	albumId: number;
+	variant: 'card' | 'set';
+}) {
+	const { isPlaying, type, queueId, onClickAlbum } = usePlayTrack();
+
+	if (!track) {
+		return null;
+	}
+
+	let classes = '';
+
+	if (variant === 'card') {
+		classes += `${isPlaying && type === 'album' && queueId === albumId ? 'opacity-100' : 'opacity-0'} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+	}
+
+	return (
+		<Button
+			variant='outline'
+			size='icon-lg'
+			type='button'
+			className={classes}
+			onClick={() => onClickAlbum(track, albumId)}
+		>
+			{isPlaying && type === 'album' && queueId === albumId ? (
+				<Pause className='size-5 fill-foreground' />
+			) : (
+				<Play className='size-5 fill-foreground' />
+			)}
+		</Button>
+	);
 }

@@ -1,6 +1,6 @@
 import { api } from '@/api/interceptors';
 import type { LikedTrack } from './liked-track.types';
-import { TracksIds } from '@/services/track/track.types';
+import type { TracksIds } from '@/services/track/track.types';
 
 export const likedTrackService = {
 	async getMany(take?: number) {

@@ -10,48 +10,47 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import { useCurrentUserQuery } from '@/hooks/queries';
 import { authService } from '@/services/auth/auth.service';
 import {
-	ChangeEmailDto,
+	type ChangeEmailDto,
 	ChangeEmailSchema,
-	ChangePasswordDto,
+	type ChangePasswordDto,
 	ChangePasswordSchema
 } from '@/services/auth/auth.types';
-import { userService } from '@/services/user/user.service';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default function SecuritySettings() {
-	const currentUserQuery = useQuery({
-		queryKey: ['current-user'],
-		queryFn: () => userService.getCurrent()
-	});
+	const { toast } = useToast();
+
+	const currentUserQuery = useCurrentUserQuery();
 	const currentUser = currentUserQuery.data?.data;
+
 	const changeEmailForm = useForm<ChangeEmailDto>({
 		resolver: zodResolver(ChangeEmailSchema),
 		defaultValues: { email: '' },
 		mode: 'onChange',
 		disabled: !currentUser
 	});
+
 	const changePasswordForm = useForm<ChangePasswordDto>({
 		resolver: zodResolver(ChangePasswordSchema),
 		defaultValues: { newPassword: '', oldPassword: '' },
 		mode: 'onChange',
 		disabled: !currentUser
 	});
-	const { toast } = useToast();
+
 	const changeEmail = useMutation({
-		mutationKey: ['change-email'],
 		mutationFn: (dto: ChangeEmailDto) => authService.changeEmail(dto),
 		onSuccess: () => {
 			toast({ title: 'Email updated' });
 		}
 	});
+
 	const changePassword = useMutation({
-		mutationKey: ['change-password'],
 		mutationFn: (dto: ChangePasswordDto) => authService.changePassword(dto),
 		onSuccess: () => {
 			changePasswordForm.reset();
@@ -89,9 +88,7 @@ export default function SecuritySettings() {
 												<div className='text-end text-zinc-400'>
 													Current email: {currentUser?.email}
 												</div>
-											) : (
-												<></>
-											)}
+											) : null}
 										</div>
 
 										<FormControl>

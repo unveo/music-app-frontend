@@ -1,8 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { cn, nFormatter } from '@/lib/utils';
 import type { Album } from '@/services/album/album.types';
 import type { Playlist } from '@/services/playlist/playlist.types';
 import type { Track } from '@/services/track/track.types';
@@ -10,99 +7,345 @@ import type {
 	UserPublic,
 	UserWithoutFollowingCount
 } from '@/services/user/user.types';
-import { useMemo } from 'react';
-import { baseUrl, imageFormat } from '@/config';
-import { PlayButton } from './PlayButtons';
+import Image from 'next/image';
+import Link from 'next/link';
+import { nFormatter } from '@/lib/utils';
+import { baseUrl, LARGE_IMAGE_ENDING } from '@/config';
+import {
+	PlayAlbumButton,
+	PlayLikedTrackButton,
+	PlayPlaylistButton,
+	PlayUserButton,
+	PlayUserTrackButton
+} from './PlayButtons';
+import {
+	useFirstAlbumTrackQuery,
+	useFirstPlaylistTrackQuery,
+	useFirstTrackQuery
+} from '@/hooks/queries';
 
-type Queue = 'user' | 'liked' | 'album' | 'playlist';
-
-export function Card({
-	title,
-	desc,
-	titleHref,
-	descHref,
-	imageSrc,
-	centered,
-	roundedFull,
-	queueType,
-	track,
-	trackPosition
+export function UserCard({
+	user
 }: {
-	title: string;
-	desc?: string;
-	titleHref?: string;
-	descHref?: string;
-	imageSrc: string;
-	centered?: boolean;
-	roundedFull?: boolean;
-	queueType?: Queue;
-	track?: Track;
-	trackPosition?: number;
+	user: UserPublic | UserWithoutFollowingCount;
 }) {
-	const roundedClass = useMemo(
-		() => (roundedFull ? 'rounded-full' : 'rounded-md'),
-		[roundedFull]
-	);
+	const firstTrackQuery = useFirstTrackQuery(user.id);
+	const firstTrack = firstTrackQuery.data?.data;
 
 	return (
 		<li className='flex flex-col gap-2'>
-			<div className={cn(roundedClass, 'group relative border')}>
-				{titleHref ? (
-					<Link href={titleHref} className={cn(roundedClass, 'aspect-square')}>
-						<Image
-							alt='Track image'
-							src={imageSrc}
-							width={250}
-							height={250}
-							priority
-							className={cn(roundedClass, 'aspect-square')}
-						></Image>
-					</Link>
-				) : (
+			<div className='group relative rounded-full border'>
+				<Link href={`/${user.username}`} className='aspect-square rounded-full'>
 					<Image
 						alt='Track image'
-						src={imageSrc}
+						src={`${baseUrl.backend}/${user.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
-						className={cn(roundedClass, 'aspect-square cursor-pointer')}
+						className='aspect-square rounded-full'
 					></Image>
-				)}
-				{queueType && track && (
-					<PlayButton
-						track={track}
-						queueInfo={{
-							queueType,
-							trackPosition
-						}}
-						forCard
-					/>
-				)}
+				</Link>
+				{firstTrack && firstTrack.length ? (
+					<PlayUserButton track={firstTrack[0]} variant='card' />
+				) : null}
 			</div>
-			<div className={cn(centered && 'items-center', 'flex flex-col')}>
-				{titleHref ? (
-					<Link href={titleHref} className='w-min text-nowrap'>
-						{title}
-					</Link>
-				) : (
-					<span className='w-min text-nowrap'>{title}</span>
-				)}
-				{desc ? (
-					descHref ? (
-						<Link
-							href={descHref}
-							className='w-min text-nowrap text-muted-foreground'
-						>
-							{desc}
-						</Link>
-					) : (
-						<span className='w-min text-nowrap text-muted-foreground'>
-							{desc}
-						</span>
-					)
-				) : (
-					<></>
-				)}
+			<div className='flex flex-col items-center'>
+				<Link href={`/${user.username}`} className='max-w-full truncate'>
+					{user.username}
+				</Link>
+				<span className='max-w-full truncate text-muted-foreground'>
+					{`${nFormatter(user._count.followers)} followers`}
+				</span>
+			</div>
+		</li>
+	);
+}
+
+export function TrackCard({ track }: { track: Track }) {
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${track.username}/${track.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				<PlayUserTrackButton track={track} variant='card' />
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${track.username}/${track.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{track.title}
+				</Link>
+				<span className='max-w-full truncate text-muted-foreground'>
+					{track.createdAt.slice(0, 4)}
+				</span>
+			</div>
+		</li>
+	);
+}
+
+export function LikedTrackCard({ track }: { track: Track }) {
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${track.username}/${track.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				<PlayLikedTrackButton track={track} />
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${track.username}/${track.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{track.title}
+				</Link>
+				<Link
+					href={`/${track.username}`}
+					className='max-w-full truncate text-muted-foreground'
+				>
+					{track.username}
+				</Link>
+			</div>
+		</li>
+	);
+}
+
+export function ListeningHistoryCard({ track }: { track: Track }) {
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${track.username}/${track.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				<PlayUserTrackButton track={track} variant='card' />
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${track.username}/${track.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{track.title}
+				</Link>
+				<Link
+					href={`/${track.username}`}
+					className='max-w-full truncate text-muted-foreground'
+				>
+					{track.username}
+				</Link>
+			</div>
+		</li>
+	);
+}
+
+export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
+	const firstTrackQuery = useFirstPlaylistTrackQuery(playlist.id);
+	const firstTrack = firstTrackQuery.data?.data;
+
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${playlist.username}/playlists/${playlist.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				{firstTrack && firstTrack.length ? (
+					<PlayPlaylistButton
+						track={firstTrack[0].track}
+						playlistId={playlist.id}
+						variant='card'
+					/>
+				) : null}
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${playlist.username}/playlists/${playlist.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{playlist.title}
+				</Link>
+				<p className='max-w-full truncate text-muted-foreground'>
+					{playlist.createdAt.slice(0, 4)}
+				</p>
+			</div>
+		</li>
+	);
+}
+
+export function PlaylistCard({ playlist }: { playlist: Playlist }) {
+	const firstTrackQuery = useFirstPlaylistTrackQuery(playlist.id);
+	const firstTrack = firstTrackQuery.data?.data;
+
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${playlist.username}/playlists/${playlist.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				{firstTrack && firstTrack.length ? (
+					<PlayPlaylistButton
+						track={firstTrack[0].track}
+						playlistId={playlist.id}
+						variant='card'
+					/>
+				) : null}
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${playlist.username}/playlists/${playlist.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{playlist.title}
+				</Link>
+				<Link
+					href={`/${playlist.username}`}
+					className='max-w-full truncate text-muted-foreground'
+				>
+					{playlist.username}
+				</Link>
+			</div>
+		</li>
+	);
+}
+
+export function AlbumCardProfile({ album }: { album: Album }) {
+	const firstTrackQuery = useFirstAlbumTrackQuery(album.id);
+	const firstTrack = firstTrackQuery.data?.data;
+
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${album.username}/albums/${album.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				{firstTrack && firstTrack.length ? (
+					<PlayAlbumButton
+						track={firstTrack[0].track}
+						albumId={album.id}
+						variant='card'
+					/>
+				) : null}
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${album.username}/albums/${album.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{album.title}
+				</Link>
+				<p className='max-w-full truncate text-muted-foreground'>
+					{album.createdAt.slice(0, 4) +
+						' • ' +
+						(album.type === 'ep'
+							? album.type.toUpperCase()
+							: album.type[0].toUpperCase() + album.type.slice(1))}
+				</p>
+			</div>
+		</li>
+	);
+}
+
+export function AlbumCard({ album }: { album: Album }) {
+	const firstTrackQuery = useFirstAlbumTrackQuery(album.id);
+	const firstTrack = firstTrackQuery.data?.data;
+
+	return (
+		<li className='flex flex-col gap-2'>
+			<div className='group relative rounded-md border'>
+				<Link
+					href={`/${album.username}/albums/${album.changeableId}`}
+					className='aspect-square rounded-md'
+				>
+					<Image
+						alt='Track image'
+						src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
+						width={250}
+						height={250}
+						priority
+						className='aspect-square rounded-md'
+					></Image>
+				</Link>
+				{firstTrack && firstTrack.length ? (
+					<PlayAlbumButton
+						track={firstTrack[0].track}
+						albumId={album.id}
+						variant='card'
+					/>
+				) : null}
+			</div>
+			<div className='flex flex-col'>
+				<Link
+					href={`/${album.username}/albums/${album.changeableId}`}
+					className='max-w-full truncate'
+				>
+					{album.title}
+				</Link>
+				<Link
+					href={`/${album.username}`}
+					className='max-w-full truncate text-muted-foreground'
+				>
+					{album.username}
+				</Link>
 			</div>
 		</li>
 	);
@@ -117,115 +360,5 @@ export function CardSkeleton() {
 				<div className='h-4 w-20 rounded-md bg-skeleton'></div>
 			</div>
 		</li>
-	);
-}
-
-export function UserCard({
-	user
-}: {
-	user: UserPublic | UserWithoutFollowingCount;
-}) {
-	return (
-		<Card
-			title={user.username}
-			titleHref={`/${user.username}`}
-			desc={`${nFormatter(user._count.followers)} followers`}
-			imageSrc={`${baseUrl.backend}/${user.image}_250x250${imageFormat}`}
-			centered
-			roundedFull
-		></Card>
-	);
-}
-
-export function TrackCard({ track }: { track: Track }) {
-	return (
-		<Card
-			title={track.title}
-			titleHref={`/${track.username}/${track.changeableId}`}
-			desc={track.createdAt.slice(0, 4)}
-			imageSrc={`${baseUrl.backend}/${track.image}_250x250${imageFormat}`}
-			track={track}
-			queueType='user'
-		></Card>
-	);
-}
-
-export function LikedTrackCard({ track }: { track: Track }) {
-	return (
-		<Card
-			title={track.title}
-			titleHref={`/${track.username}/${track.changeableId}`}
-			desc={track.username}
-			descHref={`/${track.username}`}
-			imageSrc={`${baseUrl.backend}/${track.image}_250x250${imageFormat}`}
-			track={track}
-			queueType='liked'
-		></Card>
-	);
-}
-
-export function ListeningHistoryCard({ track }: { track: Track }) {
-	return (
-		<Card
-			title={track.title}
-			titleHref={`/${track.username}/${track.changeableId}`}
-			desc={track.username}
-			descHref={`/${track.username}`}
-			imageSrc={`${baseUrl.backend}/${track.image}_250x250${imageFormat}`}
-			track={track}
-			queueType='user'
-		></Card>
-	);
-}
-
-export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
-	return (
-		<Card
-			title={playlist.title}
-			titleHref={`/${playlist.username}/playlists/${playlist.changeableId}`}
-			desc={playlist.createdAt.slice(0, 4)}
-			imageSrc={`${baseUrl.backend}/${playlist.image}_250x250${imageFormat}`}
-		></Card>
-	);
-}
-
-export function PlaylistCard({ playlist }: { playlist: Playlist }) {
-	return (
-		<Card
-			title={playlist.title}
-			titleHref={`/${playlist.username}/playlists/${playlist.changeableId}`}
-			desc={playlist.username}
-			descHref={`/${playlist.username}`}
-			imageSrc={`${baseUrl.backend}/${playlist.image}_250x250${imageFormat}`}
-		></Card>
-	);
-}
-
-export function AlbumCardProfile({ album }: { album: Album }) {
-	return (
-		<Card
-			title={album.title}
-			titleHref={`/${album.username}/albums/${album.changeableId}`}
-			desc={
-				album.createdAt.slice(0, 4) +
-				' • ' +
-				(album.type === 'ep'
-					? album.type.toUpperCase()
-					: album.type[0].toUpperCase() + album.type.slice(1))
-			}
-			imageSrc={`${baseUrl.backend}/${album.image}_250x250${imageFormat}`}
-		></Card>
-	);
-}
-
-export function AlbumCard({ album }: { album: Album }) {
-	return (
-		<Card
-			title={album.title}
-			titleHref={`/${album.username}/albums/${album.changeableId}`}
-			desc={album.username}
-			descHref={`/${album.username}`}
-			imageSrc={`${baseUrl.backend}/${album.image}_250x250${imageFormat}`}
-		></Card>
 	);
 }

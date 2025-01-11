@@ -1,7 +1,6 @@
 import { api } from '@/api/interceptors';
 import type {
 	Track,
-	TracksCreatedCount,
 	TracksIds,
 	TrackWithLiked,
 	UpdateTrackDto,

@@ -1,5 +1,3 @@
-'use client';
-
 import { CardSkeleton } from './Cards';
 import Link from 'next/link';
 

@@ -3,7 +3,9 @@ import { baseUrl, REFRESH_TOKEN } from './config';
 
 export function middleware(request: NextRequest) {
 	const { url, cookies } = request;
+
 	const refreshToken = cookies.get(REFRESH_TOKEN)?.value;
+
 	const isAuthPage =
 		url === `${baseUrl.frontend}/login` || url === `${baseUrl.frontend}/signup`;
 

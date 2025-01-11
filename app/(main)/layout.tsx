@@ -1,5 +1,5 @@
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import Player from '@/components/Player';
 
 export default function MainLayout({
 	children
@@ -12,7 +12,7 @@ export default function MainLayout({
 			<main>
 				<div className='div-main'>{children}</div>
 			</main>
-			<Footer></Footer>
+			<Player></Player>
 		</>
 	);
 }

@@ -2,69 +2,36 @@
 
 import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { userService } from '@/services/user/user.service';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import Image from 'next/image';
 import { ImageUp, X } from 'lucide-react';
-import { validateAudio, validateImage } from '@/lib/utils';
-import { ACCEPTED_AUDIO_TYPES, ACCEPTED_IMAGE_TYPES } from '@/config';
+import { validateImage } from '@/lib/utils';
+import { ACCEPTED_IMAGE_TYPES } from '@/config';
 import {
-	CreateAlbumDto,
+	type CreateAlbumDto,
 	CreateAlbumSchema
 } from '@/services/album/album.types';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { albumService } from '@/services/album/album.service';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow
-} from '@/components/ui/table';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import SortableRow from '@/components/SortableRow';
-import {
-	DndContext,
-	DragEndEvent,
-	PointerSensor,
-	closestCenter,
-	useSensor,
-	useSensors
-} from '@dnd-kit/core';
-import {
-	SortableContext,
-	verticalListSortingStrategy
-} from '@dnd-kit/sortable';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis
-} from '@dnd-kit/modifiers';
+import { useCurrentUserQuery } from '@/hooks/queries';
+import { UploadAlbumTable } from '@/components/Tables';
 
 export default function UploadAlbum() {
 	const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+
 	const { toast } = useToast();
 
-	const currentUserQuery = useQuery({
-		queryKey: ['current-user'],
-		queryFn: () => userService.getCurrent()
-	});
+	const currentUserQuery = useCurrentUserQuery();
 	const currentUser = currentUserQuery.data?.data;
 
-	const {
-		control,
-		formState: { errors },
-		register,
-		handleSubmit,
-		getValues,
-		reset
-	} = useForm<CreateAlbumDto>({
+	const createAlbumForm = useForm<CreateAlbumDto>({
 		resolver: zodResolver(CreateAlbumSchema),
 		defaultValues: {
 			title: '',
@@ -76,13 +43,12 @@ export default function UploadAlbum() {
 		disabled: !currentUser
 	});
 
-	const { fields, append, remove, move } = useFieldArray({
-		control,
+	const tracksField = useFieldArray({
+		control: createAlbumForm.control,
 		name: 'tracks'
 	});
 
 	const uploadMutation = useMutation({
-		mutationKey: ['upload-album'],
 		mutationFn: (dto: FormData) =>
 			albumService.create(dto as unknown as CreateAlbumDto),
 		onSuccess: () => {
@@ -93,7 +59,7 @@ export default function UploadAlbum() {
 			}
 			setImageUrl(undefined);
 
-			reset({
+			createAlbumForm.reset({
 				title: '',
 				changeableId: '',
 				type: 'ep',
@@ -104,8 +70,8 @@ export default function UploadAlbum() {
 	});
 
 	function onSubmit(dto: CreateAlbumDto) {
-		let tracks: { changeableId: string; title: string }[] = [];
-		let audios: File[] = [];
+		const tracks: { changeableId: string; title: string }[] = [];
+		const audios: File[] = [];
 
 		dto.tracks.map((track) => {
 			tracks.push({ changeableId: track.changeableId, title: track.title });
@@ -113,34 +79,18 @@ export default function UploadAlbum() {
 		});
 
 		const formData = new FormData();
+
 		formData.append('title', dto.title);
 		formData.append('changeableId', dto.changeableId);
 		formData.append('type', dto.type);
 		formData.append('tracks', JSON.stringify(tracks));
 		formData.append('image', dto.image);
-		for (let audio of audios) {
+		for (const audio of audios) {
 			formData.append('audios', audio);
 		}
 
 		uploadMutation.mutate(formData);
 	}
-
-	const sensors = useSensors(
-		useSensor(PointerSensor, {
-			activationConstraint: {
-				distance: 10
-			}
-		})
-	);
-
-	const handleDragEnd = (event: DragEndEvent) => {
-		const { active, over } = event;
-		if (active.id !== over?.id) {
-			const oldIndex = fields.findIndex((item) => item.id === active.id);
-			const newIndex = fields.findIndex((item) => item.id === over?.id);
-			move(oldIndex, newIndex);
-		}
-	};
 
 	return (
 		<>
@@ -152,7 +102,7 @@ export default function UploadAlbum() {
 			</nav>
 			<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
 				<form
-					onSubmit={handleSubmit(onSubmit)}
+					onSubmit={createAlbumForm.handleSubmit(onSubmit)}
 					noValidate
 					className='flex flex-col gap-6'
 				>
@@ -166,12 +116,12 @@ export default function UploadAlbum() {
 										placeholder='Title'
 										required
 										maxLength={20}
-										{...register('title')}
+										{...createAlbumForm.register('title')}
 									/>
 								</div>
-								{errors.title && (
+								{createAlbumForm.formState.errors.title && (
 									<p className='text-sm text-destructive'>
-										{errors.title.message}
+										{createAlbumForm.formState.errors.title.message}
 									</p>
 								)}
 							</div>
@@ -183,22 +133,24 @@ export default function UploadAlbum() {
 										required
 										placeholder='Album id'
 										maxLength={20}
-										{...register('changeableId')}
+										{...createAlbumForm.register('changeableId')}
 									/>
 								</div>
-								{errors.changeableId && (
+								{createAlbumForm.formState.errors.changeableId && (
 									<p className='text-sm text-destructive'>
-										{errors.changeableId.message}
+										{createAlbumForm.formState.errors.changeableId.message}
 									</p>
 								)}
 							</div>
 							<div className='flex flex-col gap-2'>
 								<Controller
 									name='type'
-									control={control}
+									control={createAlbumForm.control}
 									render={({ field: { onChange, value, ...field } }) => (
 										<>
-											<span>Album type</span>
+											<p className='text-sm font-medium leading-none'>
+												Album type
+											</p>
 											<RadioGroup
 												id='type'
 												required
@@ -219,7 +171,7 @@ export default function UploadAlbum() {
 
 						<Controller
 							name='image'
-							control={control}
+							control={createAlbumForm.control}
 							render={({
 								field: { onChange, value, ...field },
 								fieldState: { error }
@@ -253,8 +205,8 @@ export default function UploadAlbum() {
 												className='flex size-full cursor-pointer flex-col items-center justify-center gap-2 rounded-md p-6'
 											>
 												<ImageUp className='size-8'></ImageUp>
-												<span>Click to upload image</span>
-												<span className='text-xs'>JPG or PNG</span>
+												<p>Click to upload image</p>
+												<p className='text-xs'>JPG or PNG</p>
 											</Label>
 										)}
 										<Input
@@ -262,8 +214,8 @@ export default function UploadAlbum() {
 											id='image'
 											accept={`.jpg, .png, ${ACCEPTED_IMAGE_TYPES.join(', ')}`}
 											onChange={(e) => {
-												if (e.target.files?.[0]) {
-													const file = e.target.files[0];
+												const file = e.target.files?.[0];
+												if (file) {
 													try {
 														validateImage(file);
 													} catch (err: any) {
@@ -274,6 +226,7 @@ export default function UploadAlbum() {
 														return;
 													}
 													const imageUrl = URL.createObjectURL(file);
+
 													setImageUrl(imageUrl);
 													onChange(file);
 												}
@@ -299,162 +252,32 @@ export default function UploadAlbum() {
 						/>
 					</div>
 					<div className='flex flex-col'>
-						<span className='mb-2'>Tracks</span>
-						{errors.tracks?.root && (
+						<p className='mb-2 text-sm font-medium leading-none'>Tracks</p>
+						{createAlbumForm.formState.errors.tracks?.root && (
 							<p className='text-sm text-destructive'>
-								{errors.tracks.root.message}
+								{createAlbumForm.formState.errors.tracks.root.message}
 							</p>
 						)}
-						{errors.tracks?.length && (
+						{createAlbumForm.formState.errors.tracks?.length && (
 							<p className='text-sm text-destructive'>
 								Title, id and audio is required for tracks
 							</p>
 						)}
-						{fields.length ? (
-							<DndContext
-								sensors={sensors}
-								collisionDetection={closestCenter}
-								modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-								onDragEnd={handleDragEnd}
-							>
-								<SortableContext
-									items={fields.map((field) => field.id)}
-									strategy={verticalListSortingStrategy}
-								>
-									<Table>
-										<TableHeader>
-											<TableRow>
-												<TableHead className='w-0'>#</TableHead>
-												<TableHead>Title</TableHead>
-												<TableHead>Id</TableHead>
-												<TableHead className='text-center'>Audio</TableHead>
-												<TableHead className='text-right'>Remove</TableHead>
-											</TableRow>
-										</TableHeader>
-										<TableBody>
-											{fields.map((field, index) => (
-												<SortableRow key={field.id} id={field.id} index={index}>
-													<TableCell>
-														<Label
-															htmlFor={`tracks.${index}.title`}
-															className='hidden'
-														>
-															Track Title
-														</Label>
-														<Input
-															placeholder='Title'
-															required
-															maxLength={20}
-															id={`tracks.${index}.title`}
-															{...register(`tracks.${index}.title`)}
-															className='bg-transparent'
-														/>
-													</TableCell>
-													<TableCell>
-														<Label
-															htmlFor={`tracks.${index}.changeableId`}
-															className='hidden'
-														>
-															Track Id
-														</Label>
-														<Input
-															placeholder='Track id'
-															required
-															maxLength={20}
-															id={`tracks.${index}.changeableId`}
-															{...register(`tracks.${index}.changeableId`)}
-															className='bg-transparent'
-														/>
-													</TableCell>
-													<TableCell className='py-0'>
-														<Controller
-															name={`tracks.${index}.audio`}
-															control={control}
-															render={({ field: { onChange, value } }) => (
-																<div className='group/clear relative flex justify-end'>
-																	{value ? (
-																		<>
-																			<Button
-																				variant='outline'
-																				size='icon-sm'
-																				type='button'
-																				className='absolute right-2 z-10 translate-y-1/2 rounded-md opacity-0 transition-opacity group-hover/clear:opacity-100'
-																				onClick={() => {
-																					onChange(undefined);
-																				}}
-																			>
-																				<X className='size-5' />
-																			</Button>
-																			<Label
-																				htmlFor={`tracks.${index}.audio`}
-																				className='flex h-10 w-44 cursor-pointer items-center justify-center rounded-md border px-4'
-																			>
-																				<span className='overflow-hidden text-nowrap'>
-																					{value.name}
-																				</span>
-																			</Label>
-																		</>
-																	) : (
-																		<Label
-																			htmlFor={`tracks.${index}.audio`}
-																			className='flex h-10 w-44 cursor-pointer items-center justify-center rounded-md border px-4'
-																		>
-																			Upload audio
-																		</Label>
-																	)}
-																	<Input
-																		type='file'
-																		id={`tracks.${index}.audio`}
-																		className='hidden'
-																		accept={`.mp3, .aac, .m4a, .flac, .wav, .aiff, .webm, ${ACCEPTED_AUDIO_TYPES.join(', ')}`}
-																		onChange={(e) => {
-																			if (e.target.files?.[0]) {
-																				const file = e.target.files[0];
-																				try {
-																					validateAudio(file);
-																				} catch (err: any) {
-																					toast({
-																						title: err.message,
-																						variant: 'destructive'
-																					});
-																					return;
-																				}
-																				onChange(file);
-																			}
-																		}}
-																	/>
-																</div>
-															)}
-														/>
-													</TableCell>
-													<TableCell className='py-0'>
-														<div className='flex justify-end'>
-															<Button
-																type='button'
-																variant='destructive'
-																size='icon'
-																onClick={() => remove(index)}
-															>
-																<X className='size-5'></X>
-															</Button>
-														</div>
-													</TableCell>
-												</SortableRow>
-											))}
-										</TableBody>
-									</Table>
-								</SortableContext>
-							</DndContext>
-						) : (
-							<></>
-						)}
+						<UploadAlbumTable
+							tracksField={tracksField}
+							createAlbumForm={createAlbumForm}
+						></UploadAlbumTable>
 						<Button
 							disabled={!currentUser}
 							className='mt-2'
 							type='button'
 							variant='outline'
 							onClick={() =>
-								append({ audio: undefined, changeableId: '', title: '' })
+								tracksField.append({
+									audio: undefined,
+									changeableId: '',
+									title: ''
+								})
 							}
 						>
 							Add new track

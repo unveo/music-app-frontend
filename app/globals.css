@@ -64,12 +64,15 @@
 	* {
 		@apply border-border;
 	}
+
 	body {
 		@apply flex min-h-screen flex-col overflow-y-scroll bg-background text-foreground;
 	}
+
 	main {
 		@apply flex flex-grow flex-col items-center bg-muted/40;
 	}
+
 	div[data-part='thumb'][data-dragging] {
 		opacity: 1;
 	}

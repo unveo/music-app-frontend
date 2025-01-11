@@ -1,4 +1,4 @@
-import { messages, regex, restrictedUsernames } from '@/config';
+import { messages, regex, RESTRICTED_USERNAMES } from '@/config';
 import { z } from 'zod';
 
 export const LoginSchema = z.object({
@@ -18,7 +18,7 @@ export const RegisterSchema = z.object({
 		.max(20, messages.max('Password', 20))
 		.regex(regex.username, messages.usernameRegex)
 		.refine(
-			(username) => !restrictedUsernames.includes(username),
+			(username) => !RESTRICTED_USERNAMES.includes(username),
 			messages.restrictedUsername
 		),
 	password: z

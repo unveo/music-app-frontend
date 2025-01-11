@@ -1,10 +1,10 @@
 import { api } from '@/api/interceptors';
-import { SavedPlaylist } from './saved-playlist.types';
+import type { SavedPlaylist } from './saved-playlist.types';
 
 export const savedPlaylistService = {
-	async getMany(take?: number) {
+	async getMany(take?: number, lastId?: number) {
 		return await api.get<SavedPlaylist[]>(
-			`user/saved-playlist?take=${take ? take : ''}`
+			`user/saved-playlist?take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
 		);
 	},
 

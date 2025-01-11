@@ -17,10 +17,10 @@ export default function Header() {
 						Library
 					</Link>
 				</div>
-				<div className='flex h-full items-center justify-end gap-2 px-2 md:w-40'>
+				<div className='flex h-full items-center justify-end px-2 md:w-40'>
 					<Link
 						href='/upload'
-						className='flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
+						className='ml-1 mr-2 flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
 					>
 						<ArrowUpFromLine className='size-5' />
 					</Link>

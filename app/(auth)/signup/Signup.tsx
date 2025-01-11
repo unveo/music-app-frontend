@@ -30,14 +30,16 @@ export default function Signup() {
 		defaultValues: { email: '', password: '', username: '' },
 		mode: 'onSubmit'
 	});
+
 	const { push } = useRouter();
-	const { mutate } = useMutation({
-		mutationKey: ['register'],
+
+	const registerMutation = useMutation({
 		mutationFn: (data: RegisterDto) => authService.register(data),
 		onSuccess: () => push('/')
 	});
+
 	function onSubmit(data: RegisterDto) {
-		mutate(data);
+		registerMutation.mutate(data);
 	}
 
 	return (

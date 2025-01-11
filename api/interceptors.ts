@@ -1,6 +1,6 @@
+import axios, { type CreateAxiosDefaults } from 'axios';
 import { baseUrl } from '@/config';
 import { authService } from '@/services/auth/auth.service';
-import axios, { AxiosError, CreateAxiosDefaults } from 'axios';
 
 const options: CreateAxiosDefaults = {
 	baseURL: `${baseUrl.backend}/api`,
@@ -17,6 +17,7 @@ api.interceptors.response.use(
 	(config) => config,
 	async (error: any) => {
 		const originalRequest = error.config;
+
 		if (
 			error.response?.status === 401 &&
 			((error.response?.data?.message === 'Unauthorized' &&
@@ -40,6 +41,7 @@ api.interceptors.response.use(
 					isRefreshing = false;
 					requests = [];
 					window.location.href = '/login';
+
 					throw err;
 				}
 			} else {

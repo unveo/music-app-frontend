@@ -1,30 +1,20 @@
 'use client';
 
 import { PlaylistCard } from '@/components/Cards';
-import { List, ListSkeleton } from '@/components/Lists';
+import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
-import { playlistService } from '@/services/playlist/playlist.service';
-import { userService } from '@/services/user/user.service';
-import { useQuery } from '@tanstack/react-query';
+import { usePlaylistsQuery, useUserQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function Playlists({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
+	const userQuery = useUserQuery(username);
 	const user = userQuery.data?.data;
-	const userId = user?.id;
-	const playlistsQuery = useQuery({
-		queryKey: ['playlists', userId],
-		queryFn: () => playlistService.getMany(userId),
-		enabled: !!userId
-	});
+
+	const playlistsQuery = usePlaylistsQuery(user?.id);
 	const playlists = playlistsQuery.data?.data;
 
 	if (userQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (userQuery.isError) {
@@ -32,7 +22,7 @@ export default function Playlists({ username }: { username: string }) {
 	}
 
 	if (playlistsQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (playlists) {

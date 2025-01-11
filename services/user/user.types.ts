@@ -3,7 +3,7 @@ import {
 	IMAGE_FILE_LIMIT,
 	messages,
 	regex,
-	restrictedUsernames
+	RESTRICTED_USERNAMES
 } from '@/config';
 import { z } from 'zod';
 
@@ -14,7 +14,7 @@ export const ChangeUsernameSchema = z.object({
 		.max(20, messages.max('Username', 20))
 		.regex(regex.username, messages.usernameRegex)
 		.refine(
-			(username) => !restrictedUsernames.includes(username),
+			(username) => !RESTRICTED_USERNAMES.includes(username),
 			messages.restrictedUsername
 		)
 });

@@ -64,6 +64,10 @@ export interface Playlist {
 	updatedAt: string;
 }
 
+export interface PlaylistWithIsSaved extends Playlist {
+	isSaved: boolean;
+}
+
 export interface PlaylistFull extends Playlist {
 	_count: { tracks: number };
 	savedByUsers: { addedAt: string }[];

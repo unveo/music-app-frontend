@@ -8,17 +8,26 @@ export const useQueueStore = create(
 		prev: number[];
 		next: number[];
 		all: number[];
+		type: 'playlist' | 'album' | 'user' | 'liked';
+		queueId: number;
 		setPrev: (next: number[]) => void;
 		setNext: (next: number[]) => void;
 		setAll: (all: number[]) => void;
+		setType: (type: 'playlist' | 'album' | 'user' | 'liked') => void;
+		setQueueId: (queueId: number) => void;
 	}>(
 		(set) => ({
 			prev: [],
 			next: [],
 			all: [],
+			type: 'user',
+			queueId: 0,
 			setPrev: (prev: number[]) => set(() => ({ prev })),
 			setNext: (next: number[]) => set(() => ({ next })),
-			setAll: (all: number[]) => set(() => ({ all }))
+			setAll: (all: number[]) => set(() => ({ all })),
+			setType: (type: 'playlist' | 'album' | 'user' | 'liked') =>
+				set(() => ({ type })),
+			setQueueId: (queueId: number) => set(() => ({ queueId }))
 		}),
 		{ name: 'queue' }
 	)

@@ -5,7 +5,7 @@ import type {
 	TrackInPlaylist,
 	UpdateTrackPositionDto
 } from './playlist-track.types';
-import { TracksIds } from '@/services/track/track.types';
+import type { TracksIds } from '@/services/track/track.types';
 
 export const playlistTrackService = {
 	async getMany(playlistId: number, take?: number) {
@@ -20,7 +20,7 @@ export const playlistTrackService = {
 		);
 	},
 
-	async add(playlistId: number, trackId: number, dto: AddTrackDto) {
+	async add(playlistId: number, trackId: number, dto?: AddTrackDto) {
 		return await api.post<PlaylistTrackRelation>(
 			`playlist/${playlistId}/track/${trackId}`,
 			dto

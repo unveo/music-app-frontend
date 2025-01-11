@@ -1,8 +1,6 @@
 import { z } from 'zod';
 import {
-	ACCEPTED_AUDIO_TYPES,
 	ACCEPTED_IMAGE_TYPES,
-	AUDIO_FILE_LIMIT,
 	IMAGE_FILE_LIMIT,
 	messages,
 	regex
@@ -33,10 +31,10 @@ export const CreateAlbumSchema = z.object({
 		),
 	tracks: z
 		.array(TrackForAlbumSchema)
-		.min(2, messages.albumTracks)
+		.min(2, messages.albumTracks.amount)
 		.refine(
 			(tracks) => tracks.every((track) => track.audio),
-			'Each track must have an audio file'
+			messages.albumTracks.audios
 		)
 		.refine((tracks) => {
 			const titles: string[] = [];
@@ -53,7 +51,7 @@ export const CreateAlbumSchema = z.object({
 				return false;
 			}
 			return true;
-		}, 'Track titles and ids must be unique')
+		}, messages.albumTracks.unique)
 });
 
 export const UpdateAlbumSchema = z.object({

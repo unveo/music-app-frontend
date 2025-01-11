@@ -2,23 +2,22 @@
 
 import Link from 'next/link';
 import {
-	AlbumCard,
 	AlbumCardProfile,
 	CardSkeleton,
-	ListeningHistoryCard,
-	PlaylistCard,
 	PlaylistCardProfile,
 	TrackCard,
 	UserCard
 } from './Cards';
-import { useQuery } from '@tanstack/react-query';
-import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
-import { userService } from '@/services/user/user.service';
-import { playlistService } from '@/services/playlist/playlist.service';
-import { trackService } from '@/services/track/track.service';
-import { followService } from '@/services/user/follow/follow.service';
 import { useCardsCountStore } from '@/stores/cards-count.store';
-import { albumService } from '@/services/album/album.service';
+import {
+	useAlbumsQuery,
+	useFollowersQuery,
+	useFollowingQuery,
+	usePlaylistsQuery,
+	useTracksQuery,
+	useUserQuery,
+	useUsersQuery
+} from '@/hooks/queries';
 
 export function Section({
 	name,
@@ -37,9 +36,7 @@ export function Section({
 					<Link href={href} className='text-muted-foreground'>
 						Show all
 					</Link>
-				) : (
-					<></>
-				)}
+				) : null}
 			</div>
 			<div>
 				<ul className='grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
@@ -52,7 +49,7 @@ export function Section({
 
 export function SectionSkeleton() {
 	const { cardsCount } = useCardsCountStore();
-	let skeletons = Array(cardsCount).fill(0);
+	const skeletons = Array(cardsCount).fill(0);
 
 	return (
 		<li className='flex flex-col gap-4'>
@@ -71,56 +68,10 @@ export function SectionSkeleton() {
 	);
 }
 
-export function ListeningHistorySection() {
-	const { cardsCount } = useCardsCountStore();
-	const listeningHistoryQuery = useQuery({
-		queryKey: ['listening-history'],
-		queryFn: () => listeningHistoryService.get(),
-		refetchOnMount: false
-	});
-	const listeningHistory = listeningHistoryQuery.data?.data;
-
-	if (listeningHistoryQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
-
-	if (listeningHistory) {
-		if (listeningHistory.length) {
-			if (listeningHistory.length > cardsCount) {
-				return (
-					<Section href='/history' name='Listening history'>
-						{listeningHistory.slice(0, cardsCount).map(({ track }) => (
-							<ListeningHistoryCard
-								key={track.id}
-								track={track}
-							></ListeningHistoryCard>
-						))}
-					</Section>
-				);
-			} else {
-				return (
-					<Section name='Listening history'>
-						{listeningHistory.slice(0, cardsCount).map(({ track }) => (
-							<ListeningHistoryCard
-								key={track.id}
-								track={track}
-							></ListeningHistoryCard>
-						))}
-					</Section>
-				);
-			}
-		} else {
-			return <></>;
-		}
-	}
-}
-
 export function UsersSection() {
 	const { cardsCount } = useCardsCountStore();
-	const usersQuery = useQuery({
-		queryKey: ['users'],
-		queryFn: () => userService.getMany(7)
-	});
+
+	const usersQuery = useUsersQuery(7);
 	const users = usersQuery.data?.data;
 
 	if (usersQuery.isLoading) {
@@ -147,68 +98,18 @@ export function UsersSection() {
 				);
 			}
 		} else {
-			return <></>;
-		}
-	}
-}
-
-export function GlobalPlaylistsSection() {
-	const { cardsCount } = useCardsCountStore();
-	const playlistsQuery = useQuery({
-		queryKey: ['playlists'],
-		queryFn: () => playlistService.getMany(1, 7) //
-	});
-	const playlists = playlistsQuery.data?.data;
-
-	if (playlistsQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
-
-	if (playlists) {
-		if (playlists.length) {
-			if (playlists.length > cardsCount) {
-				return (
-					<Section href='/playlists' name='Playlists'>
-						{playlists.slice(0, cardsCount).map((playlist) => (
-							<PlaylistCard
-								key={playlist.id}
-								playlist={playlist}
-							></PlaylistCard>
-						))}
-					</Section>
-				);
-			} else {
-				return (
-					<Section name='Playlists'>
-						{playlists.slice(0, cardsCount).map((playlist) => (
-							<PlaylistCard
-								key={playlist.id}
-								playlist={playlist}
-							></PlaylistCard>
-						))}
-					</Section>
-				);
-			}
-		} else {
-			return <></>;
+			return null;
 		}
 	}
 }
 
 export function TracksSection({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
-	const user = userQuery.data?.data;
-	const userId = user?.id;
 	const { cardsCount } = useCardsCountStore();
-	const tracksQuery = useQuery({
-		queryKey: ['tracks', userId],
-		queryFn: () => trackService.getMany(userId!, 7),
-		enabled: !!userId
-	});
+
+	const userQuery = useUserQuery(username);
+	const user = userQuery.data?.data;
+
+	const tracksQuery = useTracksQuery(user?.id, 7);
 	const tracks = tracksQuery.data?.data;
 
 	if (tracksQuery.isLoading) {
@@ -235,25 +136,18 @@ export function TracksSection({ username }: { username: string }) {
 				);
 			}
 		} else {
-			return <></>;
+			return null;
 		}
 	}
 }
 
 export function AlbumsSection({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
-	const user = userQuery.data?.data;
-	const userId = user?.id;
 	const { cardsCount } = useCardsCountStore();
-	const albumsQuery = useQuery({
-		queryKey: ['albums', userId],
-		queryFn: () => albumService.getMany(userId!, 7),
-		enabled: !!userId
-	});
+
+	const userQuery = useUserQuery(username);
+	const user = userQuery.data?.data;
+
+	const albumsQuery = useAlbumsQuery(user?.id, 7);
 	const albums = albumsQuery.data?.data;
 
 	if (albumsQuery.isLoading) {
@@ -280,7 +174,7 @@ export function AlbumsSection({ username }: { username: string }) {
 				);
 			}
 		} else {
-			return <></>;
+			return null;
 		}
 	}
 }
@@ -288,19 +182,10 @@ export function AlbumsSection({ username }: { username: string }) {
 export function PlaylistsSection({ username }: { username: string }) {
 	const { cardsCount } = useCardsCountStore();
 
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
+	const userQuery = useUserQuery(username);
 	const user = userQuery.data?.data;
-	const userId = user?.id;
 
-	const playlistsQuery = useQuery({
-		queryKey: ['playlists', userId],
-		queryFn: () => playlistService.getMany(userId!, 7),
-		enabled: !!userId
-	});
+	const playlistsQuery = usePlaylistsQuery(user?.id, 7);
 	const playlists = playlistsQuery.data?.data;
 
 	if (playlistsQuery.isLoading) {
@@ -333,25 +218,18 @@ export function PlaylistsSection({ username }: { username: string }) {
 				);
 			}
 		} else {
-			return <></>;
+			return null;
 		}
 	}
 }
 
 export function FollowersSection({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
-	const user = userQuery.data?.data;
-	const userId = user?.id;
 	const { cardsCount } = useCardsCountStore();
-	const followersQuery = useQuery({
-		queryKey: ['followers', userId],
-		queryFn: () => followService.getManyFollowers(userId!, 7),
-		enabled: !!userId
-	});
+
+	const userQuery = useUserQuery(username);
+	const user = userQuery.data?.data;
+
+	const followersQuery = useFollowersQuery(user?.id, 7);
 	const followers = followersQuery.data?.data;
 
 	if (followersQuery.isLoading) {
@@ -378,25 +256,18 @@ export function FollowersSection({ username }: { username: string }) {
 				);
 			}
 		} else {
-			return <></>;
+			return null;
 		}
 	}
 }
 
 export function FollowingSection({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
-	const user = userQuery.data?.data;
-	const userId = user?.id;
 	const { cardsCount } = useCardsCountStore();
-	const followingQuery = useQuery({
-		queryKey: ['following', userId],
-		queryFn: () => followService.getManyFollowing(userId!, 7),
-		enabled: !!userId
-	});
+
+	const userQuery = useUserQuery(username);
+	const user = userQuery.data?.data;
+
+	const followingQuery = useFollowingQuery(user?.id, 7);
 	const following = followingQuery.data?.data;
 
 	if (followingQuery.isLoading) {
@@ -423,7 +294,7 @@ export function FollowingSection({ username }: { username: string }) {
 				);
 			}
 		} else {
-			return <></>;
+			return null;
 		}
 	}
 }

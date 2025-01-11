@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import {
 	AlbumsSection,
@@ -12,40 +12,39 @@ import {
 } from '@/components/Sections';
 import { nFormatter } from '@/lib/utils';
 import { followService } from '@/services/user/follow/follow.service';
-import { userService } from '@/services/user/user.service';
 import NotFound from '@/components/NotFound';
 import useCardsCount from '@/hooks/cards-count';
-import { baseUrl, imageFormat } from '@/config';
+import { baseUrl, LARGE_IMAGE_ENDING } from '@/config';
+import {
+	useCurrentUserQuery,
+	useFollowersQuery,
+	useIsFollowedQuery,
+	useTracksQuery,
+	useUserQuery
+} from '@/hooks/queries';
+import { UserHero } from '@/components/Heroes';
+import { PlayUserButton } from '@/components/PlayButtons';
 
 export default function Profile({ username }: { username: string }) {
 	useCardsCount();
 
-	const currentUserQuery = useQuery({
-		queryKey: ['current-user'],
-		queryFn: () => userService.getCurrent()
-	});
+	const currentUserQuery = useCurrentUserQuery();
 	const currentUser = currentUserQuery.data?.data;
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
+
+	const userQuery = useUserQuery(username);
 	const user = userQuery.data?.data;
 	const userId = user?.id;
 	const isCurrentUser = currentUser?.id === userId;
-	const isFollowedQuery = useQuery({
-		queryKey: ['is-followed', userId],
-		queryFn: () => followService.check(userId!),
-		enabled: !!userId && !isCurrentUser
-	});
+
+	const isFollowedQuery = useIsFollowedQuery(isCurrentUser, userId);
 	const isFollowed = isFollowedQuery.data?.data;
-	const followersQuery = useQuery({
-		queryKey: ['followers', userId],
-		queryFn: () => followService.getManyFollowers(userId!, 7),
-		enabled: !!userId
-	});
+
+	const followersQuery = useFollowersQuery(userId, 7);
+
+	const tracksQuery = useTracksQuery(userId, 7);
+	const tracks = tracksQuery.data?.data;
+
 	const followMutation = useMutation({
-		mutationKey: ['follow', userId],
 		mutationFn: () => followService.follow(userId!),
 		onSuccess: () => {
 			userQuery.refetch();
@@ -54,7 +53,6 @@ export default function Profile({ username }: { username: string }) {
 		}
 	});
 	const unfollowMutation = useMutation({
-		mutationKey: ['unfollow', userId],
 		mutationFn: () => followService.unfollow(userId!),
 		onSuccess: () => {
 			userQuery.refetch();
@@ -64,38 +62,27 @@ export default function Profile({ username }: { username: string }) {
 	});
 
 	if (userQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (userQuery.isError) {
 		return <NotFound></NotFound>;
 	}
 
-	if (user) {
-		return (
-			<>
-				<div className='flex bg-skeleton p-6'>
-					<div className='flex gap-4'>
-						<div className='p-4'>
-							<Image
-								alt='Avatar'
-								src={`${baseUrl.backend}/${user.image}_250x250${imageFormat}`}
-								width={250}
-								height={250}
-								priority
-								className='aspect-square size-52 cursor-pointer rounded-full border shadow-sm'
-							></Image>
-						</div>
-						<div className='flex items-center'>
-							<span className='text-2xl font-semibold'>{user.username}</span>
-						</div>
-					</div>
-				</div>
-				<div className='flex flex-col gap-6 px-8 py-6'>
-					<div className='flex h-10 items-center justify-between'>
-						{isCurrentUser ? (
-							<div></div>
-						) : isFollowed ? (
+	if (!user) {
+		return null;
+	}
+
+	return (
+		<>
+			<UserHero user={user}></UserHero>
+			<div className='flex flex-col gap-8 px-8 py-6'>
+				<div className='flex items-center justify-between'>
+					<div className='flex items-center gap-2'>
+						{tracks?.length ? (
+							<PlayUserButton track={tracks[0]} variant='set'></PlayUserButton>
+						) : null}
+						{isCurrentUser ? null : isFollowed ? (
 							<Button onClick={() => unfollowMutation.mutate()}>
 								Unfollow
 							</Button>
@@ -104,20 +91,20 @@ export default function Profile({ username }: { username: string }) {
 								Follow
 							</Button>
 						)}
-						<div className='flex gap-3'>
-							<span>{`${nFormatter(user._count.followers)} Followers`}</span>
-							<span>{`${nFormatter(user._count.following)} Following`}</span>
-						</div>
 					</div>
-					<ul className='flex flex-col gap-12'>
-						<TracksSection username={username}></TracksSection>
-						<AlbumsSection username={username}></AlbumsSection>
-						<PlaylistsSection username={username}></PlaylistsSection>
-						<FollowersSection username={username}></FollowersSection>
-						<FollowingSection username={username}></FollowingSection>
-					</ul>
+					<div className='flex gap-3'>
+						<span>{`${nFormatter(user._count.followers)} Followers`}</span>
+						<span>{`${nFormatter(user._count.following)} Following`}</span>
+					</div>
 				</div>
-			</>
-		);
-	}
+				<ul className='flex flex-col gap-12'>
+					<TracksSection username={username}></TracksSection>
+					<AlbumsSection username={username}></AlbumsSection>
+					<PlaylistsSection username={username}></PlaylistsSection>
+					<FollowersSection username={username}></FollowersSection>
+					<FollowingSection username={username}></FollowingSection>
+				</ul>
+			</div>
+		</>
+	);
 }

@@ -1,28 +1,72 @@
 'use client';
 
-import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
-import { playlistService } from '@/services/playlist/playlist.service';
-import { useQuery } from '@tanstack/react-query';
+import NotFound from '@/components/NotFound';
+import {
+	useCurrentUserQuery,
+	usePlaylistQuery,
+	usePlaylistTracksQuery
+} from '@/hooks/queries';
+import { SavePlaylistButton } from '@/components/LikeButtons';
+import { PlaylistTable } from '@/components/Tables';
+import { PlaylistHero } from '@/components/Heroes';
+import { PlayPlaylistButton } from '@/components/PlayButtons';
 
 export default function Playlist({
 	username,
-	playlist
+	changeableId
 }: {
 	username: string;
-	playlist: string;
+	changeableId: string;
 }) {
-	// const playlistQuery = useQuery({
-	// 	queryKey: ['playlist', playlist],
-	// 	queryFn: () => playlistService.getOneFull(playlist)
-	// });
-	// const playlist1 = playlistQuery.data?.data;
-	// const playlistTracksQuery = useQuery({
-	// 	queryKey: ['playlist-tracks', playlist],
-	// 	queryFn: () => playlistTrackService.getMany(playlist)
-	// });
-	// const playlistTracks = playlistTracksQuery.data?.data;
-	// if (!playlist || !playlistTracks) {
-	// 	return <>loading</>;
-	// }
-	return <></>;
+	const currentUserQuery = useCurrentUserQuery();
+	const currentUser = currentUserQuery.data?.data;
+
+	const playlistQuery = usePlaylistQuery(username, changeableId);
+	const playlist = playlistQuery.data?.data;
+
+	const playlistTracksQuery = usePlaylistTracksQuery(
+		changeableId,
+		playlist?.id
+	);
+	const playlistTracks = playlistTracksQuery.data?.data;
+
+	if (playlistQuery.isLoading) {
+		return null;
+	}
+
+	if (playlistQuery.isError) {
+		return <NotFound></NotFound>;
+	}
+
+	if (!playlist || !currentUser) {
+		return null;
+	}
+
+	return (
+		<>
+			<PlaylistHero
+				changeableId={changeableId}
+				username={username}
+			></PlaylistHero>
+			<div className='flex flex-col gap-4 px-8 py-6'>
+				<div className='flex gap-2'>
+					{playlistTracks?.length ? (
+						<PlayPlaylistButton
+							track={playlistTracks[0].track}
+							playlistId={playlist.id}
+							variant='set'
+						></PlayPlaylistButton>
+					) : null}
+					<SavePlaylistButton
+						changeableId={changeableId}
+						username={username}
+					></SavePlaylistButton>
+				</div>
+				<PlaylistTable
+					changeableId={changeableId}
+					username={username}
+				></PlaylistTable>
+			</div>
+		</>
+	);
 }

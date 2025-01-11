@@ -1,4 +1,4 @@
-import Footer from '@/components/Footer';
+import Player from '@/components/Player';
 import Header from '@/components/Header';
 import NotFoundComponent from '@/components/NotFound';
 
@@ -11,7 +11,7 @@ export default function NotFound() {
 					<NotFoundComponent></NotFoundComponent>
 				</div>
 			</main>
-			<Footer></Footer>
+			<Player></Player>
 		</>
 	);
 }

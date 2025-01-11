@@ -1,30 +1,20 @@
 'use client';
 
 import { AlbumCard } from '@/components/Cards';
-import { List, ListSkeleton } from '@/components/Lists';
+import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
-import { albumService } from '@/services/album/album.service';
-import { userService } from '@/services/user/user.service';
-import { useQuery } from '@tanstack/react-query';
+import { useAlbumsQuery, useUserQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function Albums({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
+	const userQuery = useUserQuery(username);
 	const user = userQuery.data?.data;
-	const userId = user?.id;
-	const albumsQuery = useQuery({
-		queryKey: ['albums', userId],
-		queryFn: () => albumService.getMany(userId),
-		enabled: !!userId
-	});
+
+	const albumsQuery = useAlbumsQuery(user?.id);
 	const albums = albumsQuery.data?.data;
 
 	if (userQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (userQuery.isError) {
@@ -32,7 +22,7 @@ export default function Albums({ username }: { username: string }) {
 	}
 
 	if (albumsQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (albums) {

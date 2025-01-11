@@ -1,30 +1,20 @@
 'use client';
 
 import { UserCard } from '@/components/Cards';
-import { List, ListSkeleton } from '@/components/Lists';
+import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
-import { followService } from '@/services/user/follow/follow.service';
-import { userService } from '@/services/user/user.service';
-import { useQuery } from '@tanstack/react-query';
+import { useFollowingQuery, useUserQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function Following({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
+	const userQuery = useUserQuery(username);
 	const user = userQuery.data?.data;
-	const userId = user?.id;
-	const followingQuery = useQuery({
-		queryKey: ['following', userId],
-		queryFn: () => followService.getManyFollowing(userId!),
-		enabled: !!userId
-	});
+
+	const followingQuery = useFollowingQuery(user?.id);
 	const following = followingQuery.data?.data;
 
 	if (userQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (userQuery.isError) {
@@ -32,7 +22,7 @@ export default function Following({ username }: { username: string }) {
 	}
 
 	if (followingQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (following) {

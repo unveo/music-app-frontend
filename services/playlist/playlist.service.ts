@@ -3,19 +3,26 @@ import type {
 	CreatePlaylistDto,
 	Playlist,
 	PlaylistFull,
+	PlaylistWithIsSaved,
 	UpdatePlaylistDto
 } from './playlist.types';
 
 export const playlistService = {
 	async getOneFull(username: string, changeableId: string) {
 		return await api.get<PlaylistFull>(
-			`/playlist/?username=${username}&changeableId=${changeableId}`
+			`/playlist?username=${username}&changeableId=${changeableId}`
 		);
 	},
 
 	async getMany(userId: number, take?: number, lastId?: number) {
 		return await api.get<Playlist[]>(
-			`/playlist/many/?userId=${userId}&take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
+			`/playlist/many?userId=${userId}&take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
+		);
+	},
+
+	async getManyWithSaved(take?: number, lastId?: number) {
+		return await api.get<PlaylistWithIsSaved[]>(
+			`/playlist/many-with-saved?take=${take ? take : ''}&lastId=${lastId ? lastId : ''}`
 		);
 	},
 

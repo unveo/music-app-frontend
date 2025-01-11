@@ -3,28 +3,18 @@
 import { TrackCard } from '@/components/Cards';
 import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
-import { trackService } from '@/services/track/track.service';
-import { userService } from '@/services/user/user.service';
-import { useQuery } from '@tanstack/react-query';
+import { useTracksQuery, useUserQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function Tracks({ username }: { username: string }) {
-	const userQuery = useQuery({
-		queryKey: ['user', username],
-		queryFn: () => userService.getByName(username),
-		retry: false
-	});
+	const userQuery = useUserQuery(username);
 	const user = userQuery.data?.data;
-	const userId = user?.id;
-	const tracksQuery = useQuery({
-		queryKey: ['tracks', userId],
-		queryFn: () => trackService.getMany(userId!),
-		enabled: !!userId
-	});
+
+	const tracksQuery = useTracksQuery(user?.id);
 	const tracks = tracksQuery.data?.data;
 
 	if (userQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (userQuery.isError) {
@@ -32,7 +22,7 @@ export default function Tracks({ username }: { username: string }) {
 	}
 
 	if (tracksQuery.isLoading) {
-		return <></>;
+		return null;
 	}
 
 	if (tracks) {

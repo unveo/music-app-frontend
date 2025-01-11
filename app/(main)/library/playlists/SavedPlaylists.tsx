@@ -1,15 +1,11 @@
 'use client';
 
 import { PlaylistCard } from '@/components/Cards';
-import { savedPlaylistService } from '@/services/user/saved-playlist/saved-playlist.service';
-import { useQuery } from '@tanstack/react-query';
+import { usePlaylistsWithSavedQuery } from '@/hooks/queries';
 import Link from 'next/link';
 
 export default function SavedPlaylists() {
-	const savedPlaylistsQuery = useQuery({
-		queryKey: ['saved-playlists'],
-		queryFn: () => savedPlaylistService.getMany()
-	});
+	const savedPlaylistsQuery = usePlaylistsWithSavedQuery();
 	const savedPlaylists = savedPlaylistsQuery.data?.data;
 
 	return (
@@ -21,10 +17,11 @@ export default function SavedPlaylists() {
 				</Link>
 				<Link href='/library/albums'>Albums</Link>
 				<Link href='/library/history'>History</Link>
+				<Link href='/library/following'>Following</Link>
 			</nav>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
 				{savedPlaylists &&
-					savedPlaylists.map(({ playlist }) => (
+					savedPlaylists.map((playlist) => (
 						<PlaylistCard playlist={playlist} key={playlist.id}></PlaylistCard>
 					))}
 			</ul>
