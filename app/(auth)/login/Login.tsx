@@ -23,23 +23,96 @@ import { Input } from '@/components/ui/input';
 import { useForm, FormProvider } from 'react-hook-form';
 import { type LoginDto, LoginSchema } from '@/services/auth/auth.types';
 import { authService } from '@/services/auth/auth.service';
+import { AxiosError } from 'axios';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Login() {
+	const { push } = useRouter();
+	const { toast } = useToast();
+
 	const form = useForm<LoginDto>({
 		resolver: zodResolver(LoginSchema),
 		defaultValues: { email: '', password: '' },
 		mode: 'onSubmit'
 	});
 
-	const { push } = useRouter();
-
 	const loginMutation = useMutation({
 		mutationFn: (data: LoginDto) => authService.login(data),
-		onSuccess: () => push('/')
+		onSuccess: () => push('/'),
+		onError: (error: any) => {
+			if (error.status !== 400) {
+				toast({
+					title: error.response.data.message,
+					variant: 'destructive'
+				});
+			}
+		}
+	});
+
+	const newVerificationMutation = useMutation({
+		mutationFn: (data: LoginDto) => authService.newVerification(data),
+		onError: () => {
+			toast({
+				title: 'Too many requests. Try again later',
+				variant: 'destructive'
+			});
+		}
 	});
 
 	function onSubmit(data: LoginDto) {
 		loginMutation.mutate(data);
+	}
+
+	if (newVerificationMutation.isSuccess) {
+		return (
+			<Card className='mx-auto w-[23rem]'>
+				<CardHeader>
+					<CardTitle className='text-xl'>Verification</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<p>Verification link has been sent to {form.getValues().email}</p>
+					<button
+						onClick={() =>
+							newVerificationMutation.mutate({
+								email: form.getValues().email,
+								password: form.getValues().password
+							})
+						}
+						className='mt-2 text-sm underline'
+					>
+						Send new link
+					</button>
+				</CardContent>
+			</Card>
+		);
+	}
+
+	if (loginMutation.isError) {
+		const error = loginMutation.error as AxiosError;
+
+		if (error.status === 400) {
+			return (
+				<Card className='mx-auto w-[23rem]'>
+					<CardHeader>
+						<CardTitle className='text-xl'>Verification</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p>You are not verified. Check your email</p>
+						<button
+							onClick={() =>
+								newVerificationMutation.mutate({
+									email: form.getValues().email,
+									password: form.getValues().password
+								})
+							}
+							className='mt-2 text-sm underline'
+						>
+							Send new link
+						</button>
+					</CardContent>
+				</Card>
+			);
+		}
 	}
 
 	return (

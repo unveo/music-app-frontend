@@ -1,14 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-	FormField,
-	FormItem,
-	FormLabel,
-	FormControl,
-	FormMessage
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { useCurrentUserQuery } from '@/hooks/queries';
 import { authService } from '@/services/auth/auth.service';
@@ -21,7 +15,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 export default function SecuritySettings() {
 	const { toast } = useToast();
@@ -32,14 +26,12 @@ export default function SecuritySettings() {
 	const changeEmailForm = useForm<ChangeEmailDto>({
 		resolver: zodResolver(ChangeEmailSchema),
 		defaultValues: { email: '' },
-		mode: 'onChange',
 		disabled: !currentUser
 	});
 
 	const changePasswordForm = useForm<ChangePasswordDto>({
 		resolver: zodResolver(ChangePasswordSchema),
 		defaultValues: { newPassword: '', oldPassword: '' },
-		mode: 'onChange',
 		disabled: !currentUser
 	});
 
@@ -68,100 +60,87 @@ export default function SecuritySettings() {
 			</nav>
 			<div className='grid gap-6'>
 				<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
-					<FormProvider {...changeEmailForm}>
-						<form
-							onSubmit={changeEmailForm.handleSubmit((dto) =>
-								changeEmail.mutate(dto)
+					<form
+						onSubmit={changeEmailForm.handleSubmit((dto) =>
+							changeEmail.mutate(dto)
+						)}
+						className='grid gap-4'
+					>
+						<div className='grid gap-2'>
+							<div className='flex items-end justify-between'>
+								<Label htmlFor='email' className='text-lg'>
+									Email
+								</Label>
+								{currentUser?.email ? (
+									<div className='text-end text-zinc-400'>
+										Current email: {currentUser?.email}
+									</div>
+								) : null}
+							</div>
+							<div className='flex h-10 items-center rounded-md border border-border px-2'>
+								<Input
+									id='email'
+									required
+									{...changeEmailForm.register('email')}
+								/>
+							</div>
+							{changeEmailForm.formState.errors.email && (
+								<p className='text-sm text-destructive'>
+									{changeEmailForm.formState.errors.email.message}
+								</p>
 							)}
-							className='grid gap-4'
-						>
-							<FormField
-								control={changeEmailForm.control}
-								name='email'
-								render={({ field }) => (
-									<FormItem className='grid gap-2'>
-										<div className='flex items-end justify-between'>
-											<FormLabel htmlFor='email' className='text-lg'>
-												Email
-											</FormLabel>
-											{currentUser?.email ? (
-												<div className='text-end text-zinc-400'>
-													Current email: {currentUser?.email}
-												</div>
-											) : null}
-										</div>
-
-										<FormControl>
-											<div className='flex h-10 items-center rounded-md border border-border px-2'>
-												<Input id='email' required {...field} />
-											</div>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button disabled={!currentUser} type='submit' className='w-min'>
-								Save
-							</Button>
-						</form>
-					</FormProvider>
+						</div>
+						<Button disabled={!currentUser} type='submit' className='w-min'>
+							Save
+						</Button>
+					</form>
 				</div>
 				<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
-					<FormProvider {...changePasswordForm}>
-						<form
-							onSubmit={changePasswordForm.handleSubmit((dto) =>
-								changePassword.mutate(dto)
+					<form
+						onSubmit={changePasswordForm.handleSubmit((dto) =>
+							changePassword.mutate(dto)
+						)}
+						className='grid gap-4'
+					>
+						<Label htmlFor='oldPassword' className='text-lg'>
+							Password
+						</Label>
+						<div className='grid gap-2'>
+							<Label htmlFor='oldPassword'>Old password</Label>
+							<div className='flex h-10 items-center rounded-md border border-border px-2'>
+								<Input
+									id='oldPassword'
+									type='password'
+									required
+									{...changePasswordForm.register('oldPassword')}
+								/>
+							</div>
+							{changePasswordForm.formState.errors.oldPassword && (
+								<p className='text-sm text-destructive'>
+									{changePasswordForm.formState.errors.oldPassword.message}
+								</p>
 							)}
-							className='grid gap-4'
-						>
-							<FormLabel htmlFor='oldPassword' className='text-lg'>
-								Password
-							</FormLabel>
-							<FormField
-								control={changePasswordForm.control}
-								name='oldPassword'
-								render={({ field }) => (
-									<FormItem className='grid gap-2'>
-										<FormLabel htmlFor='oldPassword'>Old password</FormLabel>
-										<FormControl>
-											<div className='flex h-10 items-center rounded-md border border-border px-2'>
-												<Input
-													id='oldPassword'
-													type='password'
-													required
-													{...field}
-												/>
-											</div>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={changePasswordForm.control}
-								name='newPassword'
-								render={({ field }) => (
-									<FormItem className='grid gap-2'>
-										<FormLabel htmlFor='newPassword'>New password</FormLabel>
-										<FormControl>
-											<div className='flex h-10 items-center rounded-md border border-border px-2'>
-												<Input
-													id='newPassword'
-													type='password'
-													required
-													{...field}
-												/>
-											</div>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button disabled={!currentUser} type='submit' className='w-min'>
-								Save
-							</Button>
-						</form>
-					</FormProvider>
+						</div>
+						<div className='grid gap-2'>
+							<Label htmlFor='newPassword'>New password</Label>
+							<div className='flex h-10 items-center rounded-md border border-border px-2'>
+								<Input
+									id='newPassword'
+									type='password'
+									required
+									{...changePasswordForm.register('newPassword')}
+								/>
+							</div>
+							{changePasswordForm.formState.errors.newPassword && (
+								<p className='text-sm text-destructive'>
+									{changePasswordForm.formState.errors.newPassword.message}
+								</p>
+							)}
+						</div>
+						<Button disabled={!currentUser} type='submit' className='w-min'>
+							Save
+						</Button>
+					</form>
 				</div>
 			</div>
 		</>

@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
-import Image from 'next/image';
 import {
 	AlbumsSection,
 	FollowersSection,
@@ -14,7 +13,6 @@ import { nFormatter } from '@/lib/utils';
 import { followService } from '@/services/user/follow/follow.service';
 import NotFound from '@/components/NotFound';
 import useCardsCount from '@/hooks/cards-count';
-import { baseUrl, LARGE_IMAGE_ENDING } from '@/config';
 import {
 	useCurrentUserQuery,
 	useFollowersQuery,

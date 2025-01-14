@@ -37,7 +37,7 @@ export function UserCard({
 			<div className='group relative rounded-full border'>
 				<Link href={`/${user.username}`} className='aspect-square rounded-full'>
 					<Image
-						alt='Track image'
+						alt='User image'
 						src={`${baseUrl.backend}/${user.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
@@ -181,7 +181,7 @@ export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
 					className='aspect-square rounded-md'
 				>
 					<Image
-						alt='Track image'
+						alt='Playlist image'
 						src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
@@ -224,7 +224,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
 					className='aspect-square rounded-md'
 				>
 					<Image
-						alt='Track image'
+						alt='Playlist image'
 						src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
@@ -270,7 +270,7 @@ export function AlbumCardProfile({ album }: { album: Album }) {
 					className='aspect-square rounded-md'
 				>
 					<Image
-						alt='Track image'
+						alt='Album image'
 						src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
@@ -313,7 +313,7 @@ export function AlbumCard({ album }: { album: Album }) {
 					className='aspect-square rounded-md'
 				>
 					<Image
-						alt='Track image'
+						alt='Album image'
 						src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}

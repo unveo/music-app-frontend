@@ -2,9 +2,11 @@
 
 import { albumTrackService } from '@/services/album/album-track/album-track.service';
 import { albumService } from '@/services/album/album.service';
+import { authService } from '@/services/auth/auth.service';
 import { notificationService } from '@/services/notification/notification.service';
 import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { playlistService } from '@/services/playlist/playlist.service';
+import { searchService } from '@/services/search/search.service';
 import { trackService } from '@/services/track/track.service';
 import { followService } from '@/services/user/follow/follow.service';
 import { likedAlbumService } from '@/services/user/liked-album/liked-album.service';
@@ -222,5 +224,24 @@ export function useNotificationsQuery() {
 	return useQuery({
 		queryKey: ['notifications'],
 		queryFn: () => notificationService.getAll()
+	});
+}
+
+export function useVerifyQuery(token?: string | null) {
+	return useQuery({
+		queryKey: ['verify'],
+		queryFn: () => authService.verify(token!),
+		enabled: !!token
+	});
+}
+
+export function useSearchQuery(query: string) {
+	return useQuery({
+		queryKey: ['search', query],
+		queryFn: () => searchService.search(query),
+		enabled: !!query,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false
 	});
 }

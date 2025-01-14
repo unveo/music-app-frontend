@@ -3,13 +3,13 @@ export const IMAGE_FILE_LIMIT = 10485760;
 export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png'];
 export const ACCEPTED_AUDIO_TYPES = [
 	'audio/mpeg',
-	'audio/aac',
-	'audio/mp4',
+	'audio/vnd.dlna.adts',
 	'audio/flac',
 	'audio/wav',
 	'audio/aiff',
-	'audio/webm'
-]; // m4a check, webm check
+	'audio/webm',
+	'video/webm'
+];
 export const RESTRICTED_USERNAMES = [
 	'login',
 	'signup',
@@ -39,8 +39,7 @@ export const messages = {
 	imageMaxSize: 'Max image file size is 10MB',
 	imageTypes: 'Only jpg and png files are supported',
 	audioMaxSize: 'Max audio file size is 50MB',
-	audioTypes:
-		'Only mp3, aac, m4a, flac, wav, aiff and webm files are supported',
+	audioTypes: 'Only mp3, aac, flac, wav, aiff and webm files are supported',
 	restrictedUsername: 'This username is not available',
 	emailValid: 'This email is not valid',
 	albumTracks: {

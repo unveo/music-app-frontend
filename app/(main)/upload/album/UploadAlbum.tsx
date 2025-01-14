@@ -75,7 +75,7 @@ export default function UploadAlbum() {
 
 		dto.tracks.map((track) => {
 			tracks.push({ changeableId: track.changeableId, title: track.title });
-			audios.push(track.audio!); //
+			audios.push(track.audio!);
 		});
 
 		const formData = new FormData();
@@ -99,6 +99,7 @@ export default function UploadAlbum() {
 				<Link href='/upload/album' className='font-semibold text-primary'>
 					Album
 				</Link>
+				<Link href='/upload/playlist'>Playlist</Link>
 			</nav>
 			<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
 				<form

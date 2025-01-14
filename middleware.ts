@@ -7,7 +7,9 @@ export function middleware(request: NextRequest) {
 	const refreshToken = cookies.get(REFRESH_TOKEN)?.value;
 
 	const isAuthPage =
-		url === `${baseUrl.frontend}/login` || url === `${baseUrl.frontend}/signup`;
+		url === `${baseUrl.frontend}/login` ||
+		url === `${baseUrl.frontend}/signup` ||
+		url.startsWith(`${baseUrl.frontend}/verify`);
 
 	if (refreshToken && isAuthPage) {
 		return NextResponse.redirect(new URL('/', url));

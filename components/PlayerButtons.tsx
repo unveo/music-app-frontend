@@ -15,16 +15,32 @@ import {
 	VolumeX
 } from 'lucide-react';
 import { usePlayTrack } from '@/hooks/play-track';
-import { Track } from '@/services/track/track.types';
 import { useMutation } from '@tanstack/react-query';
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import { useDisabledLikedTracksQuery } from '@/hooks/queries';
 import { usePathname } from 'next/navigation';
 import { useTrackStore } from '@/stores/track.store';
 import { useSettingsStore } from '@/stores/settings.store';
+import { useEffect } from 'react';
 
 export function PlayButton() {
 	const { isPlaying, audioReady, onClickPlay } = usePlayTrack();
+
+	useEffect(() => {
+		const handleSpaceKey = (event: KeyboardEvent) => {
+			if (event.code === 'Space') {
+				event.preventDefault();
+				onClickPlay();
+			}
+		};
+
+		window.addEventListener('keydown', handleSpaceKey);
+
+		return () => {
+			window.removeEventListener('keydown', handleSpaceKey);
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<Button

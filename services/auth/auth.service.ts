@@ -28,6 +28,19 @@ export const authService = {
 		return await apiWithoutAuth.post<UserPrivate>('/auth/login/refresh');
 	},
 
+	async verify(token: string) {
+		return await apiWithoutAuth.post<UserPrivate>(
+			`/auth/verify?token=${token}`
+		);
+	},
+
+	async newVerification(dto: LoginDto) {
+		return await apiWithoutAuth.post<UserPrivate>(
+			'/auth/new-verification',
+			dto
+		);
+	},
+
 	async changeEmail(dto: ChangeEmailDto) {
 		return await api.patch<UserPrivate>('/auth/email', dto);
 	},

@@ -66,6 +66,7 @@ export interface Playlist {
 
 export interface PlaylistWithIsSaved extends Playlist {
 	isSaved: boolean;
+	addedAt?: Date | null;
 }
 
 export interface PlaylistFull extends Playlist {

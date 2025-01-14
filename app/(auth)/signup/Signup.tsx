@@ -21,21 +21,30 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { FormProvider, useForm } from 'react-hook-form';
-import { RegisterSchema, type RegisterDto } from '@/services/auth/auth.types';
+import {
+	LoginDto,
+	RegisterSchema,
+	type RegisterDto
+} from '@/services/auth/auth.types';
 import { authService } from '@/services/auth/auth.service';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Signup() {
+	const { push } = useRouter();
+	const { toast } = useToast();
+
 	const form = useForm<RegisterDto>({
 		resolver: zodResolver(RegisterSchema),
 		defaultValues: { email: '', password: '', username: '' },
 		mode: 'onSubmit'
 	});
 
-	const { push } = useRouter();
-
 	const registerMutation = useMutation({
 		mutationFn: (data: RegisterDto) => authService.register(data),
-		onSuccess: () => push('/')
+		onSuccess: ({ data }) => {
+			toast({ title: `Verification link has been sent to ${data.email}` });
+			push('/login');
+		}
 	});
 
 	function onSubmit(data: RegisterDto) {

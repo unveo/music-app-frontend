@@ -191,7 +191,7 @@ export function PlaylistTable({
 	if (!playlistTracks?.length) {
 		return (
 			<div className='flex h-60 w-full items-center justify-center text-2xl'>
-				This playlist doesn't have any tracks
+				This playlist doesn&apos;t have any tracks
 			</div>
 		);
 	}
@@ -321,7 +321,7 @@ export function PlaylistSortableTable({
 	if (!playlistTracks?.length) {
 		return (
 			<div className='flex h-60 w-full items-center justify-center text-2xl'>
-				This playlist doesn't have any tracks
+				This playlist doesn&apos;t have any tracks
 			</div>
 		);
 	}
@@ -392,7 +392,7 @@ export function AlbumTable({
 	if (!albumTracks?.length) {
 		return (
 			<div className='flex h-60 w-full items-center justify-center text-2xl'>
-				This album doesn't have any tracks
+				This album doesn&apos;t have any tracks
 			</div>
 		);
 	}
@@ -519,7 +519,7 @@ export function AlbumSortableTable({
 	if (!albumTracks?.length) {
 		return (
 			<div className='flex h-60 w-full items-center justify-center text-2xl'>
-				This album doesn't have any tracks
+				This album doesn&apos;t have any tracks
 			</div>
 		);
 	}
@@ -729,7 +729,7 @@ export function UploadAlbumTable({
 													type='file'
 													id={`tracks.${index}.audio`}
 													className='hidden'
-													accept={`.mp3, .aac, .m4a, .flac, .wav, .aiff, .webm, ${ACCEPTED_AUDIO_TYPES.join(', ')}`}
+													accept={`.mp3, .aac, .flac, .wav, .aiff, .webm, ${ACCEPTED_AUDIO_TYPES.join(', ')}`}
 													onChange={(e) => {
 														const file = e.target.files?.[0];
 

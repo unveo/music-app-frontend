@@ -47,7 +47,7 @@ export default function Notifications() {
 					<Bell className='size-5' />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end' className='w-96'>
+			<DropdownMenuContent align='end' className='w-64 md:w-96'>
 				<DropdownMenuLabel className='flex justify-between'>
 					<p>Notifications</p>
 					{notifications?.length ? (
@@ -66,10 +66,13 @@ export default function Notifications() {
 						<div key={notification.id}>
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
-								className='px-2 py-1.5'
+								className='gap-2 px-2 py-1.5'
 								onSelect={(event) => event.preventDefault()}
 							>
-								<Link href={notification.link} className='w-full'>
+								<Link
+									href={notification.link}
+									className='w-full overflow-hidden text-ellipsis'
+								>
 									{notification.message}
 								</Link>
 								<Button
@@ -88,7 +91,7 @@ export default function Notifications() {
 					<>
 						<DropdownMenuSeparator />
 						<div className='flex h-24 items-center justify-center text-sm'>
-							You don't have any notifications
+							You don&apos;t have any notifications
 						</div>
 					</>
 				)}

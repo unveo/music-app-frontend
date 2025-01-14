@@ -103,6 +103,7 @@ export function TrackHero({
 			setImageUrl(`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`);
 			UpdateTrackForm.setValue('title', track.title);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [track]);
 
 	useEffect(() => {
@@ -112,6 +113,7 @@ export function TrackHero({
 				variant: 'destructive'
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [UpdateTrackForm.formState.errors.title]);
 
 	function onSubmit(dto: UpdateTrackDto) {
@@ -346,6 +348,7 @@ export function PlaylistHero({
 			setImageUrl(`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`);
 			UpdatePlaylistForm.setValue('title', playlist.title);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [playlist]);
 
 	useEffect(() => {
@@ -355,6 +358,7 @@ export function PlaylistHero({
 				variant: 'destructive'
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [UpdatePlaylistForm.formState.errors.title]);
 
 	function onSubmit(dto: UpdatePlaylistDto) {
@@ -590,6 +594,7 @@ export function AlbumHero({
 			setImageUrl(`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`);
 			UpdateAlbumForm.setValue('title', album.title);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [album]);
 
 	useEffect(() => {
@@ -599,6 +604,7 @@ export function AlbumHero({
 				variant: 'destructive'
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [UpdateAlbumForm.formState.errors.title]);
 
 	function onSubmit(dto: UpdateAlbumDto) {

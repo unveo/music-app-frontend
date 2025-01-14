@@ -84,7 +84,7 @@ export default function AddToPlaylistMenu({
 						</DropdownMenuItem>
 					))
 				) : (
-					<div>You don't have playlists</div>
+					<div className='p-2'>You don&apos;t have playlists</div>
 				)}
 			</DropdownMenuContent>
 		</DropdownMenu>

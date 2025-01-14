@@ -34,12 +34,13 @@ export default function Player() {
 
 	return (
 		<FooterLayout>
-			<div className='flex items-center gap-4'>
+			<div className='flex h-full items-center gap-4'>
 				<Link
 					href={`/${trackInfo.username}/${trackInfo.changeableId}`}
-					className='min-h12 size-12 min-w-12 rounded-md border'
+					className='size-12 min-h-12 min-w-12 rounded-md border'
 				>
 					<Image
+						priority
 						alt='cover'
 						src={`${baseUrl.backend}/${trackInfo.image}${SMALL_IMAGE_ENDING}`}
 						width={50}
@@ -63,7 +64,7 @@ export default function Player() {
 				</div>
 				<LikeTrackPlayerButton />
 			</div>
-			<div className='col-start-2 col-end-5 flex flex-col pt-1'>
+			<div className='col-start-2 col-end-5 flex h-full flex-col items-center pt-1'>
 				<div className='flex justify-center gap-2'>
 					<ShuffleButton />
 					<SkipBackButton />
@@ -79,7 +80,7 @@ export default function Player() {
 					<span className='w-12'>{formatTime(trackInfo.duration)}</span>
 				</div>
 			</div>
-			<div className='col-start-5 flex items-center justify-end gap-1'>
+			<div className='col-start-5 flex h-full items-center justify-end gap-1'>
 				<VolumeButton />
 				<VolumeSlider />
 			</div>
@@ -93,8 +94,8 @@ function FooterLayout({
 	children?: React.ReactNode;
 }>) {
 	return (
-		<footer className='sticky bottom-0 flex h-16 justify-center border-t bg-background'>
-			<div className='grid h-full w-full max-w-[80rem] grid-cols-5 px-2'>
+		<footer className='sticky bottom-0 flex h-16 max-h-16 min-h-16 justify-center border-t bg-background'>
+			<div className='grid h-full w-full max-w-[80rem] grid-cols-5 items-center px-2'>
 				{children}
 			</div>
 		</footer>
