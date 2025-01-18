@@ -10,7 +10,7 @@ import type {
 import Image from 'next/image';
 import Link from 'next/link';
 import { nFormatter } from '@/lib/utils';
-import { baseUrl, LARGE_IMAGE_ENDING } from '@/config';
+import { IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
 import {
 	PlayAlbumButton,
 	PlayLikedTrackButton,
@@ -38,7 +38,7 @@ export function UserCard({
 				<Link href={`/${user.username}`} className='aspect-square rounded-full'>
 					<Image
 						alt='User image'
-						src={`${baseUrl.backend}/${user.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${user.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -71,7 +71,7 @@ export function TrackCard({ track }: { track: Track }) {
 				>
 					<Image
 						alt='Track image'
-						src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -105,7 +105,7 @@ export function LikedTrackCard({ track }: { track: Track }) {
 				>
 					<Image
 						alt='Track image'
-						src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -142,7 +142,7 @@ export function ListeningHistoryCard({ track }: { track: Track }) {
 				>
 					<Image
 						alt='Track image'
-						src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -182,7 +182,7 @@ export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
 				>
 					<Image
 						alt='Playlist image'
-						src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${playlist.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -225,7 +225,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
 				>
 					<Image
 						alt='Playlist image'
-						src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${playlist.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -271,7 +271,7 @@ export function AlbumCardProfile({ album }: { album: Album }) {
 				>
 					<Image
 						alt='Album image'
-						src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${album.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -314,7 +314,7 @@ export function AlbumCard({ album }: { album: Album }) {
 				>
 					<Image
 						alt='Album image'
-						src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${album.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority

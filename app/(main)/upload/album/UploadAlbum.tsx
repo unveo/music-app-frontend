@@ -66,6 +66,9 @@ export default function UploadAlbum() {
 				image: undefined,
 				tracks: []
 			});
+		},
+		onMutate: () => {
+			toast({ title: 'Uploading album, please wait...' });
 		}
 	});
 

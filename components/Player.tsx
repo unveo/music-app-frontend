@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { formatTime } from '@/lib/utils';
 import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
-import { baseUrl, SMALL_IMAGE_ENDING } from '@/config';
+import { IMAGES_URL, SMALL_IMAGE_ENDING } from '@/config';
 import { useCurrentUserQuery } from '@/hooks/queries';
 import {
 	LikeTrackPlayerButton,
@@ -42,7 +42,7 @@ export default function Player() {
 					<Image
 						priority
 						alt='cover'
-						src={`${baseUrl.backend}/${trackInfo.image}${SMALL_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${trackInfo.image}${SMALL_IMAGE_ENDING}`}
 						width={50}
 						height={50}
 						className='aspect-square size-12 rounded-md'

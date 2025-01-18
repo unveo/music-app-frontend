@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useToast } from '@/components/ui/use-toast';
 import { ACCEPTED_IMAGE_TYPES } from '@/config';
 import { useCurrentUserQuery } from '@/hooks/queries';
@@ -210,9 +211,14 @@ export default function ProfileSettings() {
 								</div>
 							)}
 						/>
-						<Button disabled={!currentUser} type='submit' className='w-min'>
-							Save
-						</Button>
+						<div className='flex items-center gap-4'>
+							<Button disabled={!currentUser} type='submit' className='w-min'>
+								Save
+							</Button>
+							<LoadingSpinner
+								className={changeImageMutation.isPending ? 'opacity-100' : ''}
+							/>
+						</div>
 					</form>
 				</div>
 			</div>

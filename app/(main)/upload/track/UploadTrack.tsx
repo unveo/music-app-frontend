@@ -63,6 +63,9 @@ export default function UploadTrack() {
 				changeableId: '',
 				title: ''
 			});
+		},
+		onMutate: () => {
+			toast({ title: 'Uploading track, please wait...' });
 		}
 	});
 

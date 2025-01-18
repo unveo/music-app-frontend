@@ -1,6 +1,6 @@
 'use client';
 
-import { baseUrl } from '@/config';
+import { AUDIO_ENDING, AUDIO_URL } from '@/config';
 import { trackService } from '@/services/track/track.service';
 import { Track } from '@/services/track/track.types';
 import { useListenTimeStore } from '@/stores/listen-time.store';
@@ -104,7 +104,7 @@ export function usePlayTrack() {
 
 	function setNewAudio(newTrackInfo: Track) {
 		const newAudio = new Audio(
-			`${baseUrl.backend}/api/track/stream/${newTrackInfo.id}`
+			`${AUDIO_URL}/${newTrackInfo.audio}${AUDIO_ENDING}`
 		);
 
 		setAudioReady(false);

@@ -16,7 +16,8 @@ export const RESTRICTED_USERNAMES = [
 	'logout',
 	'library',
 	'upload',
-	'settings'
+	'settings',
+	'api'
 ];
 export const regex = {
 	title: /^[^\s][\s\S]*$/,
@@ -49,10 +50,13 @@ export const messages = {
 	}
 };
 export const baseUrl = {
-	frontend: 'http://localhost:3000',
-	backend: 'http://localhost:5000'
+	frontend: process.env.NEXT_PUBLIC_FRONTEND_URL,
+	backend: process.env.NEXT_PUBLIC_BACKEND_URL
 };
+export const IMAGES_URL = process.env.NEXT_PUBLIC_IMAGES_URL;
+export const AUDIO_URL = process.env.NEXT_PUBLIC_AUDIO_URL;
 export const REFRESH_TOKEN = 'refreshToken';
 export const MS_TO_ADD_LISTEN = 10000;
 export const SMALL_IMAGE_ENDING = '_50x50.jpg';
 export const LARGE_IMAGE_ENDING = '_250x250.jpg';
+export const AUDIO_ENDING = '.webm';

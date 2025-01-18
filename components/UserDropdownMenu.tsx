@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { authService } from '@/services/auth/auth.service';
-import { baseUrl, SMALL_IMAGE_ENDING } from '@/config';
+import { IMAGES_URL, SMALL_IMAGE_ENDING } from '@/config';
 import { useCurrentUserQuery } from '@/hooks/queries';
 import { useTrackStore } from '@/stores/track.store';
 
@@ -38,7 +38,7 @@ export function UserDropdownMenu() {
 				<button className='size-8 rounded-full bg-muted outline-none'>
 					{currentUserQuery.isLoading ? null : (
 						<Image
-							src={`${baseUrl.backend}/${currentUser?.image}${SMALL_IMAGE_ENDING}`}
+							src={`${IMAGES_URL}/${currentUser?.image}${SMALL_IMAGE_ENDING}`}
 							width={100}
 							height={100}
 							alt='avatar'

@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ACCEPTED_IMAGE_TYPES, baseUrl, LARGE_IMAGE_ENDING } from '@/config';
+import { ACCEPTED_IMAGE_TYPES, IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
 import { trackService } from '@/services/track/track.service';
 import { useMutation } from '@tanstack/react-query';
 import { Check, ImageUp, Pencil, X } from 'lucide-react';
@@ -46,7 +46,7 @@ export function UserHero({ user }: { user: UserPublic }) {
 				<div className='p-4'>
 					<Image
 						alt='Avatar'
-						src={`${baseUrl.backend}/${user.image}${LARGE_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${user.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
@@ -100,7 +100,7 @@ export function TrackHero({
 
 	useEffect(() => {
 		if (track) {
-			setImageUrl(`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`);
+			setImageUrl(`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`);
 			UpdateTrackForm.setValue('title', track.title);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -165,7 +165,7 @@ export function TrackHero({
 												className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 												onClick={() => {
 													setImageUrl(
-														`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`
+														`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`
 													);
 													onChange(undefined);
 												}}
@@ -231,7 +231,7 @@ export function TrackHero({
 					<div className='group relative size-52 cursor-pointer rounded-md border shadow-sm'>
 						<Image
 							alt='Cover'
-							src={`${baseUrl.backend}/${track.image}${LARGE_IMAGE_ENDING}`}
+							src={`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`}
 							width={250}
 							height={250}
 							priority
@@ -345,7 +345,7 @@ export function PlaylistHero({
 
 	useEffect(() => {
 		if (playlist) {
-			setImageUrl(`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`);
+			setImageUrl(`${IMAGES_URL}/${playlist.image}${LARGE_IMAGE_ENDING}`);
 			UpdatePlaylistForm.setValue('title', playlist.title);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -410,7 +410,7 @@ export function PlaylistHero({
 												className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 												onClick={() => {
 													setImageUrl(
-														`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`
+														`${IMAGES_URL}/${playlist.image}${LARGE_IMAGE_ENDING}`
 													);
 													onChange(undefined);
 												}}
@@ -475,7 +475,7 @@ export function PlaylistHero({
 					<div className='group relative size-52 cursor-pointer rounded-md border shadow-sm'>
 						<Image
 							alt='Cover'
-							src={`${baseUrl.backend}/${playlist.image}${LARGE_IMAGE_ENDING}`}
+							src={`${IMAGES_URL}/${playlist.image}${LARGE_IMAGE_ENDING}`}
 							width={250}
 							height={250}
 							priority
@@ -591,7 +591,7 @@ export function AlbumHero({
 
 	useEffect(() => {
 		if (album) {
-			setImageUrl(`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`);
+			setImageUrl(`${IMAGES_URL}/${album.image}${LARGE_IMAGE_ENDING}`);
 			UpdateAlbumForm.setValue('title', album.title);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -656,7 +656,7 @@ export function AlbumHero({
 												className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 												onClick={() => {
 													setImageUrl(
-														`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`
+														`${IMAGES_URL}/${album.image}${LARGE_IMAGE_ENDING}`
 													);
 													onChange(undefined);
 												}}
@@ -721,7 +721,7 @@ export function AlbumHero({
 					<div className='group relative size-52 cursor-pointer rounded-md border shadow-sm'>
 						<Image
 							alt='Cover'
-							src={`${baseUrl.backend}/${album.image}${LARGE_IMAGE_ENDING}`}
+							src={`${IMAGES_URL}/${album.image}${LARGE_IMAGE_ENDING}`}
 							width={250}
 							height={250}
 							priority

@@ -6,7 +6,7 @@ import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
 import { useCallback, useEffect } from 'react';
 import { useCurrentTrackQuery } from './queries';
-import { baseUrl, MS_TO_ADD_LISTEN } from '@/config';
+import { AUDIO_ENDING, AUDIO_URL, MS_TO_ADD_LISTEN } from '@/config';
 import { trackService } from '@/services/track/track.service';
 import { usePlayTrack } from './play-track';
 
@@ -54,7 +54,7 @@ export function usePlayer() {
 	useEffect(() => {
 		if (currentTrack) {
 			const audio = new Audio(
-				`${baseUrl.backend}/api/track/stream/${currentTrack.id}`
+				`${AUDIO_URL}/${currentTrack.audio}${AUDIO_ENDING}`
 			);
 
 			setAudio(audio);

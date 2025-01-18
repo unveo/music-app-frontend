@@ -12,7 +12,7 @@ import { useQueueStore } from '@/stores/queue.store';
 import { LikeTrackButton } from './LikeButtons';
 import { RemoveFromPlaylistButton } from './RemoveButtons';
 import Image from 'next/image';
-import { baseUrl, SMALL_IMAGE_ENDING } from '@/config';
+import { IMAGES_URL, SMALL_IMAGE_ENDING } from '@/config';
 import Link from 'next/link';
 import { TrackInAlbum } from '@/services/album/album-track/album-track.types';
 import { DeleteAlbumTrackButton } from './DeleteButtons';
@@ -54,7 +54,7 @@ export function PlaylistRow({
 				<div className='flex h-10 items-center gap-3'>
 					<Image
 						alt='cover'
-						src={`${baseUrl.backend}/${playlistTrack.track.image}${SMALL_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${playlistTrack.track.image}${SMALL_IMAGE_ENDING}`}
 						width={50}
 						height={50}
 						className='aspect-square size-10 rounded-md border'
@@ -152,7 +152,7 @@ export function PlaylistSortableRow({
 				<div className='flex h-10 items-center gap-3'>
 					<Image
 						alt='cover'
-						src={`${baseUrl.backend}/${playlistTrack.track.image}${SMALL_IMAGE_ENDING}`}
+						src={`${IMAGES_URL}/${playlistTrack.track.image}${SMALL_IMAGE_ENDING}`}
 						width={50}
 						height={50}
 						className='aspect-square size-10 rounded-md border'
