@@ -21,14 +21,14 @@ export default function Header() {
 				<div className='flex h-full items-center justify-end gap-1 px-4 md:w-40 xl:px-2'>
 					<Link
 						href='/search'
-						className='flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
+						className='flex size-8 min-w-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
 					>
 						<SearchIcon className='size-5' />
 					</Link>
 					<Notifications />
 					<Link
 						href='/upload'
-						className='mr-1 flex size-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
+						className='mr-1 flex size-8 min-w-8 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground'
 					>
 						<ArrowUpFromLine className='size-5' />
 					</Link>

@@ -92,7 +92,7 @@ export default function Profile({ username }: { username: string }) {
 					</div>
 					<div className='flex gap-3'>
 						<span>{`${nFormatter(user._count.followers)} Followers`}</span>
-						<span>{`${nFormatter(user._count.following)} Following`}</span>
+						<span className='hidden sm:inline'>{`${nFormatter(user._count.following)} Following`}</span>
 					</div>
 				</div>
 				<ul className='flex flex-col gap-12'>

@@ -86,13 +86,16 @@ export default function ProfileSettings() {
 						className='grid gap-4'
 					>
 						<div className='grid gap-2'>
-							<div className='flex items-end justify-between'>
+							<div className='flex items-end justify-between gap-4 truncate'>
 								<Label htmlFor='username' className='w-min text-lg'>
 									Username
 								</Label>
 								{currentUser?.username ? (
-									<div className='text-end text-zinc-400'>
-										Current username: {currentUser?.username}
+									<div className='truncate text-end text-zinc-400'>
+										<p className='hidden sm:inline'>
+											Current username: {currentUser?.username}
+										</p>
+										<p className='sm:hidden'>{currentUser?.username}</p>
 									</div>
 								) : null}
 							</div>

@@ -41,7 +41,7 @@ export function TrackSlider({ updateTime }: { updateTime: () => void }) {
 			max={1}
 			step={0.01}
 			disabled={audioReady ? false : true}
-			className='w-52 md:w-80 lg:w-[26rem]'
+			className='w-full sm:w-52 md:w-80 lg:w-[26rem]'
 		/>
 	);
 }
@@ -68,7 +68,7 @@ export function VolumeSlider() {
 			onValueChange={onVolumeChange}
 			max={1}
 			step={0.01}
-			className='w-28'
+			className='w-16 md:w-20 lg:w-28'
 		/>
 	);
 }

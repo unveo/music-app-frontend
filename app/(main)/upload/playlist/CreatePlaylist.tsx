@@ -83,20 +83,20 @@ export default function CreatePlaylist() {
 					Playlist
 				</Link>
 			</nav>
-			<div className='grid gap-6'>
+			<div className='flex flex-col gap-6'>
 				<div className='rounded-md border bg-card p-6 text-card-foreground shadow-sm'>
 					<form
 						onSubmit={handleSubmit(onSubmit)}
 						noValidate
 						className='flex flex-col gap-6'
 					>
-						<div className='flex gap-4'>
+						<div className='flex flex-col gap-4 md:flex-row'>
 							<div className='flex w-full flex-col gap-4'>
 								<div className='grid gap-2'>
 									<div className='flex flex-col gap-2'>
 										<Label htmlFor='title'>Title</Label>
 										<div className='flex items-center gap-2'>
-											<div className='flex h-10 w-80 items-center rounded-md border border-border px-2'>
+											<div className='flex h-10 w-64 items-center rounded-md border border-border px-2 lg:w-80'>
 												<Input
 													id='title'
 													placeholder='Title'
@@ -117,7 +117,7 @@ export default function CreatePlaylist() {
 									<div className='flex flex-col gap-2'>
 										<Label htmlFor='changeableId'>Playlist id</Label>
 										<div className='flex items-center gap-2'>
-											<div className='flex h-10 w-80 items-center rounded-md border border-border px-2'>
+											<div className='flex h-10 w-64 items-center rounded-md border border-border px-2 lg:w-80'>
 												<Input
 													id='changeableId'
 													required

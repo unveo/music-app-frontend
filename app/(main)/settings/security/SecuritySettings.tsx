@@ -67,13 +67,16 @@ export default function SecuritySettings() {
 						className='grid gap-4'
 					>
 						<div className='grid gap-2'>
-							<div className='flex items-end justify-between'>
+							<div className='flex items-end justify-between gap-4 truncate'>
 								<Label htmlFor='email' className='text-lg'>
 									Email
 								</Label>
 								{currentUser?.email ? (
-									<div className='text-end text-zinc-400'>
-										Current email: {currentUser?.email}
+									<div className='truncate text-end text-zinc-400'>
+										<p className='hidden sm:inline'>
+											Current email: {currentUser?.email}
+										</p>
+										<p className='sm:hidden'>{currentUser?.email}</p>
 									</div>
 								) : null}
 							</div>

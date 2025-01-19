@@ -38,7 +38,7 @@ export function PlayUserTrackButton({
 			queueId === track.userId
 				? 'opacity-100'
 				: 'opacity-0'
-		} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm hidden sm:inline-flex`;
 	}
 
 	return (
@@ -81,7 +81,7 @@ export function PlayUserButton({
 	let classes = '';
 
 	if (variant === 'card') {
-		classes += `${isPlaying && type === 'user' && queueId === track.userId ? 'opacity-100' : 'opacity-0'} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		classes += `${isPlaying && type === 'user' && queueId === track.userId ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
 
 	return (
@@ -113,7 +113,7 @@ export function PlayLikedTrackButton({ track }: { track?: Track }) {
 			variant='outline'
 			size='icon-lg'
 			type='button'
-			className={`${isPlaying && trackId === track.id && type === 'liked' ? 'opacity-100' : 'opacity-0'} absolute bottom-0 right-0 m-2 shadow-sm transition-opacity group-hover:opacity-100`}
+			className={`${isPlaying && trackId === track.id && type === 'liked' ? 'opacity-100' : 'opacity-0'} absolute bottom-0 right-0 m-2 hidden shadow-sm transition-opacity group-hover:opacity-100 sm:inline-flex`}
 			onClick={() => onClickLikedTrack(track)}
 		>
 			{isPlaying && trackId === track.id && type === 'liked' ? (
@@ -186,7 +186,7 @@ export function PlayPlaylistButton({
 	let classes = '';
 
 	if (variant === 'card') {
-		classes += `${isPlaying && type === 'playlist' && queueId === playlistId ? 'opacity-100' : 'opacity-0'} transition-opacity absolute group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		classes += `${isPlaying && type === 'playlist' && queueId === playlistId ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex transition-opacity absolute group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
 
 	return (
@@ -267,7 +267,7 @@ export function PlayAlbumButton({
 	let classes = '';
 
 	if (variant === 'card') {
-		classes += `${isPlaying && type === 'album' && queueId === albumId ? 'opacity-100' : 'opacity-0'} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		classes += `${isPlaying && type === 'album' && queueId === albumId ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
 
 	return (

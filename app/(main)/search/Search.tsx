@@ -45,61 +45,67 @@ export default function Search() {
 	}, []);
 
 	return (
-		<div className='flex flex-col items-center gap-4 p-8'>
-			<div className='flex items-center gap-2'>
-				<div className='flex h-10 w-80 items-center rounded-md border border-border bg-background px-2'>
-					<Input
-						id='search'
-						placeholder='Search...'
-						value={query}
-						onChange={(event) => setQuery(event.target.value)}
-						disabled={!currentUser}
-						maxLength={30}
-						className=''
-					/>
+		<div className='flex flex-col items-center gap-4 p-4 sm:p-6 md:p-8'>
+			<div className='flex w-full max-w-md flex-col items-center gap-2 sm:flex-row'>
+				<div className='flex w-full items-center gap-2'>
+					<div className='flex h-10 flex-grow items-center rounded-md border border-border bg-background px-2'>
+						<Input
+							id='search'
+							placeholder='Search...'
+							value={query}
+							onChange={(event) => setQuery(event.target.value)}
+							maxLength={30}
+							className='w-full'
+						/>
+					</div>
+					<Button
+						variant='outline'
+						className='size-10 min-h-10 min-w-10 rounded-md p-0'
+						onClick={() => router.push(`?search=${query}`)}
+					>
+						<SearchIcon className='size-5' />
+					</Button>
 				</div>
-				<Button
-					variant='outline'
-					className='size-10 min-h-10 min-w-10 rounded-md p-0'
-					onClick={() => router.push(`?search=${query}`)}
-				>
-					<SearchIcon className='size-5' />
-				</Button>
-				<LoadingSpinner
-					className={searchQuery.isLoading ? 'opacity-100' : 'opacity-0'}
-				/>
+				{searchQuery.isLoading ? (
+					<LoadingSpinner className='opacity-100' />
+				) : null}
 			</div>
-			{searchData &&
-				(searchData.length > 0 ? (
-					<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-						{searchData.map((result) => {
-							if (result.type === 'user') {
-								return (
-									<UserRow
-										key={`user_${result.document.id}`}
-										user={result.document}
-									></UserRow>
-								);
-							} else if (result.type === 'album') {
-								return (
-									<AlbumRow
-										key={`album_${result.document.id}`}
-										album={result.document}
-									></AlbumRow>
-								);
-							} else {
-								return (
-									<TrackRow
-										key={`track_${result.document.id}`}
-										track={result.document}
-									></TrackRow>
-								);
-							}
-						})}
-					</ul>
-				) : (
-					<></>
-				))}
+			{searchData && (
+				<div className='w-full max-w-7xl'>
+					{searchData.length > 0 ? (
+						<ul className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+							{searchData.map((result) => {
+								if (result.type === 'user') {
+									return (
+										<UserRow
+											key={`user_${result.document.id}`}
+											user={result.document}
+										/>
+									);
+								} else if (result.type === 'album') {
+									return (
+										<AlbumRow
+											key={`album_${result.document.id}`}
+											album={result.document}
+										/>
+									);
+								} else {
+									return (
+										<TrackRow
+											key={`track_${result.document.id}`}
+											track={result.document}
+										/>
+									);
+								}
+							})}
+						</ul>
+					) : (
+						<p className='text-center text-muted-foreground'>
+							No results found
+						</p>
+					)}
+				</div>
+			)}
 		</div>
 	);
 }

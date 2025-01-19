@@ -34,7 +34,7 @@ export default function Player() {
 
 	return (
 		<FooterLayout>
-			<div className='flex h-full items-center gap-4'>
+			<div className='flex h-full w-full items-center gap-4 sm:w-64'>
 				<Link
 					href={`/${trackInfo.username}/${trackInfo.changeableId}`}
 					className='size-12 min-h-12 min-w-12 rounded-md border'
@@ -45,10 +45,10 @@ export default function Player() {
 						src={`${IMAGES_URL}/${trackInfo.image}${SMALL_IMAGE_ENDING}`}
 						width={50}
 						height={50}
-						className='aspect-square size-12 rounded-md'
+						className='aspect-square size-12 min-h-12 min-w-12 rounded-md'
 					/>
 				</Link>
-				<div className='flex min-w-8 max-w-20 flex-col overflow-hidden text-sm lg:max-w-28'>
+				<div className='flex w-full min-w-8 flex-col overflow-hidden text-sm sm:max-w-20 lg:max-w-28'>
 					<Link
 						className='overflow-hidden whitespace-nowrap'
 						href={`/${trackInfo.username}/${trackInfo.changeableId}`}
@@ -64,7 +64,7 @@ export default function Player() {
 				</div>
 				<LikeTrackPlayerButton />
 			</div>
-			<div className='col-start-2 col-end-5 flex h-full flex-col items-center pt-1'>
+			<div className='flex h-full w-full flex-col items-center pt-1 sm:w-[48rem]'>
 				<div className='flex justify-center gap-2'>
 					<ShuffleButton />
 					<SkipBackButton />
@@ -72,7 +72,7 @@ export default function Player() {
 					<SkipForwardButton />
 					<RepeatButton />
 				</div>
-				<div className='flex items-center justify-center gap-2 text-xs'>
+				<div className='flex w-full items-center justify-center gap-2 text-xs'>
 					<span className='w-12 text-end'>
 						{audioReady ? formatTime(currentTime) : '0:00'}
 					</span>
@@ -80,7 +80,7 @@ export default function Player() {
 					<span className='w-12'>{formatTime(trackInfo.duration)}</span>
 				</div>
 			</div>
-			<div className='col-start-5 flex h-full items-center justify-end gap-1'>
+			<div className='hidden h-full w-64 items-center justify-end gap-1 sm:flex'>
 				<VolumeButton />
 				<VolumeSlider />
 			</div>
@@ -94,8 +94,8 @@ function FooterLayout({
 	children?: React.ReactNode;
 }>) {
 	return (
-		<footer className='sticky bottom-0 flex h-16 max-h-16 min-h-16 justify-center border-t bg-background'>
-			<div className='grid h-full w-full max-w-[80rem] grid-cols-5 items-center px-2'>
+		<footer className='sticky bottom-0 flex h-32 max-h-32 min-h-32 justify-center border-t bg-background sm:h-16 sm:max-h-16 sm:min-h-16'>
+			<div className='flex h-full w-full max-w-[80rem] flex-col px-2 sm:flex-row sm:items-center'>
 				{children}
 			</div>
 		</footer>

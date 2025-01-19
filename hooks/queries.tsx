@@ -12,7 +12,6 @@ import { followService } from '@/services/user/follow/follow.service';
 import { likedAlbumService } from '@/services/user/liked-album/liked-album.service';
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
-import { savedPlaylistService } from '@/services/user/saved-playlist/saved-playlist.service';
 import { userService } from '@/services/user/user.service';
 import { useQuery } from '@tanstack/react-query';
 

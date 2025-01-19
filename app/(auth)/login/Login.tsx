@@ -174,6 +174,18 @@ export default function Login() {
 						<Button type='submit' className='w-full'>
 							Login
 						</Button>
+						<Button
+							onClick={() => {
+								form.setValue('email', 'guest@musicapp.fun');
+								form.setValue('password', 'guest');
+								loginMutation.mutate(form.getValues());
+							}}
+							type='button'
+							variant='outline'
+							className='w-full'
+						>
+							Login as guest
+						</Button>
 					</form>
 				</FormProvider>
 				<div className='mt-4 text-center text-sm'>

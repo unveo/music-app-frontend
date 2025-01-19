@@ -51,7 +51,7 @@ export function PlaylistRow({
 				></PlayPlaylistTrackButton>
 			</TableCell>
 			<TableCell>
-				<div className='flex h-10 items-center gap-3'>
+				<div className='flex h-10 max-w-32 items-center gap-3 truncate sm:max-w-full'>
 					<Image
 						alt='cover'
 						src={`${IMAGES_URL}/${playlistTrack.track.image}${SMALL_IMAGE_ENDING}`}
@@ -59,14 +59,14 @@ export function PlaylistRow({
 						height={50}
 						className='aspect-square size-10 rounded-md border'
 					/>
-					<div>
+					<div className='truncate'>
 						<p
 							className={
 								trackId === playlistTrack.track.id &&
 								type === 'playlist' &&
 								queueId === playlistId
-									? 'text-primary'
-									: ''
+									? 'truncate text-primary'
+									: 'truncate'
 							}
 						>
 							{playlistTrack.track.title}
@@ -149,7 +149,7 @@ export function PlaylistSortableRow({
 				></PlayPlaylistTrackButton>
 			</TableCell>
 			<TableCell>
-				<div className='flex h-10 items-center gap-3'>
+				<div className='flex h-10 max-w-28 items-center gap-3 truncate sm:max-w-full'>
 					<Image
 						alt='cover'
 						src={`${IMAGES_URL}/${playlistTrack.track.image}${SMALL_IMAGE_ENDING}`}
@@ -157,14 +157,14 @@ export function PlaylistSortableRow({
 						height={50}
 						className='aspect-square size-10 rounded-md border'
 					/>
-					<div>
+					<div className='truncate'>
 						<p
 							className={
 								trackId === playlistTrack.track.id &&
 								type === 'playlist' &&
 								queueId === playlistId
-									? 'text-primary'
-									: ''
+									? 'truncate text-primary'
+									: 'truncate'
 							}
 						>
 							{playlistTrack.track.title}
@@ -234,15 +234,15 @@ export function AlbumRow({
 				></PlayAlbumTrackButton>
 			</TableCell>
 			<TableCell>
-				<div className='flex h-10 items-center gap-3'>
-					<div>
+				<div className='flex h-10 max-w-28 items-center gap-3 truncate sm:max-w-full'>
+					<div className='truncate'>
 						<p
 							className={
 								trackId === albumTrack.track.id &&
 								type === 'album' &&
 								queueId === albumId
-									? 'text-primary'
-									: ''
+									? 'truncate text-primary'
+									: 'truncate'
 							}
 						>
 							{albumTrack.track.title}
@@ -327,15 +327,15 @@ export function AlbumSortableRow({
 				></PlayAlbumTrackButton>
 			</TableCell>
 			<TableCell>
-				<div className='flex h-10 items-center gap-3'>
-					<div>
+				<div className='flex h-10 max-w-28 items-center gap-3 truncate sm:max-w-full'>
+					<div className='truncate'>
 						<p
 							className={
 								trackId === albumTrack.track.id &&
 								type === 'album' &&
 								queueId === albumId
-									? 'text-primary'
-									: ''
+									? 'truncate text-primary'
+									: 'truncate'
 							}
 						>
 							{albumTrack.track.title}
@@ -393,7 +393,7 @@ export function UploadAlbumSortableRow({
 	return (
 		<TableRow ref={setNodeRef} style={style} className='group'>
 			<TableCell
-				className='relative cursor-grab active:cursor-grabbing'
+				className='relative cursor-grab px-1 active:cursor-grabbing sm:px-4'
 				{...attributes}
 				{...listeners}
 			>

@@ -117,15 +117,15 @@ export function TrackTable({
 						></PlayUserTrackButton>
 					</TableCell>
 					<TableCell className='cursor-default'>
-						<div className='flex h-10 items-center gap-3'>
-							<div>
+						<div className='flex h-10 max-w-28 items-center gap-3 truncate sm:max-w-full'>
+							<div className='truncate'>
 								<p
 									className={
 										trackId === track.id &&
 										type === 'user' &&
 										queueId === track.userId
-											? 'text-primary'
-											: ''
+											? 'truncate text-primary'
+											: 'truncate'
 									}
 								>
 									{track.title}
@@ -644,11 +644,11 @@ export function UploadAlbumTable({
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead className='w-0'>#</TableHead>
-							<TableHead>Title</TableHead>
-							<TableHead>Id</TableHead>
-							<TableHead className='text-center'>Audio</TableHead>
-							<TableHead className='text-right'>Remove</TableHead>
+							<TableHead className='w-0 px-1 sm:px-4'>#</TableHead>
+							<TableHead className='px-1 sm:px-4'>Title</TableHead>
+							<TableHead className='px-1 sm:px-4'>Id</TableHead>
+							<TableHead className='px-1 text-center sm:px-4'>Audio</TableHead>
+							<TableHead className='px-1 text-right sm:px-4'>Remove</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -658,7 +658,7 @@ export function UploadAlbumTable({
 								id={field.id}
 								index={index}
 							>
-								<TableCell>
+								<TableCell className='px-1 sm:px-4'>
 									<Label htmlFor={`tracks.${index}.title`} className='hidden'>
 										Track Title
 									</Label>
@@ -671,7 +671,7 @@ export function UploadAlbumTable({
 										className='bg-transparent'
 									/>
 								</TableCell>
-								<TableCell>
+								<TableCell className='px-1 sm:px-4'>
 									<Label
 										htmlFor={`tracks.${index}.changeableId`}
 										className='hidden'
@@ -689,7 +689,7 @@ export function UploadAlbumTable({
 										className='bg-transparent'
 									/>
 								</TableCell>
-								<TableCell className='py-0'>
+								<TableCell className='px-1 py-0 sm:px-4'>
 									<Controller
 										name={`tracks.${index}.audio`}
 										control={createAlbumForm.control}
@@ -710,7 +710,7 @@ export function UploadAlbumTable({
 														</Button>
 														<Label
 															htmlFor={`tracks.${index}.audio`}
-															className='flex h-10 w-44 cursor-pointer items-center justify-center rounded-md border px-4'
+															className='flex h-10 w-14 cursor-pointer items-center justify-center rounded-md border px-4 md:w-44'
 														>
 															<p className='flex h-full items-center justify-center overflow-hidden text-nowrap'>
 																{value.name}
@@ -720,7 +720,7 @@ export function UploadAlbumTable({
 												) : (
 													<Label
 														htmlFor={`tracks.${index}.audio`}
-														className='flex h-10 w-44 cursor-pointer items-center justify-center rounded-md border px-4'
+														className='flex h-10 w-14 cursor-pointer items-center justify-center rounded-md border px-4 md:w-44'
 													>
 														Upload audio
 													</Label>
@@ -753,7 +753,7 @@ export function UploadAlbumTable({
 										)}
 									/>
 								</TableCell>
-								<TableCell>
+								<TableCell className='px-1 sm:px-4'>
 									<div className='flex h-10 items-center justify-end'>
 										<Button
 											type='button'

@@ -63,7 +63,7 @@ export default function AddToPlaylistMenu({
 			<DropdownMenuContent
 				side={inTable ? 'top' : 'right'}
 				align={inTable ? 'end' : 'start'}
-				className='max-h-48 max-w-60 overflow-y-scroll'
+				className='max-h-48 max-w-40 overflow-y-scroll sm:max-w-60'
 			>
 				<DropdownMenuLabel>Add to playlist</DropdownMenuLabel>
 				<DropdownMenuSeparator></DropdownMenuSeparator>

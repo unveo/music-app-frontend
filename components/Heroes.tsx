@@ -42,19 +42,21 @@ import { DeleteAlbumButton } from '@/components/DeleteButtons';
 export function UserHero({ user }: { user: UserPublic }) {
 	return (
 		<div className='flex bg-skeleton p-6'>
-			<div className='flex gap-4'>
-				<div className='p-4'>
+			<div className='flex gap-4 truncate'>
+				<div className='sm:p-4'>
 					<Image
 						alt='Avatar'
 						src={`${IMAGES_URL}/${user.image}${LARGE_IMAGE_ENDING}`}
 						width={250}
 						height={250}
 						priority
-						className='aspect-square size-52 cursor-pointer rounded-full border shadow-sm'
+						className='aspect-square size-36 min-h-36 min-w-36 cursor-pointer rounded-full border shadow-sm sm:size-52 sm:min-h-52 sm:min-w-52'
 					></Image>
 				</div>
-				<div className='flex items-center'>
-					<span className='text-2xl font-semibold'>{user.username}</span>
+				<div className='flex items-center truncate'>
+					<span className='truncate text-2xl font-semibold'>
+						{user.username}
+					</span>
 				</div>
 			</div>
 		</div>
@@ -150,7 +152,7 @@ export function TrackHero({
 				className='relative flex w-full gap-8 p-4'
 			>
 				{editMode ? (
-					<div className='min-size-52 group relative size-52 rounded-md border'>
+					<div className='group relative size-36 min-h-36 min-w-36 rounded-md border sm:size-52 sm:min-h-52 sm:min-w-52'>
 						<Controller
 							name='image'
 							control={UpdateTrackForm.control}
@@ -228,7 +230,7 @@ export function TrackHero({
 						/>
 					</div>
 				) : (
-					<div className='group relative size-52 cursor-pointer rounded-md border shadow-sm'>
+					<div className='group relative size-36 min-h-36 min-w-36 cursor-pointer rounded-md border shadow-sm sm:size-52 sm:min-h-52 sm:min-w-52'>
 						<Image
 							alt='Cover'
 							src={`${IMAGES_URL}/${track.image}${LARGE_IMAGE_ENDING}`}
@@ -239,7 +241,7 @@ export function TrackHero({
 						></Image>
 					</div>
 				)}
-				<div className='flex flex-col justify-between py-2'>
+				<div className='flex flex-col justify-between truncate py-2'>
 					<span className='font-semibold'>Track</span>
 					{editMode ? (
 						<div className='flex h-10 items-center lg:w-[40rem]'>
@@ -256,14 +258,18 @@ export function TrackHero({
 							/>
 						</div>
 					) : (
-						<span className='text-3xl font-semibold'>{track.title}</span>
+						<span className='truncate text-3xl font-semibold'>
+							{track.title}
+						</span>
 					)}
 					<div className='flex h-4 gap-2'>
 						<Link href={`/${track.username}`} className='font-semibold'>
 							{track.username}
 						</Link>
-						{' • '}
-						<span>{formatDate(track.createdAt)}</span>
+						<span className='hidden sm:inline'>{' • '}</span>
+						<span className='hidden sm:inline'>
+							{formatDate(track.createdAt)}
+						</span>
 					</div>
 				</div>
 				{track.userId === currentUser.id && (
@@ -395,7 +401,7 @@ export function PlaylistHero({
 				className='relative flex w-full gap-8 p-4'
 			>
 				{editMode ? (
-					<div className='min-size-52 group relative size-52 rounded-md border'>
+					<div className='group relative size-36 min-h-36 min-w-36 rounded-md border sm:size-52 sm:min-h-52 sm:min-w-52'>
 						<Controller
 							name='image'
 							control={UpdatePlaylistForm.control}
@@ -472,7 +478,7 @@ export function PlaylistHero({
 						/>
 					</div>
 				) : (
-					<div className='group relative size-52 cursor-pointer rounded-md border shadow-sm'>
+					<div className='group relative size-36 min-h-36 min-w-36 cursor-pointer rounded-md border shadow-sm sm:size-52 sm:min-h-52 sm:min-w-52'>
 						<Image
 							alt='Cover'
 							src={`${IMAGES_URL}/${playlist.image}${LARGE_IMAGE_ENDING}`}
@@ -483,7 +489,7 @@ export function PlaylistHero({
 						></Image>
 					</div>
 				)}
-				<div className='flex flex-col justify-between py-2'>
+				<div className='flex flex-col justify-between truncate py-2'>
 					<span className='font-semibold'>Playlist</span>
 					{editMode ? (
 						<div className='flex h-10 items-center lg:w-[40rem]'>
@@ -500,14 +506,18 @@ export function PlaylistHero({
 							/>
 						</div>
 					) : (
-						<span className='text-3xl font-semibold'>{playlist.title}</span>
+						<span className='truncate text-3xl font-semibold'>
+							{playlist.title}
+						</span>
 					)}
 					<div className='flex h-4 gap-2'>
 						<Link href={`/${playlist.username}`} className='font-semibold'>
 							{playlist.username}
 						</Link>
-						{' • '}
-						<span>{formatDate(playlist.createdAt)}</span>
+						<span className='hidden sm:inline'>{' • '}</span>
+						<span className='hidden sm:inline'>
+							{formatDate(playlist.createdAt)}
+						</span>
 						{' • '}
 						<span>{`${playlist._count.tracks} ${playlist._count.tracks === 1 ? 'song' : 'songs'}`}</span>
 					</div>
@@ -641,7 +651,7 @@ export function AlbumHero({
 				className='relative flex w-full gap-8 p-4'
 			>
 				{editMode ? (
-					<div className='min-size-52 group relative size-52 rounded-md border'>
+					<div className='group relative size-36 min-h-36 min-w-36 rounded-md border sm:size-52 sm:min-h-52 sm:min-w-52'>
 						<Controller
 							name='image'
 							control={UpdateAlbumForm.control}
@@ -718,7 +728,7 @@ export function AlbumHero({
 						/>
 					</div>
 				) : (
-					<div className='group relative size-52 cursor-pointer rounded-md border shadow-sm'>
+					<div className='group relative size-36 min-h-36 min-w-36 cursor-pointer rounded-md border shadow-sm sm:size-52 sm:min-h-52 sm:min-w-52'>
 						<Image
 							alt='Cover'
 							src={`${IMAGES_URL}/${album.image}${LARGE_IMAGE_ENDING}`}
@@ -729,7 +739,7 @@ export function AlbumHero({
 						></Image>
 					</div>
 				)}
-				<div className='flex flex-col justify-between py-2'>
+				<div className='flex flex-col justify-between truncate py-2'>
 					<span className='font-semibold'>Album</span>
 					{editMode ? (
 						<div className='flex h-10 items-center lg:w-[40rem]'>
@@ -746,14 +756,18 @@ export function AlbumHero({
 							/>
 						</div>
 					) : (
-						<span className='text-3xl font-semibold'>{album.title}</span>
+						<span className='truncate text-3xl font-semibold'>
+							{album.title}
+						</span>
 					)}
 					<div className='flex h-4 gap-2'>
 						<Link href={`/${album.username}`} className='font-semibold'>
 							{album.username}
 						</Link>
-						{' • '}
-						<span>{formatDate(album.createdAt)}</span>
+						<span className='hidden sm:inline'>{' • '}</span>
+						<span className='hidden sm:inline'>
+							{formatDate(album.createdAt)}
+						</span>
 						{' • '}
 						<span>{`${album._count.tracks} ${album._count.tracks === 1 ? 'song' : 'songs'}`}</span>
 					</div>

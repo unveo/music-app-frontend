@@ -42,7 +42,8 @@ export default function Signup() {
 	const registerMutation = useMutation({
 		mutationFn: (data: RegisterDto) => authService.register(data),
 		onSuccess: ({ data }) => {
-			toast({ title: `Verification link has been sent to ${data.email}` });
+			toast({ title: 'Registration is disabled now' });
+			// toast({ title: `Verification link has been sent to ${data.email}` });
 			push('/login');
 		}
 	});

@@ -35,7 +35,7 @@ export function UserDropdownMenu() {
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
-				<button className='size-8 rounded-full bg-muted outline-none'>
+				<button className='size-8 min-h-8 min-w-8 rounded-full bg-muted outline-none'>
 					{currentUserQuery.isLoading ? null : (
 						<Image
 							src={`${IMAGES_URL}/${currentUser?.image}${SMALL_IMAGE_ENDING}`}
