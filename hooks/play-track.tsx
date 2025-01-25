@@ -34,7 +34,9 @@ export function usePlayTrack() {
 	const addToHistoryMutation = useAddToHistoryMut();
 
 	function onCanPlayThrough(this: HTMLAudioElement) {
-		if (!useTrackStore.getState().audioReady) {
+		const currentAudio = useTrackStore.getState().audio;
+
+		if (!useTrackStore.getState().audioReady && currentAudio === this) {
 			setAudioReady(true);
 			playAudio(this);
 		}
@@ -344,6 +346,7 @@ export function usePlayTrack() {
 
 	async function onClickUserTrack(track: Track) {
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (
 			!trackInfo ||
@@ -374,6 +377,7 @@ export function usePlayTrack() {
 		const queueId = useQueueStore.getState().queueId;
 		const type = useQueueStore.getState().type;
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (!trackInfo || type !== 'user' || queueId !== track.userId) {
 			if (isPlaying && audio) {
@@ -397,6 +401,7 @@ export function usePlayTrack() {
 
 	async function onClickLikedTrack(track: Track) {
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (!trackInfo || trackInfo.id !== track.id || type !== 'liked') {
 			if (isPlaying && audio) {
@@ -424,6 +429,7 @@ export function usePlayTrack() {
 		position: number
 	) {
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (
 			!trackInfo ||
@@ -454,6 +460,7 @@ export function usePlayTrack() {
 		const queueId = useQueueStore.getState().queueId;
 		const type = useQueueStore.getState().type;
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (!trackInfo || type !== 'playlist' || queueId !== playlistId) {
 			if (isPlaying && audio) {
@@ -481,6 +488,7 @@ export function usePlayTrack() {
 		position: number
 	) {
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (
 			!trackInfo ||
@@ -511,6 +519,7 @@ export function usePlayTrack() {
 		const queueId = useQueueStore.getState().queueId;
 		const type = useQueueStore.getState().type;
 		const trackInfo = useTrackStore.getState().trackInfo;
+		const audio = useTrackStore.getState().audio;
 
 		if (!trackInfo || type !== 'album' || queueId !== albumId) {
 			if (isPlaying && audio) {
