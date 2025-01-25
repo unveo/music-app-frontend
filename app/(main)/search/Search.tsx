@@ -4,7 +4,6 @@ import { AlbumRow, TrackRow, UserRow } from '@/components/SearchRows';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useCurrentUserQuery } from '@/hooks/queries';
 import { searchService } from '@/services/search/search.service';
 import { useQuery } from '@tanstack/react-query';
 import { SearchIcon } from 'lucide-react';
@@ -30,9 +29,6 @@ export default function Search() {
 	const search = searchParams.get('search') || '';
 
 	const [query, setQuery] = useState('');
-
-	const currentUserQuery = useCurrentUserQuery();
-	const currentUser = currentUserQuery.data?.data;
 
 	const searchQuery = useSearchQuery(search);
 	const searchData = searchQuery.data?.data;
@@ -73,7 +69,7 @@ export default function Search() {
 			{searchData && (
 				<div className='w-full max-w-7xl'>
 					{searchData.length > 0 ? (
-						<ul className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+						<ul className='grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
 							{searchData.map((result) => {
 								if (result.type === 'user') {
 									return (

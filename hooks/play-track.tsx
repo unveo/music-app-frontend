@@ -103,6 +103,13 @@ export function usePlayTrack() {
 	}
 
 	function setNewAudio(newTrackInfo: Track) {
+		const audio = useTrackStore.getState().audio;
+
+		if (audio) {
+			audio.removeEventListener('canplaythrough', onCanPlayThrough);
+			audio.removeEventListener('ended', onEnded);
+		}
+
 		const newAudio = new Audio(
 			`${AUDIO_URL}/${newTrackInfo.audio}${AUDIO_ENDING}`
 		);

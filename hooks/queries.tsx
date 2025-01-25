@@ -32,7 +32,14 @@ export function useUserQuery(username: string) {
 export function useUsersQuery(take?: number, lastId?: number) {
 	return useQuery({
 		queryKey: ['users'],
-		queryFn: () => userService.getMany(take)
+		queryFn: () => userService.getMany(take, lastId)
+	});
+}
+
+export function useRecommendedQuery() {
+	return useQuery({
+		queryKey: ['recommended'],
+		queryFn: () => userService.getRecommended()
 	});
 }
 

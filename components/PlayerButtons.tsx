@@ -28,6 +28,16 @@ export function PlayButton() {
 
 	useEffect(() => {
 		const handleSpaceKey = (event: KeyboardEvent) => {
+			const activeElement = document.activeElement;
+
+			if (
+				activeElement instanceof HTMLInputElement ||
+				activeElement instanceof HTMLTextAreaElement ||
+				activeElement?.getAttribute('contenteditable') === 'true'
+			) {
+				return;
+			}
+
 			if (event.code === 'Space') {
 				event.preventDefault();
 				onClickPlay();

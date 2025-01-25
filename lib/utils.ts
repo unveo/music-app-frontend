@@ -17,7 +17,7 @@ export function nFormatter(num: number) {
 		{ value: 1, symbol: '' },
 		{ value: 1e3, symbol: 'k' },
 		{ value: 1e6, symbol: 'M' },
-		{ value: 1e9, symbol: 'G' }
+		{ value: 1e9, symbol: 'B' }
 	];
 	const regexp = /\.0+$|(?<=\.[0-9]*[1-9])0+$/;
 	const item = lookup.findLast((item) => num >= item.value);

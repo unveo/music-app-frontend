@@ -21,6 +21,10 @@ export const userService = {
 		);
 	},
 
+	async getRecommended() {
+		return await api.get<UserPublic[]>('/user/recommended');
+	},
+
 	async update(dto: ChangeImageDto | ChangeUsernameDto) {
 		return await api.patch<void>('/user', dto);
 	},

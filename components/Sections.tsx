@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import {
 	AlbumCardProfile,
-	CardSkeleton,
 	PlaylistCardProfile,
 	TrackCard,
 	UserCard
@@ -14,19 +13,21 @@ import {
 	useFollowersQuery,
 	useFollowingQuery,
 	usePlaylistsQuery,
+	useRecommendedQuery,
 	useTracksQuery,
-	useUserQuery,
-	useUsersQuery
+	useUserQuery
 } from '@/hooks/queries';
 
 export function Section({
 	name,
 	href,
-	children
+	children,
+	maxFive
 }: {
 	name: string;
 	href?: string;
 	children: React.ReactNode;
+	maxFive?: boolean;
 }) {
 	return (
 		<li className='flex flex-col gap-4'>
@@ -39,7 +40,9 @@ export function Section({
 				) : null}
 			</div>
 			<div>
-				<ul className='grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
+				<ul
+					className={`grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 ${maxFive ? '' : 'lg:grid-cols-6'}`}
+				>
 					{children}
 				</ul>
 			</div>
@@ -47,60 +50,23 @@ export function Section({
 	);
 }
 
-export function SectionSkeleton() {
+export function RecommendedSection() {
 	const { cardsCount } = useCardsCountStore();
-	const skeletons = Array(cardsCount).fill(0);
+
+	const recommendedQuery = useRecommendedQuery();
+	const recommended = recommendedQuery.data?.data;
+
+	if (!recommended?.length) {
+		return null;
+	}
 
 	return (
-		<li className='flex flex-col gap-4'>
-			<div className='flex items-end justify-between'>
-				<div className='h-8 w-36 rounded-md bg-skeleton'></div>
-				<div className='h-6 w-20 rounded-md bg-skeleton'></div>
-			</div>
-			<div>
-				<ul className='grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-					{skeletons.map((value, index) => (
-						<CardSkeleton key={index}></CardSkeleton>
-					))}
-				</ul>
-			</div>
-		</li>
+		<Section name='Recommended' maxFive>
+			{recommended.slice(0, cardsCount).map((user) => (
+				<UserCard key={user.id} user={user}></UserCard>
+			))}
+		</Section>
 	);
-}
-
-export function UsersSection() {
-	const { cardsCount } = useCardsCountStore();
-
-	const usersQuery = useUsersQuery(7);
-	const users = usersQuery.data?.data;
-
-	if (usersQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
-
-	if (users) {
-		if (users.length) {
-			if (users.length > cardsCount) {
-				return (
-					<Section href='/users' name='Users'>
-						{users.slice(0, cardsCount).map((user) => (
-							<UserCard key={user.id} user={user}></UserCard>
-						))}
-					</Section>
-				);
-			} else {
-				return (
-					<Section name='Users'>
-						{users.slice(0, cardsCount).map((user) => (
-							<UserCard key={user.id} user={user}></UserCard>
-						))}
-					</Section>
-				);
-			}
-		} else {
-			return null;
-		}
-	}
 }
 
 export function TracksSection({ username }: { username: string }) {
@@ -111,10 +77,6 @@ export function TracksSection({ username }: { username: string }) {
 
 	const tracksQuery = useTracksQuery(user?.id, 7);
 	const tracks = tracksQuery.data?.data;
-
-	if (tracksQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
 
 	if (tracks) {
 		if (tracks.length) {
@@ -150,10 +112,6 @@ export function AlbumsSection({ username }: { username: string }) {
 	const albumsQuery = useAlbumsQuery(user?.id, 7);
 	const albums = albumsQuery.data?.data;
 
-	if (albumsQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
-
 	if (albums) {
 		if (albums.length) {
 			if (albums.length > cardsCount) {
@@ -187,10 +145,6 @@ export function PlaylistsSection({ username }: { username: string }) {
 
 	const playlistsQuery = usePlaylistsQuery(user?.id, 7);
 	const playlists = playlistsQuery.data?.data;
-
-	if (playlistsQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
 
 	if (playlists) {
 		if (playlists.length) {
@@ -232,10 +186,6 @@ export function FollowersSection({ username }: { username: string }) {
 	const followersQuery = useFollowersQuery(user?.id, 7);
 	const followers = followersQuery.data?.data;
 
-	if (followersQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
-
 	if (followers) {
 		if (followers.length) {
 			if (followers.length > cardsCount) {
@@ -269,10 +219,6 @@ export function FollowingSection({ username }: { username: string }) {
 
 	const followingQuery = useFollowingQuery(user?.id, 7);
 	const following = followingQuery.data?.data;
-
-	if (followingQuery.isLoading) {
-		return <SectionSkeleton></SectionSkeleton>;
-	}
 
 	if (following) {
 		if (following.length) {

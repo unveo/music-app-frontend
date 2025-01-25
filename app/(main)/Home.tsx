@@ -1,6 +1,6 @@
 'use client';
 
-import { UsersSection } from '@/components/Sections';
+import { RecommendedSection } from '@/components/Sections';
 import useCardsCount from '@/hooks/cards-count';
 
 export default function Home() {
@@ -9,7 +9,7 @@ export default function Home() {
 	return (
 		<div className='p-8'>
 			<ul className='flex flex-col gap-12'>
-				<UsersSection></UsersSection>
+				<RecommendedSection></RecommendedSection>
 			</ul>
 		</div>
 	);
