@@ -13,18 +13,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function nFormatter(num: number) {
-	const lookup = [
-		{ value: 1, symbol: '' },
-		{ value: 1e3, symbol: 'k' },
-		{ value: 1e6, symbol: 'M' },
-		{ value: 1e9, symbol: 'B' }
-	];
-	const regexp = /\.0+$|(?<=\.[0-9]*[1-9])0+$/;
-	const item = lookup.findLast((item) => num >= item.value);
-
-	return item
-		? (num / item.value).toString().replace(regexp, '').concat(item.symbol)
-		: '0';
+	return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function formatTime(time: number) {
