@@ -21,13 +21,11 @@ import {
 export function Section({
 	name,
 	href,
-	children,
-	maxFive
+	children
 }: {
 	name: string;
 	href?: string;
 	children: React.ReactNode;
-	maxFive?: boolean;
 }) {
 	return (
 		<li className='flex flex-col gap-4'>
@@ -41,7 +39,7 @@ export function Section({
 			</div>
 			<div>
 				<ul
-					className={`grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 ${maxFive ? '' : 'lg:grid-cols-6'}`}
+					className={`grid grid-cols-3 grid-rows-1 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6`}
 				>
 					{children}
 				</ul>
@@ -51,8 +49,6 @@ export function Section({
 }
 
 export function RecommendedSection() {
-	const { cardsCount } = useCardsCountStore();
-
 	const recommendedQuery = useRecommendedQuery();
 	const recommended = recommendedQuery.data?.data;
 
@@ -61,8 +57,8 @@ export function RecommendedSection() {
 	}
 
 	return (
-		<Section name='Recommended' maxFive>
-			{recommended.slice(0, cardsCount).map((user) => (
+		<Section name='Recommended'>
+			{recommended.map((user) => (
 				<UserCard key={user.id} user={user}></UserCard>
 			))}
 		</Section>
