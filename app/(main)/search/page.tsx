@@ -1,6 +1,6 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import Search from './Search';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Search'

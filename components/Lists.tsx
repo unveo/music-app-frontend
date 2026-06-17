@@ -1,5 +1,5 @@
-import { CardSkeleton } from './Cards';
 import Link from 'next/link';
+import { CardSkeleton } from './Cards';
 
 export function List({
 	username,
@@ -39,7 +39,8 @@ export function ListSkeleton() {
 			</div>
 			<div>
 				<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-					{cards.map((value, index) => (
+					{cards.map((_value, index) => (
+						// biome-ignore lint/suspicious/noArrayIndexKey: skeleton items have no unique ID
 						<CardSkeleton key={index}></CardSkeleton>
 					))}
 				</ul>

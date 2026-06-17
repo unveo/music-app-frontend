@@ -1,18 +1,18 @@
 'use client';
 
 import { AUDIO_ENDING, AUDIO_URL } from '@/config';
+import { shuffleArray } from '@/lib/utils';
+import { albumTrackService } from '@/services/album/album-track/album-track.service';
+import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { trackService } from '@/services/track/track.service';
-import { Track } from '@/services/track/track.types';
+import type { Track } from '@/services/track/track.types';
+import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import { useListenTimeStore } from '@/stores/listen-time.store';
 import { useQueueStore } from '@/stores/queue.store';
 import { useSettingsStore } from '@/stores/settings.store';
-import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
+import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useAddToHistoryMut } from './mutations';
-import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
-import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
-import { albumTrackService } from '@/services/album/album-track/album-track.service';
-import { shuffleArray } from '@/lib/utils';
 
 export function usePlayTrack() {
 	const {

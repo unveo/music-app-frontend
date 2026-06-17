@@ -1,10 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { PlaylistCard } from '@/components/Cards';
 import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
 import { usePlaylistsQuery, useUserQuery } from '@/hooks/queries';
-import Link from 'next/link';
 
 export default function Playlists({ username }: { username: string }) {
 	const userQuery = useUserQuery(username);

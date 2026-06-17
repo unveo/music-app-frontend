@@ -1,7 +1,7 @@
 'use client';
 
-import type { Track } from '@/services/track/track.types';
 import { create } from 'zustand';
+import type { Track } from '@/services/track/track.types';
 
 export const useTrackStore = create<{
 	trackInfo: Track | null;

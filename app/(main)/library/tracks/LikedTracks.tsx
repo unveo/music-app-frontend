@@ -1,9 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { LikedTrackCard } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { useLikedTracksQuery } from '@/hooks/queries';
-import Link from 'next/link';
 
 export default function LikedTracks() {
 	const likedTracksQuery = useLikedTracksQuery();
@@ -26,10 +26,9 @@ export default function LikedTracks() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{likedTracks &&
-					likedTracks.map(({ track }) => (
-						<LikedTrackCard track={track} key={track.id}></LikedTrackCard>
-					))}
+				{likedTracks?.map(({ track }) => (
+					<LikedTrackCard track={track} key={track.id}></LikedTrackCard>
+				))}
 			</ul>
 		</div>
 	);

@@ -1,30 +1,30 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import type { AxiosError } from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
-	CardHeader,
-	CardTitle,
+	CardContent,
 	CardDescription,
-	CardContent
+	CardHeader,
+	CardTitle
 } from '@/components/ui/card';
 import {
+	FormControl,
 	FormField,
 	FormItem,
 	FormLabel,
-	FormControl,
 	FormMessage
 } from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
-import { useForm, FormProvider } from 'react-hook-form';
-import { type LoginDto, LoginSchema } from '@/services/auth/auth.types';
-import { authService } from '@/services/auth/auth.service';
-import { AxiosError } from 'axios';
 import { useToast } from '@/components/ui/use-toast';
+import { authService } from '@/services/auth/auth.service';
+import { type LoginDto, LoginSchema } from '@/services/auth/auth.types';
 
 export default function Login() {
 	const { push } = useRouter();
@@ -72,6 +72,7 @@ export default function Login() {
 				<CardContent>
 					<p>Verification link has been sent to {form.getValues().email}</p>
 					<button
+						type='button'
 						onClick={() =>
 							newVerificationMutation.mutate({
 								email: form.getValues().email,
@@ -99,6 +100,7 @@ export default function Login() {
 					<CardContent>
 						<p>You are not verified. Check your email</p>
 						<button
+							type='button'
 							onClick={() =>
 								newVerificationMutation.mutate({
 									email: form.getValues().email,

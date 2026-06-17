@@ -1,15 +1,15 @@
 'use client';
 
-import NotFound from '@/components/NotFound';
-import {
-	useCurrentUserQuery,
-	useAlbumQuery,
-	useAlbumTracksQuery
-} from '@/hooks/queries';
-import { LikeAlbumButton } from '@/components/LikeButtons';
-import { AlbumSortableTable, AlbumTable } from '@/components/Tables';
 import { AlbumHero } from '@/components/Heroes';
+import { LikeAlbumButton } from '@/components/LikeButtons';
+import NotFound from '@/components/NotFound';
 import { PlayAlbumButton } from '@/components/PlayButtons';
+import { AlbumSortableTable, AlbumTable } from '@/components/Tables';
+import {
+	useAlbumQuery,
+	useAlbumTracksQuery,
+	useCurrentUserQuery
+} from '@/hooks/queries';
 
 export default function Album({
 	username,

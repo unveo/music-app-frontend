@@ -1,10 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { AlbumCard } from '@/components/Cards';
 import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
 import { useAlbumsQuery, useUserQuery } from '@/hooks/queries';
-import Link from 'next/link';
 
 export default function Albums({ username }: { username: string }) {
 	const userQuery = useUserQuery(username);

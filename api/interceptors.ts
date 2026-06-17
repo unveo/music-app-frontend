@@ -33,7 +33,9 @@ api.interceptors.response.use(
 				try {
 					await authService.refresh();
 					isRefreshing = false;
-					requests.forEach((request) => request());
+					requests.forEach((request) => {
+						request();
+					});
 					requests = [];
 
 					return await api.request(originalRequest);

@@ -1,14 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { baseUrl, REFRESH_TOKEN } from './config';
+import { type NextRequest, NextResponse } from 'next/server';
+import { REFRESH_TOKEN } from './config';
 
-export function middleware(request: NextRequest) {
-	const { url, cookies } = request;
+export function proxy(request: NextRequest) {
+	const { url, cookies, nextUrl } = request;
+	const { pathname } = nextUrl;
 
 	const refreshToken = cookies.get(REFRESH_TOKEN)?.value;
 	const isAuthPage =
-		url === `${baseUrl.frontend}/login` ||
-		url === `${baseUrl.frontend}/signup` ||
-		url.startsWith(`${baseUrl.frontend}/verify`);
+		pathname === '/login' ||
+		pathname === '/signup' ||
+		pathname.startsWith('/verify');
 
 	if (refreshToken && isAuthPage) {
 		return NextResponse.redirect(new URL('/', url));
@@ -18,15 +19,15 @@ export function middleware(request: NextRequest) {
 		return NextResponse.redirect(new URL('/login', url));
 	}
 
-	if (url === `${baseUrl.frontend}/settings`) {
+	if (pathname === '/settings') {
 		return NextResponse.redirect(new URL('/settings/profile', url));
 	}
 
-	if (url === `${baseUrl.frontend}/library`) {
+	if (pathname === '/library') {
 		return NextResponse.redirect(new URL('/library/tracks', url));
 	}
 
-	if (url === `${baseUrl.frontend}/upload`) {
+	if (pathname === '/upload') {
 		return NextResponse.redirect(new URL('/upload/track', url));
 	}
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { AlbumCard } from '@/components/Cards';
-import { useLikedAlbumsQuery } from '@/hooks/queries';
 import Link from 'next/link';
+import { AlbumCard } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useLikedAlbumsQuery } from '@/hooks/queries';
 
 export default function LikedAlbums() {
 	const likedAlbumsQuery = useLikedAlbumsQuery();
@@ -26,10 +26,9 @@ export default function LikedAlbums() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{likedAlbums &&
-					likedAlbums.map(({ album }) => (
-						<AlbumCard album={album} key={album.id}></AlbumCard>
-					))}
+				{likedAlbums?.map(({ album }) => (
+					<AlbumCard album={album} key={album.id}></AlbumCard>
+				))}
 			</ul>
 		</div>
 	);

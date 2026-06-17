@@ -1,6 +1,37 @@
 'use client';
 
 import {
+	closestCenter,
+	DndContext,
+	type DragEndEvent,
+	PointerSensor,
+	useSensor,
+	useSensors
+} from '@dnd-kit/core';
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis
+} from '@dnd-kit/modifiers';
+import {
+	SortableContext,
+	verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import { useMutation } from '@tanstack/react-query';
+import { X } from 'lucide-react';
+import Link from 'next/link';
+import {
+	Controller,
+	type UseFieldArrayReturn,
+	type UseFormReturn
+} from 'react-hook-form';
+import {
+	AlbumRow,
+	AlbumSortableRow,
+	PlaylistRow,
+	PlaylistSortableRow,
+	UploadAlbumSortableRow
+} from '@/components/TableRows';
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -8,10 +39,7 @@ import {
 	TableHeader,
 	TableRow
 } from '@/components/ui/table';
-import { PlayUserTrackButton } from './PlayButtons';
-import { LikeTrackButton } from './LikeButtons';
-import AddToPlaylistMenu from './AddToPlaylistMenu';
-import { formatTime, nFormatter, validateAudio } from '@/lib/utils';
+import { ACCEPTED_AUDIO_TYPES } from '@/config';
 import {
 	useAlbumQuery,
 	useAlbumTracksQuery,
@@ -19,48 +47,20 @@ import {
 	usePlaylistTracksQuery,
 	useTrackQuery
 } from '@/hooks/queries';
+import { formatTime, nFormatter, validateAudio } from '@/lib/utils';
+import { albumTrackService } from '@/services/album/album-track/album-track.service';
+import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
+import type { UpdateTrackPositionDto } from '@/services/playlist/playlist-track/playlist-track.types';
+import { useQueueStore } from '@/stores/queue.store';
 import { useTrackStore } from '@/stores/track.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
-import {
-	type DragEndEvent,
-	DndContext,
-	PointerSensor,
-	closestCenter,
-	useSensor,
-	useSensors
-} from '@dnd-kit/core';
-import {
-	SortableContext,
-	verticalListSortingStrategy
-} from '@dnd-kit/sortable';
-import {
-	restrictToParentElement,
-	restrictToVerticalAxis
-} from '@dnd-kit/modifiers';
-import {
-	PlaylistSortableRow,
-	AlbumSortableRow,
-	UploadAlbumSortableRow,
-	AlbumRow,
-	PlaylistRow
-} from '@/components/TableRows';
-import {
-	Controller,
-	UseFieldArrayReturn,
-	UseFormReturn
-} from 'react-hook-form';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
+import AddToPlaylistMenu from './AddToPlaylistMenu';
+import { LikeTrackButton } from './LikeButtons';
+import { PlayUserTrackButton } from './PlayButtons';
 import { Button } from './ui/button';
-import { X } from 'lucide-react';
-import { ACCEPTED_AUDIO_TYPES } from '@/config';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 import { useToast } from './ui/use-toast';
-import { UpdateTrackPositionDto } from '@/services/playlist/playlist-track/playlist-track.types';
-import { useMutation } from '@tanstack/react-query';
-import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
-import { useQueueStore } from '@/stores/queue.store';
-import Link from 'next/link';
-import { albumTrackService } from '@/services/album/album-track/album-track.service';
 
 export function TrackTable({
 	username,

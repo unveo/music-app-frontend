@@ -1,10 +1,10 @@
-import { IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
-import { nFormatter } from '@/lib/utils';
-import { Album } from '@/services/album/album.types';
-import { Track } from '@/services/track/track.types';
-import { UserPublic } from '@/services/user/user.types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
+import { nFormatter } from '@/lib/utils';
+import type { Album } from '@/services/album/album.types';
+import type { Track } from '@/services/track/track.types';
+import type { UserPublic } from '@/services/user/user.types';
 
 export function UserRow({ user }: { user: UserPublic }) {
 	return (

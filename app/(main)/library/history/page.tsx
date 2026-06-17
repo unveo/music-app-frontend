@@ -1,5 +1,5 @@
+import type { Metadata } from 'next';
 import History from './History';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'History'

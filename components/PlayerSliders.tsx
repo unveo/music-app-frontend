@@ -1,10 +1,10 @@
 'use client';
 
+import type { SliderValueChangeDetails } from '@ark-ui/react';
 import { Slider } from '@/components/ui/slider';
 import { useSettingsStore } from '@/stores/settings.store';
-import { useTrackLocalStore } from '@/stores/track-local.store';
 import { useTrackStore } from '@/stores/track.store';
-import type { SliderValueChangeDetails } from '@ark-ui/react';
+import { useTrackLocalStore } from '@/stores/track-local.store';
 
 export function TrackSlider({ updateTime }: { updateTime: () => void }) {
 	const { setCurrentTime } = useTrackLocalStore();
@@ -40,7 +40,7 @@ export function TrackSlider({ updateTime }: { updateTime: () => void }) {
 			onValueChangeEnd={onTrackSliderChangeEnd}
 			max={1}
 			step={0.01}
-			disabled={audioReady ? false : true}
+			disabled={!audioReady}
 			className='w-full sm:w-52 md:w-80 lg:w-[26rem]'
 		/>
 	);

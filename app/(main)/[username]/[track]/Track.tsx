@@ -1,12 +1,12 @@
 'use client';
 
-import NotFound from '@/components/NotFound';
-import { useCurrentUserQuery, useTrackQuery } from '@/hooks/queries';
 import AddToPlaylistMenu from '@/components/AddToPlaylistMenu';
-import { LikeTrackButton } from '@/components/LikeButtons';
-import { TrackTable } from '@/components/Tables';
 import { TrackHero } from '@/components/Heroes';
+import { LikeTrackButton } from '@/components/LikeButtons';
+import NotFound from '@/components/NotFound';
 import { PlayUserTrackButton } from '@/components/PlayButtons';
+import { TrackTable } from '@/components/Tables';
+import { useCurrentUserQuery, useTrackQuery } from '@/hooks/queries';
 
 export default function Track({
 	username,

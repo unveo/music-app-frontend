@@ -1,5 +1,5 @@
-import { messages, regex, RESTRICTED_USERNAMES } from '@/config';
 import { z } from 'zod';
+import { messages, RESTRICTED_USERNAMES, regex } from '@/config';
 
 export const LoginSchema = z.object({
 	email: z.string().email(messages.emailValid),

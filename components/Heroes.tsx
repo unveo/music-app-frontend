@@ -1,43 +1,45 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { ACCEPTED_IMAGE_TYPES, IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
-import { trackService } from '@/services/track/track.service';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { Check, ImageUp, Pencil, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
 import { Controller, useForm } from 'react-hook-form';
 import {
-	type UpdateTrackDto,
-	UpdateTrackSchema
-} from '@/services/track/track.types';
-import { zodResolver } from '@hookform/resolvers/zod';
+	DeleteAlbumButton,
+	DeletePlaylistButton,
+	DeleteTrackButton
+} from '@/components/DeleteButtons';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { formatDate, validateImage } from '@/lib/utils';
-import { DeleteTrackButton } from '@/components/DeleteButtons';
-import {
-	type UpdatePlaylistDto,
-	UpdatePlaylistSchema
-} from '@/services/playlist/playlist.types';
-import { playlistService } from '@/services/playlist/playlist.service';
+import { useToast } from '@/components/ui/use-toast';
+import { ACCEPTED_IMAGE_TYPES, IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
 import {
 	useAlbumQuery,
 	useCurrentUserQuery,
 	usePlaylistQuery,
 	useTrackQuery
 } from '@/hooks/queries';
-import { DeletePlaylistButton } from '@/components/DeleteButtons';
-import { useToast } from '@/components/ui/use-toast';
-import { UserPublic } from '@/services/user/user.types';
+import { formatDate, validateImage } from '@/lib/utils';
+import { albumService } from '@/services/album/album.service';
 import {
-	UpdateAlbumDto,
+	type UpdateAlbumDto,
 	UpdateAlbumSchema
 } from '@/services/album/album.types';
-import { albumService } from '@/services/album/album.service';
-import { DeleteAlbumButton } from '@/components/DeleteButtons';
+import { playlistService } from '@/services/playlist/playlist.service';
+import {
+	type UpdatePlaylistDto,
+	UpdatePlaylistSchema
+} from '@/services/playlist/playlist.types';
+import { trackService } from '@/services/track/track.service';
+import {
+	type UpdateTrackDto,
+	UpdateTrackSchema
+} from '@/services/track/track.types';
+import type { UserPublic } from '@/services/user/user.types';
 
 export function UserHero({ user }: { user: UserPublic }) {
 	return (

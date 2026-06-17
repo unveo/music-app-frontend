@@ -1,6 +1,10 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
+import { useCurrentUserQuery, usePlaylistsQuery } from '@/hooks/queries';
+import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
+import { useQueueStore } from '@/stores/queue.store';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -9,11 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from './ui/dropdown-menu';
-import { useCurrentUserQuery, usePlaylistsQuery } from '@/hooks/queries';
-import { useMutation } from '@tanstack/react-query';
 import { useToast } from './ui/use-toast';
-import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
-import { useQueueStore } from '@/stores/queue.store';
 
 export default function AddToPlaylistMenu({
 	trackToAddId,
@@ -71,6 +71,7 @@ export default function AddToPlaylistMenu({
 					playlists?.map((playlist) => (
 						<DropdownMenuItem key={playlist.id}>
 							<button
+								type='button'
 								onClick={() => {
 									addMutation.mutate({
 										playlistId: playlist.id,

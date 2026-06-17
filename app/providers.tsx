@@ -1,7 +1,7 @@
 'use client';
 
-import { useToast } from '@/components/ui/use-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Providers({ children }: React.PropsWithChildren) {
 	const { toast } = useToast();

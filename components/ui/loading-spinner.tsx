@@ -24,6 +24,7 @@ export const LoadingSpinner = ({
 			strokeLinejoin='round'
 			className={cn('animate-spin opacity-0 transition-opacity', className)}
 		>
+			<title>Loading</title>
 			<path d='M21 12a9 9 0 1 1-6.219-8.56' />
 		</svg>
 	);

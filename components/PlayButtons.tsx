@@ -1,9 +1,9 @@
 'use client';
 
-import type { Track } from '@/services/track/track.types';
-import { Button } from './ui/button';
 import { Pause, Play } from 'lucide-react';
 import { usePlayTrack } from '@/hooks/play-track';
+import type { Track } from '@/services/track/track.types';
+import { Button } from './ui/button';
 
 export function PlayUserTrackButton({
 	track,

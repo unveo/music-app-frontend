@@ -1,9 +1,9 @@
 'use client';
 
-import { AlbumCardProfile } from '@/components/Cards';
-import { useCurrentUserQuery, useAlbumsQuery } from '@/hooks/queries';
 import Link from 'next/link';
+import { AlbumCardProfile } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useAlbumsQuery, useCurrentUserQuery } from '@/hooks/queries';
 
 export default function MyAlbums() {
 	const currentUserQuery = useCurrentUserQuery();
@@ -29,10 +29,9 @@ export default function MyAlbums() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{myAlbums &&
-					myAlbums.map((album) => (
-						<AlbumCardProfile album={album} key={album.id}></AlbumCardProfile>
-					))}
+				{myAlbums?.map((album) => (
+					<AlbumCardProfile album={album} key={album.id}></AlbumCardProfile>
+				))}
 			</ul>
 		</div>
 	);

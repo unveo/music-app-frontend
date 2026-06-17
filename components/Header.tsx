@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import { ArrowUpFromLine, SearchIcon } from 'lucide-react';
-import { UserDropdownMenu } from './UserDropdownMenu';
+import Link from 'next/link';
 import Notifications from './Notifications';
+import { UserDropdownMenu } from './UserDropdownMenu';
 
 export default function Header() {
 	return (

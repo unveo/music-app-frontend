@@ -1,11 +1,12 @@
 'use client';
 
-import { albumTrackService } from '@/services/album/album-track/album-track.service';
+import { useQuery } from '@tanstack/react-query';
 import { albumService } from '@/services/album/album.service';
+import { albumTrackService } from '@/services/album/album-track/album-track.service';
 import { authService } from '@/services/auth/auth.service';
 import { notificationService } from '@/services/notification/notification.service';
-import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { playlistService } from '@/services/playlist/playlist.service';
+import { playlistTrackService } from '@/services/playlist/playlist-track/playlist-track.service';
 import { searchService } from '@/services/search/search.service';
 import { trackService } from '@/services/track/track.service';
 import { followService } from '@/services/user/follow/follow.service';
@@ -13,7 +14,6 @@ import { likedAlbumService } from '@/services/user/liked-album/liked-album.servi
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
 import { userService } from '@/services/user/user.service';
-import { useQuery } from '@tanstack/react-query';
 
 export function useCurrentUserQuery() {
 	return useQuery({

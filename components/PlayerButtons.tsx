@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from './ui/button';
+import { useMutation } from '@tanstack/react-query';
 import {
 	Heart,
 	Pause,
@@ -14,14 +14,14 @@ import {
 	Volume2,
 	VolumeX
 } from 'lucide-react';
-import { usePlayTrack } from '@/hooks/play-track';
-import { useMutation } from '@tanstack/react-query';
-import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
-import { useDisabledLikedTracksQuery } from '@/hooks/queries';
 import { usePathname } from 'next/navigation';
-import { useTrackStore } from '@/stores/track.store';
-import { useSettingsStore } from '@/stores/settings.store';
 import { useEffect } from 'react';
+import { usePlayTrack } from '@/hooks/play-track';
+import { useDisabledLikedTracksQuery } from '@/hooks/queries';
+import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
+import { useSettingsStore } from '@/stores/settings.store';
+import { useTrackStore } from '@/stores/track.store';
+import { Button } from './ui/button';
 
 export function PlayButton() {
 	const { isPlaying, audioReady, onClickPlay } = usePlayTrack();
@@ -57,7 +57,7 @@ export function PlayButton() {
 			variant='clear'
 			onClick={onClickPlay}
 			size='icon'
-			disabled={audioReady ? false : true}
+			disabled={!audioReady}
 		>
 			{isPlaying ? (
 				<Pause className='size-5 fill-foreground' />
@@ -76,7 +76,7 @@ export function SkipBackButton() {
 			variant='clear'
 			onClick={onClickSkipBack}
 			size='icon'
-			disabled={audioReady ? false : true}
+			disabled={!audioReady}
 		>
 			<SkipBack className='size-5 fill-foreground' />
 		</Button>
@@ -91,7 +91,7 @@ export function SkipForwardButton() {
 			variant='clear'
 			onClick={onClickSkipForward}
 			size='icon'
-			disabled={audioReady ? false : true}
+			disabled={!audioReady}
 		>
 			<SkipForward className='size-5 fill-foreground' />
 		</Button>
@@ -106,7 +106,7 @@ export function ShuffleButton() {
 			variant='clear'
 			size='icon'
 			onClick={onClickShuffle}
-			disabled={audioReady ? false : true}
+			disabled={!audioReady}
 		>
 			{shuffle ? (
 				<Shuffle className='size-5 text-primary' />
@@ -125,7 +125,7 @@ export function RepeatButton() {
 			variant='clear'
 			size='icon'
 			onClick={onClickRepeat}
-			disabled={audioReady ? false : true}
+			disabled={!audioReady}
 		>
 			{repeat === 'full' ? (
 				<Repeat className='size-5 text-primary' />

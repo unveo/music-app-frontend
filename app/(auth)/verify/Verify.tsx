@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useVerifyQuery } from '@/hooks/queries';
-import { useToast } from '@/components/ui/use-toast';
 import { useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import { useVerifyQuery } from '@/hooks/queries';
 
 export default function Verify() {
 	const { push } = useRouter();

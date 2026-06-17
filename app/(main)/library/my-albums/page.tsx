@@ -1,5 +1,5 @@
+import type { Metadata } from 'next';
 import MyAlbums from './MyAlbums';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'My albums'

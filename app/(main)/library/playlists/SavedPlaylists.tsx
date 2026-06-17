@@ -1,9 +1,9 @@
 'use client';
 
+import Link from 'next/link';
 import { PlaylistCard } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { usePlaylistsWithSavedQuery } from '@/hooks/queries';
-import Link from 'next/link';
 
 export default function SavedPlaylists() {
 	const savedPlaylistsQuery = usePlaylistsWithSavedQuery();
@@ -26,10 +26,9 @@ export default function SavedPlaylists() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{savedPlaylists &&
-					savedPlaylists.map((playlist) => (
-						<PlaylistCard playlist={playlist} key={playlist.id}></PlaylistCard>
-					))}
+				{savedPlaylists?.map((playlist) => (
+					<PlaylistCard playlist={playlist} key={playlist.id}></PlaylistCard>
+				))}
 			</ul>
 		</div>
 	);

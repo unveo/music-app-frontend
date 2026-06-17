@@ -1,5 +1,5 @@
+import type { Metadata } from 'next';
 import SavedPlaylists from './SavedPlaylists';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Saved playlists'

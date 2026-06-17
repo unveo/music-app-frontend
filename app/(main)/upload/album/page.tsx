@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import UploadAlbum from './UploadAlbum';
 
 export const metadata: Metadata = {

@@ -1,3 +1,5 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import {
 	ACCEPTED_AUDIO_TYPES,
 	ACCEPTED_IMAGE_TYPES,
@@ -5,8 +7,6 @@ import {
 	IMAGE_FILE_LIMIT,
 	messages
 } from '@/config';
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -22,10 +22,10 @@ export function formatTime(time: number) {
 	let seconds = (truncatedTime % 60).toString();
 
 	if (seconds.length === 1) {
-		seconds = '0' + seconds;
+		seconds = `0${seconds}`;
 	}
 
-	return minutes + ':' + seconds;
+	return `${minutes}:${seconds}`;
 }
 
 export function formatDate(dateString: string) {

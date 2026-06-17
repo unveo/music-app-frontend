@@ -1,6 +1,15 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAlbumTracksQuery } from '@/hooks/queries';
+import { albumService } from '@/services/album/album.service';
+import { albumTrackService } from '@/services/album/album-track/album-track.service';
+import { playlistService } from '@/services/playlist/playlist.service';
+import { trackService } from '@/services/track/track.service';
+import { useQueueStore } from '@/stores/queue.store';
+import { useTrackLocalStore } from '@/stores/track-local.store';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -13,16 +22,7 @@ import {
 	AlertDialogTrigger
 } from './ui/alert-dialog';
 import { Button } from './ui/button';
-import { useMutation } from '@tanstack/react-query';
-import { playlistService } from '@/services/playlist/playlist.service';
 import { useToast } from './ui/use-toast';
-import { useRouter } from 'next/navigation';
-import { trackService } from '@/services/track/track.service';
-import { albumService } from '@/services/album/album.service';
-import { useAlbumTracksQuery } from '@/hooks/queries';
-import { useTrackLocalStore } from '@/stores/track-local.store';
-import { useQueueStore } from '@/stores/queue.store';
-import { albumTrackService } from '@/services/album/album-track/album-track.service';
 
 export function DeleteTrackButton({
 	trackId,

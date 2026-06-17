@@ -1,6 +1,6 @@
-import { Album } from '../album/album.types';
-import { Track } from '../track/track.types';
-import { UserPublic } from '../user/user.types';
+import type { Album } from '../album/album.types';
+import type { Track } from '../track/track.types';
+import type { UserPublic } from '../user/user.types';
 
 export interface SearchResultUser {
 	type: 'user';

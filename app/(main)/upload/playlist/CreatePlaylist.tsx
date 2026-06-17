@@ -1,25 +1,25 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { Input } from '@/components/ui/input';
+import { ImageUp, X } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useToast } from '@/components/ui/use-toast';
+import { ACCEPTED_IMAGE_TYPES } from '@/config';
+import { useCurrentUserQuery } from '@/hooks/queries';
+import { validateImage } from '@/lib/utils';
+import { playlistService } from '@/services/playlist/playlist.service';
 import {
 	type CreatePlaylistDto,
 	CreatePlaylistSchema
 } from '@/services/playlist/playlist.types';
-import { playlistService } from '@/services/playlist/playlist.service';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useToast } from '@/components/ui/use-toast';
-import Image from 'next/image';
-import { ImageUp, X } from 'lucide-react';
-import { validateImage } from '@/lib/utils';
-import { ACCEPTED_IMAGE_TYPES } from '@/config';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useCurrentUserQuery } from '@/hooks/queries';
-import { Label } from '@/components/ui/label';
 
 export default function CreatePlaylist() {
 	const [imageUrl, setImageUrl] = useState<string | undefined>();

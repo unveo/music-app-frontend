@@ -1,20 +1,20 @@
 'use client';
 
-import Image from 'next/image';
-import {
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-	DropdownMenu,
-	DropdownMenuItem,
-	DropdownMenuSeparator
-} from './ui/dropdown-menu';
-import Link from 'next/link';
 import { useMutation } from '@tanstack/react-query';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { authService } from '@/services/auth/auth.service';
 import { IMAGES_URL, SMALL_IMAGE_ENDING } from '@/config';
 import { useCurrentUserQuery } from '@/hooks/queries';
+import { authService } from '@/services/auth/auth.service';
 import { useTrackStore } from '@/stores/track.store';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger
+} from './ui/dropdown-menu';
 
 export function UserDropdownMenu() {
 	const { audio } = useTrackStore();
@@ -35,7 +35,10 @@ export function UserDropdownMenu() {
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
-				<button className='size-8 min-h-8 min-w-8 rounded-full bg-muted outline-none'>
+				<button
+					type='button'
+					className='size-8 min-h-8 min-w-8 rounded-full bg-muted outline-none'
+				>
 					{currentUserQuery.isLoading ? null : (
 						<Image
 							src={`${IMAGES_URL}/${currentUser?.image}${SMALL_IMAGE_ENDING}`}
@@ -64,6 +67,7 @@ export function UserDropdownMenu() {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem>
 					<button
+						type='button'
 						className='h-full w-full px-2 py-1.5 text-left'
 						onClick={() => logoutMutation.mutate()}
 					>

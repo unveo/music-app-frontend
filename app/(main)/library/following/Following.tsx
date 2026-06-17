@@ -1,9 +1,9 @@
 'use client';
 
-import { UserCard } from '@/components/Cards';
-import { useCurrentUserQuery, useFollowingQuery } from '@/hooks/queries';
 import Link from 'next/link';
+import { UserCard } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useCurrentUserQuery, useFollowingQuery } from '@/hooks/queries';
 
 export default function Following() {
 	const currentUserQuery = useCurrentUserQuery();
@@ -29,10 +29,9 @@ export default function Following() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{following &&
-					following.map(({ following }) => (
-						<UserCard key={following.id} user={following}></UserCard>
-					))}
+				{following?.map(({ following }) => (
+					<UserCard key={following.id} user={following}></UserCard>
+				))}
 			</ul>
 		</div>
 	);

@@ -1,5 +1,5 @@
+import type { Metadata } from 'next';
 import MyTracks from './MyTracks';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'My tracks'

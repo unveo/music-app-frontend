@@ -1,10 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { TrackCard } from '@/components/Cards';
 import { List } from '@/components/Lists';
 import NotFound from '@/components/NotFound';
 import { useTracksQuery, useUserQuery } from '@/hooks/queries';
-import Link from 'next/link';
 
 export default function Tracks({ username }: { username: string }) {
 	const userQuery = useUserQuery(username);

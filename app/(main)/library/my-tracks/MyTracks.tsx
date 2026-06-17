@@ -1,9 +1,9 @@
 'use client';
 
-import { TrackCard } from '@/components/Cards';
-import { useCurrentUserQuery, useTracksQuery } from '@/hooks/queries';
 import Link from 'next/link';
+import { TrackCard } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useCurrentUserQuery, useTracksQuery } from '@/hooks/queries';
 
 export default function MyTracks() {
 	const currentUserQuery = useCurrentUserQuery();
@@ -29,10 +29,9 @@ export default function MyTracks() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{myTracks &&
-					myTracks.map((track) => (
-						<TrackCard track={track} key={track.id}></TrackCard>
-					))}
+				{myTracks?.map((track) => (
+					<TrackCard track={track} key={track.id}></TrackCard>
+				))}
 			</ul>
 		</div>
 	);

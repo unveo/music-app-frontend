@@ -1,12 +1,13 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
-import { formatTime } from '@/lib/utils';
-import { useTrackLocalStore } from '@/stores/track-local.store';
-import { useTrackStore } from '@/stores/track.store';
+import Link from 'next/link';
 import { IMAGES_URL, SMALL_IMAGE_ENDING } from '@/config';
+import { usePlayer } from '@/hooks/player';
 import { useCurrentUserQuery } from '@/hooks/queries';
+import { formatTime } from '@/lib/utils';
+import { useTrackStore } from '@/stores/track.store';
+import { useTrackLocalStore } from '@/stores/track-local.store';
 import {
 	LikeTrackPlayerButton,
 	PlayButton,
@@ -17,7 +18,6 @@ import {
 	VolumeButton
 } from './PlayerButtons';
 import { TrackSlider, VolumeSlider } from './PlayerSliders';
-import { usePlayer } from '@/hooks/player';
 
 export default function Player() {
 	const { currentTime } = useTrackLocalStore();

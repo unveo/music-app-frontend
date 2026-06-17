@@ -1,27 +1,27 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { Input } from '@/components/ui/input';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { ImageUp, X } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { UploadAlbumTable } from '@/components/Tables';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/components/ui/use-toast';
-import Image from 'next/image';
-import { ImageUp, X } from 'lucide-react';
-import { validateImage } from '@/lib/utils';
 import { ACCEPTED_IMAGE_TYPES } from '@/config';
+import { useCurrentUserQuery } from '@/hooks/queries';
+import { validateImage } from '@/lib/utils';
+import { albumService } from '@/services/album/album.service';
 import {
 	type CreateAlbumDto,
 	CreateAlbumSchema
 } from '@/services/album/album.types';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { albumService } from '@/services/album/album.service';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { useCurrentUserQuery } from '@/hooks/queries';
-import { UploadAlbumTable } from '@/components/Tables';
 
 export default function UploadAlbum() {
 	const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
@@ -76,7 +76,7 @@ export default function UploadAlbum() {
 		const tracks: { changeableId: string; title: string }[] = [];
 		const audios: File[] = [];
 
-		dto.tracks.map((track) => {
+		dto.tracks.forEach((track) => {
 			tracks.push({ changeableId: track.changeableId, title: track.title });
 			audios.push(track.audio!);
 		});

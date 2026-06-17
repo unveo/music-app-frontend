@@ -1,6 +1,6 @@
-import Player from '@/components/Player';
 import Header from '@/components/Header';
 import NotFoundComponent from '@/components/NotFound';
+import Player from '@/components/Player';
 
 export default function NotFound() {
 	return (

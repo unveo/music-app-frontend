@@ -1,7 +1,9 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
+import { UserHero } from '@/components/Heroes';
+import NotFound from '@/components/NotFound';
+import { PlayUserButton } from '@/components/PlayButtons';
 import {
 	AlbumsSection,
 	FollowersSection,
@@ -9,9 +11,7 @@ import {
 	PlaylistsSection,
 	TracksSection
 } from '@/components/Sections';
-import { nFormatter } from '@/lib/utils';
-import { followService } from '@/services/user/follow/follow.service';
-import NotFound from '@/components/NotFound';
+import { Button } from '@/components/ui/button';
 import useCardsCount from '@/hooks/cards-count';
 import {
 	useCurrentUserQuery,
@@ -20,8 +20,8 @@ import {
 	useTracksQuery,
 	useUserQuery
 } from '@/hooks/queries';
-import { UserHero } from '@/components/Heroes';
-import { PlayUserButton } from '@/components/PlayButtons';
+import { nFormatter } from '@/lib/utils';
+import { followService } from '@/services/user/follow/follow.service';
 
 export default function Profile({ username }: { username: string }) {
 	useCardsCount();

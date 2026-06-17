@@ -1,9 +1,9 @@
 'use client';
 
-import { ListeningHistoryCard } from '@/components/Cards';
-import { useHistoryQuery } from '@/hooks/queries';
 import Link from 'next/link';
+import { ListeningHistoryCard } from '@/components/Cards';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useHistoryQuery } from '@/hooks/queries';
 
 export default function History() {
 	const listeningHistoryQuery = useHistoryQuery();
@@ -26,13 +26,12 @@ export default function History() {
 				<ScrollBar orientation='horizontal' />
 			</ScrollArea>
 			<ul className='grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6'>
-				{listeningHistory &&
-					listeningHistory.map(({ track }) => (
-						<ListeningHistoryCard
-							key={track.id}
-							track={track}
-						></ListeningHistoryCard>
-					))}
+				{listeningHistory?.map(({ track }) => (
+					<ListeningHistoryCard
+						key={track.id}
+						track={track}
+					></ListeningHistoryCard>
+				))}
 			</ul>
 		</div>
 	);

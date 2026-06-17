@@ -1,11 +1,11 @@
 import { api, apiWithoutAuth } from '@/api/interceptors';
+import type { UserPrivate } from '../user/user.types';
 import type {
 	ChangeEmailDto,
 	ChangePasswordDto,
 	LoginDto,
 	RegisterDto
 } from './auth.types';
-import type { UserPrivate } from '../user/user.types';
 
 export const authService = {
 	async register(dto: RegisterDto) {

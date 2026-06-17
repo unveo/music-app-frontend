@@ -1,5 +1,14 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
+import { IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
+import {
+	useFirstAlbumTrackQuery,
+	useFirstPlaylistTrackQuery,
+	useFirstTrackQuery
+} from '@/hooks/queries';
+import { nFormatter } from '@/lib/utils';
 import type { Album } from '@/services/album/album.types';
 import type { Playlist } from '@/services/playlist/playlist.types';
 import type { Track } from '@/services/track/track.types';
@@ -7,10 +16,6 @@ import type {
 	UserPublic,
 	UserWithoutFollowingCount
 } from '@/services/user/user.types';
-import Image from 'next/image';
-import Link from 'next/link';
-import { nFormatter } from '@/lib/utils';
-import { IMAGES_URL, LARGE_IMAGE_ENDING } from '@/config';
 import {
 	PlayAlbumButton,
 	PlayLikedTrackButton,
@@ -18,11 +23,6 @@ import {
 	PlayUserButton,
 	PlayUserTrackButton
 } from './PlayButtons';
-import {
-	useFirstAlbumTrackQuery,
-	useFirstPlaylistTrackQuery,
-	useFirstTrackQuery
-} from '@/hooks/queries';
 
 export function UserCard({
 	user
@@ -45,7 +45,7 @@ export function UserCard({
 						className='aspect-square rounded-full'
 					></Image>
 				</Link>
-				{firstTrack && firstTrack.length ? (
+				{firstTrack?.length ? (
 					<PlayUserButton track={firstTrack[0]} variant='card' />
 				) : null}
 			</div>
@@ -189,7 +189,7 @@ export function PlaylistCardProfile({ playlist }: { playlist: Playlist }) {
 						className='aspect-square rounded-md'
 					></Image>
 				</Link>
-				{firstTrack && firstTrack.length ? (
+				{firstTrack?.length ? (
 					<PlayPlaylistButton
 						track={firstTrack[0].track}
 						playlistId={playlist.id}
@@ -232,7 +232,7 @@ export function PlaylistCard({ playlist }: { playlist: Playlist }) {
 						className='aspect-square rounded-md'
 					></Image>
 				</Link>
-				{firstTrack && firstTrack.length ? (
+				{firstTrack?.length ? (
 					<PlayPlaylistButton
 						track={firstTrack[0].track}
 						playlistId={playlist.id}
@@ -278,7 +278,7 @@ export function AlbumCardProfile({ album }: { album: Album }) {
 						className='aspect-square rounded-md'
 					></Image>
 				</Link>
-				{firstTrack && firstTrack.length ? (
+				{firstTrack?.length ? (
 					<PlayAlbumButton
 						track={firstTrack[0].track}
 						albumId={album.id}
@@ -294,7 +294,7 @@ export function AlbumCardProfile({ album }: { album: Album }) {
 					{album.title}
 				</Link>
 				<p className='max-w-full truncate text-muted-foreground'>
-					{album.createdAt.slice(0, 4) + ' • ' + album.type.toUpperCase()}
+					{`${album.createdAt.slice(0, 4)} • ${album.type.toUpperCase()}`}
 				</p>
 			</div>
 		</li>
@@ -321,7 +321,7 @@ export function AlbumCard({ album }: { album: Album }) {
 						className='aspect-square rounded-md'
 					></Image>
 				</Link>
-				{firstTrack && firstTrack.length ? (
+				{firstTrack?.length ? (
 					<PlayAlbumButton
 						track={firstTrack[0].track}
 						albumId={album.id}

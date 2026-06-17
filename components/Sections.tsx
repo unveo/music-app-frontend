@@ -2,13 +2,6 @@
 
 import Link from 'next/link';
 import {
-	AlbumCardProfile,
-	PlaylistCardProfile,
-	TrackCard,
-	UserCard
-} from './Cards';
-import { useCardsCountStore } from '@/stores/cards-count.store';
-import {
 	useAlbumsQuery,
 	useFollowersQuery,
 	useFollowingQuery,
@@ -17,6 +10,13 @@ import {
 	useTracksQuery,
 	useUserQuery
 } from '@/hooks/queries';
+import { useCardsCountStore } from '@/stores/cards-count.store';
+import {
+	AlbumCardProfile,
+	PlaylistCardProfile,
+	TrackCard,
+	UserCard
+} from './Cards';
 
 export function Section({
 	name,

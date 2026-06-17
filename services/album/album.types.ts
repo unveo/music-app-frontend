@@ -40,8 +40,9 @@ export const CreateAlbumSchema = z.object({
 			const titles: string[] = [];
 			const changeableIds: string[] = [];
 
-			tracks.map((track) => {
-				titles.push(track.title), changeableIds.push(track.changeableId);
+			tracks.forEach((track) => {
+				titles.push(track.title);
+				changeableIds.push(track.changeableId);
 			});
 
 			if (

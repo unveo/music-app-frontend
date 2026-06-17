@@ -1,11 +1,11 @@
 import { api } from '@/api/interceptors';
+import type { TracksIds } from '@/services/track/track.types';
 import type {
 	AddTrackDto,
 	PlaylistTrackRelation,
 	TrackInPlaylist,
 	UpdateTrackPositionDto
 } from './playlist-track.types';
-import type { TracksIds } from '@/services/track/track.types';
 
 export const playlistTrackService = {
 	async getMany(playlistId: number, take?: number) {

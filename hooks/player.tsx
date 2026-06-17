@@ -1,14 +1,14 @@
 'use client';
 
-import { useListenTimeStore } from '@/stores/listen-time.store';
-import { useSettingsStore } from '@/stores/settings.store';
-import { useTrackLocalStore } from '@/stores/track-local.store';
-import { useTrackStore } from '@/stores/track.store';
 import { useCallback, useEffect } from 'react';
-import { useCurrentTrackQuery } from './queries';
 import { AUDIO_ENDING, AUDIO_URL, MS_TO_ADD_LISTEN } from '@/config';
 import { trackService } from '@/services/track/track.service';
+import { useListenTimeStore } from '@/stores/listen-time.store';
+import { useSettingsStore } from '@/stores/settings.store';
+import { useTrackStore } from '@/stores/track.store';
+import { useTrackLocalStore } from '@/stores/track-local.store';
 import { usePlayTrack } from './play-track';
+import { useCurrentTrackQuery } from './queries';
 
 export function usePlayer() {
 	const {
@@ -99,9 +99,9 @@ export function usePlayer() {
 	useEffect(() => {
 		if (trackInfo && typeof listenTime === 'number') {
 			if (isPlaying && !startTime) {
-				setStartTime(new Date().getTime());
+				setStartTime(Date.now());
 			} else if (!isPlaying && startTime) {
-				const newListenTime = new Date().getTime() - startTime + listenTime;
+				const newListenTime = Date.now() - startTime + listenTime;
 
 				if (newListenTime >= MS_TO_ADD_LISTEN) {
 					trackService.addPlay(trackInfo.id);
@@ -118,7 +118,7 @@ export function usePlayer() {
 	useEffect(() => {
 		if (trackInfo && typeof listenTime === 'number' && isPlaying && startTime) {
 			const intervalId = setInterval(() => {
-				if (new Date().getTime() - startTime + listenTime >= MS_TO_ADD_LISTEN) {
+				if (Date.now() - startTime + listenTime >= MS_TO_ADD_LISTEN) {
 					trackService.addPlay(trackInfo.id);
 					setListenTime(true);
 					setStartTime(undefined);

@@ -1,5 +1,9 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,10 +16,6 @@ import {
 	type ChangePasswordDto,
 	ChangePasswordSchema
 } from '@/services/auth/auth.types';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
 
 export default function SecuritySettings() {
 	const { toast } = useToast();

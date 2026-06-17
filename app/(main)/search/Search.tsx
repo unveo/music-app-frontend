@@ -1,14 +1,14 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
+import { SearchIcon } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { AlbumRow, TrackRow, UserRow } from '@/components/SearchRows';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { searchService } from '@/services/search/search.service';
-import { useQuery } from '@tanstack/react-query';
-import { SearchIcon } from 'lucide-react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 export function useSearchQuery(query: string) {
 	return useQuery({

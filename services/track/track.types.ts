@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
 	ACCEPTED_AUDIO_TYPES,
 	ACCEPTED_IMAGE_TYPES,
@@ -6,7 +7,6 @@ import {
 	messages,
 	regex
 } from '@/config';
-import { z } from 'zod';
 
 export const UploadTrackSchema = z.object({
 	title: z

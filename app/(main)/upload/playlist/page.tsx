@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import CreatePlaylist from './CreatePlaylist';
 
 export const metadata: Metadata = {

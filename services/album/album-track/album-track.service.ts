@@ -1,6 +1,6 @@
 import { api } from '@/api/interceptors';
-import type { TrackInAlbum, UpdateTrackPositionDto } from './album-track.types';
 import type { TracksIds } from '@/services/track/track.types';
+import type { TrackInAlbum, UpdateTrackPositionDto } from './album-track.types';
 
 export const albumTrackService = {
 	async getManyTracks(albumId: number, take?: number) {

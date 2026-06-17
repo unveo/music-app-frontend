@@ -1,5 +1,5 @@
+import type { Metadata } from 'next';
 import Signup from './Signup';
-import { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Sign up'

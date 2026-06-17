@@ -1,6 +1,10 @@
 'use client';
 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Bell, X } from 'lucide-react';
+import Link from 'next/link';
+import { useNotificationsQuery } from '@/hooks/queries';
+import { notificationService } from '@/services/notification/notification.service';
 import { Button } from './ui/button';
 import {
 	DropdownMenu,
@@ -10,10 +14,6 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger
 } from './ui/dropdown-menu';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { notificationService } from '@/services/notification/notification.service';
-import Link from 'next/link';
-import { useNotificationsQuery } from '@/hooks/queries';
 
 export default function Notifications() {
 	const queryClient = useQueryClient();
@@ -52,6 +52,7 @@ export default function Notifications() {
 					<p>Notifications</p>
 					{notifications?.length ? (
 						<button
+							type='button'
 							onClick={() => {
 								deleteAllNotificationsMutation.mutate();
 							}}

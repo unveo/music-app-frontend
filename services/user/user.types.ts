@@ -1,11 +1,11 @@
+import { z } from 'zod';
 import {
 	ACCEPTED_IMAGE_TYPES,
 	IMAGE_FILE_LIMIT,
 	messages,
-	regex,
-	RESTRICTED_USERNAMES
+	RESTRICTED_USERNAMES,
+	regex
 } from '@/config';
-import { z } from 'zod';
 
 export const ChangeUsernameSchema = z.object({
 	username: z

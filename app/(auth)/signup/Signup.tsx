@@ -1,33 +1,29 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardContent
-} from '@/components/ui/card';
-import {
-	FormField,
-	FormItem,
-	FormLabel,
-	FormControl,
-	FormMessage
-} from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
 import { FormProvider, useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 import {
-	LoginDto,
-	RegisterSchema,
-	type RegisterDto
-} from '@/services/auth/auth.types';
-import { authService } from '@/services/auth/auth.service';
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle
+} from '@/components/ui/card';
+import {
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import { authService } from '@/services/auth/auth.service';
+import { type RegisterDto, RegisterSchema } from '@/services/auth/auth.types';
 
 export default function Signup() {
 	const { push } = useRouter();

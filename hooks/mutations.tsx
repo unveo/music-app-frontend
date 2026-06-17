@@ -1,8 +1,8 @@
 'use client';
 
-import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
 import { useMutation } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
+import { listeningHistoryService } from '@/services/user/listening-history/listening-history.service';
 import { useDisabledHistoryQuery } from './queries';
 
 export function useAddToHistoryMut() {
