@@ -45,8 +45,13 @@ export function DeleteTrackButton({
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
-				<Button type='button' size='icon-lg' variant='outline'>
-					<Trash2 className='size-5'></Trash2>
+				<Button
+					type='button'
+					size='icon-lg'
+					variant='outline'
+					aria-label='Delete track'
+				>
+					<Trash2 className='size-5' aria-hidden='true'></Trash2>
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
@@ -126,8 +131,11 @@ export function DeleteAlbumTrackButton({
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
-				<Button size='icon-xs' variant='clear'>
-					<Trash2 className='size-4 translate-y-[0.5px]'></Trash2>
+				<Button size='icon-xs' variant='clear' aria-label='Delete track'>
+					<Trash2
+						className='size-4 translate-y-[0.5px]'
+						aria-hidden='true'
+					></Trash2>
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
@@ -176,8 +184,13 @@ export function DeletePlaylistButton({
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
-				<Button type='button' size='icon-lg' variant='outline'>
-					<Trash2 className='size-5'></Trash2>
+				<Button
+					type='button'
+					size='icon-lg'
+					variant='outline'
+					aria-label='Delete playlist'
+				>
+					<Trash2 className='size-5' aria-hidden='true'></Trash2>
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>
@@ -226,8 +239,13 @@ export function DeleteAlbumButton({
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
-				<Button type='button' size='icon-lg' variant='outline'>
-					<Trash2 className='size-5'></Trash2>
+				<Button
+					type='button'
+					size='icon-lg'
+					variant='outline'
+					aria-label='Delete album'
+				>
+					<Trash2 className='size-5' aria-hidden='true'></Trash2>
 				</Button>
 			</AlertDialogTrigger>
 			<AlertDialogContent>

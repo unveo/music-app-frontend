@@ -9,7 +9,7 @@ export default function MainLayout({
 	return (
 		<>
 			<Header></Header>
-			<main>
+			<main id='main-content'>
 				<div className='div-main'>{children}</div>
 			</main>
 			<Player></Player>

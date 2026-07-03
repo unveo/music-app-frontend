@@ -29,7 +29,7 @@ const Slider = React.forwardRef<
 			</SliderPrimitive.Track>
 			<SliderPrimitive.Thumb
 				index={0}
-				className='pointer-events-none block size-3 rounded-full bg-primary opacity-0 outline-none transition-opacity duration-75 group-hover:opacity-100'
+				className='pointer-events-none block size-3 rounded-full bg-primary opacity-0 outline-none transition-opacity duration-75 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 group-hover:opacity-100'
 			>
 				<SliderPrimitive.HiddenInput />
 			</SliderPrimitive.Thumb>

@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { getErrorMessage } from '@/lib/error-message';
 
 export default function Providers({ children }: React.PropsWithChildren) {
 	const { toast } = useToast();
@@ -16,9 +17,10 @@ export default function Providers({ children }: React.PropsWithChildren) {
 					queries: { retry: false },
 					mutations: {
 						retry: false,
-						onError: (error: any) => {
+						onError: (error: unknown) => {
 							toastRef.current({
-								title: `${error.response.data.message}`,
+								title: getErrorMessage(error),
+								description: 'Try again or refresh the page.',
 								variant: 'destructive'
 							});
 						}

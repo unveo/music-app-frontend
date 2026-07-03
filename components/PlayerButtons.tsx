@@ -33,6 +33,7 @@ export function PlayButton() {
 			if (
 				activeElement instanceof HTMLInputElement ||
 				activeElement instanceof HTMLTextAreaElement ||
+				activeElement instanceof HTMLSelectElement ||
 				activeElement?.getAttribute('contenteditable') === 'true'
 			) {
 				return;
@@ -58,11 +59,14 @@ export function PlayButton() {
 			onClick={onClickPlay}
 			size='icon'
 			disabled={!audioReady}
+			aria-label={isPlaying ? 'Pause' : 'Play'}
+			aria-pressed={isPlaying}
+			aria-keyshortcuts='Space'
 		>
 			{isPlaying ? (
-				<Pause className='size-5 fill-foreground' />
+				<Pause className='size-5 fill-foreground' aria-hidden='true' />
 			) : (
-				<Play className='size-5 fill-foreground' />
+				<Play className='size-5 fill-foreground' aria-hidden='true' />
 			)}
 		</Button>
 	);
@@ -77,8 +81,9 @@ export function SkipBackButton() {
 			onClick={onClickSkipBack}
 			size='icon'
 			disabled={!audioReady}
+			aria-label='Previous track'
 		>
-			<SkipBack className='size-5 fill-foreground' />
+			<SkipBack className='size-5 fill-foreground' aria-hidden='true' />
 		</Button>
 	);
 }
@@ -92,8 +97,9 @@ export function SkipForwardButton() {
 			onClick={onClickSkipForward}
 			size='icon'
 			disabled={!audioReady}
+			aria-label='Next track'
 		>
-			<SkipForward className='size-5 fill-foreground' />
+			<SkipForward className='size-5 fill-foreground' aria-hidden='true' />
 		</Button>
 	);
 }
@@ -107,12 +113,13 @@ export function ShuffleButton() {
 			size='icon'
 			onClick={onClickShuffle}
 			disabled={!audioReady}
+			aria-label='Shuffle'
+			aria-pressed={shuffle}
 		>
-			{shuffle ? (
-				<Shuffle className='size-5 text-primary' />
-			) : (
-				<Shuffle className='size-5' />
-			)}
+			<Shuffle
+				className={shuffle ? 'size-5 text-primary' : 'size-5'}
+				aria-hidden='true'
+			/>
 		</Button>
 	);
 }
@@ -120,19 +127,28 @@ export function ShuffleButton() {
 export function RepeatButton() {
 	const { repeat, audioReady, onClickRepeat } = usePlayTrack();
 
+	const repeatLabel =
+		repeat === 'one'
+			? 'Repeat one track'
+			: repeat === 'full'
+				? 'Repeat queue'
+				: 'Repeat off';
+
 	return (
 		<Button
 			variant='clear'
 			size='icon'
 			onClick={onClickRepeat}
 			disabled={!audioReady}
+			aria-label={repeatLabel}
+			aria-pressed={repeat !== false}
 		>
 			{repeat === 'full' ? (
-				<Repeat className='size-5 text-primary' />
+				<Repeat className='size-5 text-primary' aria-hidden='true' />
 			) : repeat === 'one' ? (
-				<Repeat1 className='size-5 text-primary' />
+				<Repeat1 className='size-5 text-primary' aria-hidden='true' />
 			) : (
-				<Repeat className='size-5' />
+				<Repeat className='size-5' aria-hidden='true' />
 			)}
 		</Button>
 	);
@@ -175,26 +191,30 @@ export function LikeTrackPlayerButton() {
 
 	if (!trackInfo) {
 		return (
-			<Button variant='ghost' size='icon' disabled>
-				<Heart className='size-5' />
+			<Button variant='ghost' size='icon' disabled aria-label='Like track'>
+				<Heart className='size-5' aria-hidden='true' />
 			</Button>
 		);
 	}
+
+	const isLiked = trackInfo.likes.length > 0;
 
 	return (
 		<Button
 			variant='ghost'
 			onClick={async () => {
-				trackInfo.likes.length
+				isLiked
 					? removeFromLikedMutation.mutate(trackInfo.id)
 					: addToLikedMutation.mutate(trackInfo.id);
 			}}
 			size='icon'
+			aria-label={isLiked ? 'Unlike track' : 'Like track'}
+			aria-pressed={isLiked}
 		>
-			{trackInfo.likes.length ? (
-				<Heart className='size-5 fill-foreground' />
+			{isLiked ? (
+				<Heart className='size-5 fill-foreground' aria-hidden='true' />
 			) : (
-				<Heart className='size-5' />
+				<Heart className='size-5' aria-hidden='true' />
 			)}
 		</Button>
 	);
@@ -207,6 +227,8 @@ export function VolumeButton() {
 	if (!audio) {
 		return null;
 	}
+
+	const volumeLabel = muted || !volume ? 'Unmute' : 'Mute';
 
 	return (
 		<Button
@@ -226,15 +248,17 @@ export function VolumeButton() {
 					audio.volume = 0.05;
 				}
 			}}
+			aria-label={volumeLabel}
+			aria-pressed={muted || !volume}
 		>
 			{volume && !muted ? (
 				volume > 0.5 ? (
-					<Volume2 className='size-5' />
+					<Volume2 className='size-5' aria-hidden='true' />
 				) : (
-					<Volume1 className='size-5' />
+					<Volume1 className='size-5' aria-hidden='true' />
 				)
 			) : (
-				<VolumeX className='size-5' />
+				<VolumeX className='size-5' aria-hidden='true' />
 			)}
 		</Button>
 	);

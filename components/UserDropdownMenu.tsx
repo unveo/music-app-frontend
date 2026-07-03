@@ -32,47 +32,46 @@ export function UserDropdownMenu() {
 		}
 	});
 
+	const menuLabel = currentUser
+		? `${currentUser.username} account menu`
+		: 'Account menu';
+
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
 				<button
 					type='button'
-					className='size-8 min-h-8 min-w-8 rounded-full bg-muted outline-none'
+					aria-label={menuLabel}
+					className='size-8 min-h-8 min-w-8 overflow-hidden rounded-full bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
 				>
 					{currentUserQuery.isLoading ? null : (
 						<Image
 							src={`${IMAGES_URL}/${currentUser?.image}${SMALL_IMAGE_ENDING}`}
-							width={100}
-							height={100}
-							alt='avatar'
-							className='aspect-square rounded-full object-cover'
+							width={32}
+							height={32}
+							alt=''
+							className='aspect-square size-8 rounded-full object-cover'
 						/>
 					)}
 				</button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align='end'>
-				<DropdownMenuItem>
-					<Link
-						href={`/${currentUser?.username}`}
-						className='h-full w-full px-2 py-1.5'
-					>
+			<DropdownMenuContent align='end' className='w-36'>
+				<DropdownMenuItem asChild>
+					<Link href={`/${currentUser?.username}`} className='w-full'>
 						Profile
 					</Link>
 				</DropdownMenuItem>
-				<DropdownMenuItem>
-					<Link href='/settings' className='h-full w-full px-2 py-1.5'>
+				<DropdownMenuItem asChild>
+					<Link href='/settings' className='w-full'>
 						Settings
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>
-					<button
-						type='button'
-						className='h-full w-full px-2 py-1.5 text-left'
-						onClick={() => logoutMutation.mutate()}
-					>
-						Log out
-					</button>
+				<DropdownMenuItem
+					onClick={() => logoutMutation.mutate()}
+					className='cursor-pointer focus:text-destructive'
+				>
+					Log out
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

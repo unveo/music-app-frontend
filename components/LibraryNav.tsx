@@ -25,6 +25,7 @@ export default function LibraryNav() {
 					<Link
 						key={href}
 						href={href}
+						aria-current={pathname === href ? 'page' : undefined}
 						className={cn(pathname === href && 'text-primary')}
 					>
 						{label}

@@ -759,9 +759,10 @@ export function UploadAlbumTable({
 											type='button'
 											variant='destructive'
 											size='icon'
+											aria-label='Remove track'
 											onClick={() => tracksField.remove(index)}
 										>
-											<X className='size-5'></X>
+											<X className='size-5' aria-hidden='true'></X>
 										</Button>
 									</div>
 								</TableCell>

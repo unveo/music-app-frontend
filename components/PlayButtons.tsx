@@ -5,6 +5,10 @@ import { usePlayTrack } from '@/hooks/play-track';
 import type { Track } from '@/services/track/track.types';
 import { Button } from './ui/button';
 
+function trackPlayLabel(title: string, isPlaying: boolean) {
+	return isPlaying ? `Pause ${title}` : `Play ${title}`;
+}
+
 export function PlayUserTrackButton({
 	track,
 	variant
@@ -19,26 +23,18 @@ export function PlayUserTrackButton({
 		return null;
 	}
 
+	const isActive =
+		isPlaying &&
+		trackId === track.id &&
+		type === 'user' &&
+		queueId === track.userId;
+
 	let classes = '';
 
 	if (variant === 'table') {
-		classes = `${
-			isPlaying &&
-			trackId === track.id &&
-			type === 'user' &&
-			queueId === track.userId
-				? 'opacity-100'
-				: 'opacity-0'
-		} absolute transition-opacity group-hover:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2`;
+		classes = `${isActive ? 'opacity-100' : 'opacity-0'} absolute transition-opacity group-hover:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2`;
 	} else if (variant === 'card') {
-		classes = `${
-			isPlaying &&
-			trackId === track.id &&
-			type === 'user' &&
-			queueId === track.userId
-				? 'opacity-100'
-				: 'opacity-0'
-		} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm hidden sm:inline-flex`;
+		classes = `${isActive ? 'opacity-100' : 'opacity-0'} absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm hidden sm:inline-flex`;
 	}
 
 	return (
@@ -48,17 +44,18 @@ export function PlayUserTrackButton({
 			type='button'
 			className={classes}
 			onClick={() => onClickUserTrack(track)}
+			aria-label={trackPlayLabel(track.title, isActive)}
+			aria-pressed={isActive}
 		>
-			{isPlaying &&
-			trackId === track.id &&
-			type === 'user' &&
-			queueId === track.userId ? (
+			{isActive ? (
 				<Pause
 					className={`${variant === 'table' ? 'w-full translate-y-[0.5px] fill-foreground' : 'size-5'} fill-foreground`}
+					aria-hidden='true'
 				/>
 			) : (
 				<Play
 					className={`${variant === 'table' ? 'w-full translate-y-[0.5px] fill-foreground' : 'size-5'} fill-foreground`}
+					aria-hidden='true'
 				/>
 			)}
 		</Button>
@@ -78,11 +75,17 @@ export function PlayUserButton({
 		return null;
 	}
 
+	const isActive = isPlaying && type === 'user' && queueId === track.userId;
+
 	let classes = '';
 
 	if (variant === 'card') {
-		classes += `${isPlaying && type === 'user' && queueId === track.userId ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		classes += `${isActive ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
+
+	const label = isActive
+		? `Pause ${track.username}'s tracks`
+		: `Play ${track.username}'s tracks`;
 
 	return (
 		<Button
@@ -91,11 +94,13 @@ export function PlayUserButton({
 			type='button'
 			className={classes}
 			onClick={() => onClickUser(track)}
+			aria-label={label}
+			aria-pressed={isActive}
 		>
-			{isPlaying && type === 'user' && queueId === track.userId ? (
-				<Pause className='size-5 fill-foreground' />
+			{isActive ? (
+				<Pause className='size-5 fill-foreground' aria-hidden='true' />
 			) : (
-				<Play className='size-5 fill-foreground' />
+				<Play className='size-5 fill-foreground' aria-hidden='true' />
 			)}
 		</Button>
 	);
@@ -108,18 +113,22 @@ export function PlayLikedTrackButton({ track }: { track?: Track }) {
 		return null;
 	}
 
+	const isActive = isPlaying && trackId === track.id && type === 'liked';
+
 	return (
 		<Button
 			variant='outline'
 			size='icon-lg'
 			type='button'
-			className={`${isPlaying && trackId === track.id && type === 'liked' ? 'opacity-100' : 'opacity-0'} absolute bottom-0 right-0 m-2 hidden shadow-sm transition-opacity group-hover:opacity-100 sm:inline-flex`}
+			className={`${isActive ? 'opacity-100' : 'opacity-0'} absolute bottom-0 right-0 m-2 hidden shadow-sm transition-opacity group-hover:opacity-100 sm:inline-flex`}
 			onClick={() => onClickLikedTrack(track)}
+			aria-label={trackPlayLabel(track.title, isActive)}
+			aria-pressed={isActive}
 		>
-			{isPlaying && trackId === track.id && type === 'liked' ? (
-				<Pause className='size-5 fill-foreground' />
+			{isActive ? (
+				<Pause className='size-5 fill-foreground' aria-hidden='true' />
 			) : (
-				<Play className='size-5 fill-foreground' />
+				<Play className='size-5 fill-foreground' aria-hidden='true' />
 			)}
 		</Button>
 	);
@@ -141,28 +150,32 @@ export function PlayPlaylistTrackButton({
 		return null;
 	}
 
+	const isActive =
+		isPlaying &&
+		trackId === track.id &&
+		type === 'playlist' &&
+		queueId === playlistId;
+
 	return (
 		<Button
 			variant='ghost'
 			size='icon-xs'
 			type='button'
-			className={`${
-				isPlaying &&
-				trackId === track.id &&
-				type === 'playlist' &&
-				queueId === playlistId
-					? 'opacity-100'
-					: 'opacity-0'
-			} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity group-hover:opacity-100`}
+			className={`${isActive ? 'opacity-100' : 'opacity-0'} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity group-hover:opacity-100`}
 			onClick={() => onClickPlaylistTrack(track, playlistId, position)}
+			aria-label={trackPlayLabel(track.title, isActive)}
+			aria-pressed={isActive}
 		>
-			{isPlaying &&
-			trackId === track.id &&
-			type === 'playlist' &&
-			queueId === playlistId ? (
-				<Pause className='w-full translate-y-[0.5px] fill-foreground' />
+			{isActive ? (
+				<Pause
+					className='w-full translate-y-[0.5px] fill-foreground'
+					aria-hidden='true'
+				/>
 			) : (
-				<Play className='w-full translate-y-[0.5px] fill-foreground' />
+				<Play
+					className='w-full translate-y-[0.5px] fill-foreground'
+					aria-hidden='true'
+				/>
 			)}
 		</Button>
 	);
@@ -183,10 +196,12 @@ export function PlayPlaylistButton({
 		return null;
 	}
 
+	const isActive = isPlaying && type === 'playlist' && queueId === playlistId;
+
 	let classes = '';
 
 	if (variant === 'card') {
-		classes += `${isPlaying && type === 'playlist' && queueId === playlistId ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex transition-opacity absolute group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		classes += `${isActive ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex transition-opacity absolute group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
 
 	return (
@@ -196,11 +211,13 @@ export function PlayPlaylistButton({
 			type='button'
 			className={classes}
 			onClick={() => onClickPlaylist(track, playlistId)}
+			aria-label={isActive ? 'Pause playlist' : 'Play playlist'}
+			aria-pressed={isActive}
 		>
-			{isPlaying && type === 'playlist' && queueId === playlistId ? (
-				<Pause className='size-5 fill-foreground' />
+			{isActive ? (
+				<Pause className='size-5 fill-foreground' aria-hidden='true' />
 			) : (
-				<Play className='size-5 fill-foreground' />
+				<Play className='size-5 fill-foreground' aria-hidden='true' />
 			)}
 		</Button>
 	);
@@ -222,28 +239,32 @@ export function PlayAlbumTrackButton({
 		return null;
 	}
 
+	const isActive =
+		isPlaying &&
+		trackId === track.id &&
+		type === 'album' &&
+		queueId === albumId;
+
 	return (
 		<Button
 			variant='ghost'
 			size='icon-xs'
 			type='button'
-			className={`${
-				isPlaying &&
-				trackId === track.id &&
-				type === 'album' &&
-				queueId === albumId
-					? 'opacity-100'
-					: 'opacity-0'
-			} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity group-hover:opacity-100`}
+			className={`${isActive ? 'opacity-100' : 'opacity-0'} absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity group-hover:opacity-100`}
 			onClick={() => onClickAlbumTrack(track, albumId, position)}
+			aria-label={trackPlayLabel(track.title, isActive)}
+			aria-pressed={isActive}
 		>
-			{isPlaying &&
-			trackId === track.id &&
-			type === 'album' &&
-			queueId === albumId ? (
-				<Pause className='w-full translate-y-[0.5px] fill-foreground' />
+			{isActive ? (
+				<Pause
+					className='w-full translate-y-[0.5px] fill-foreground'
+					aria-hidden='true'
+				/>
 			) : (
-				<Play className='w-full translate-y-[0.5px] fill-foreground' />
+				<Play
+					className='w-full translate-y-[0.5px] fill-foreground'
+					aria-hidden='true'
+				/>
 			)}
 		</Button>
 	);
@@ -264,10 +285,12 @@ export function PlayAlbumButton({
 		return null;
 	}
 
+	const isActive = isPlaying && type === 'album' && queueId === albumId;
+
 	let classes = '';
 
 	if (variant === 'card') {
-		classes += `${isPlaying && type === 'album' && queueId === albumId ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
+		classes += `${isActive ? 'opacity-100' : 'opacity-0'} hidden sm:inline-flex absolute transition-opacity group-hover:opacity-100 bottom-0 right-0 m-2 shadow-sm`;
 	}
 
 	return (
@@ -277,11 +300,13 @@ export function PlayAlbumButton({
 			type='button'
 			className={classes}
 			onClick={() => onClickAlbum(track, albumId)}
+			aria-label={isActive ? 'Pause album' : 'Play album'}
+			aria-pressed={isActive}
 		>
-			{isPlaying && type === 'album' && queueId === albumId ? (
-				<Pause className='size-5 fill-foreground' />
+			{isActive ? (
+				<Pause className='size-5 fill-foreground' aria-hidden='true' />
 			) : (
-				<Play className='size-5 fill-foreground' />
+				<Play className='size-5 fill-foreground' aria-hidden='true' />
 			)}
 		</Button>
 	);

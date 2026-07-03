@@ -166,6 +166,7 @@ export function TrackHero({
 												variant='outline'
 												size='icon'
 												type='button'
+												aria-label='Remove image'
 												className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 												onClick={() => {
 													setImageUrl(
@@ -281,6 +282,7 @@ export function TrackHero({
 							size='icon-lg'
 							variant={editMode ? 'default' : 'outline'}
 							disabled={!currentUser}
+							aria-label={editMode ? 'Cancel editing' : 'Edit'}
 							onClick={() => {
 								if (editMode) {
 									setEditMode(false);
@@ -298,6 +300,7 @@ export function TrackHero({
 									size='icon-lg'
 									variant='outline'
 									disabled={!currentUser}
+									aria-label='Save changes'
 								>
 									<Check className='size-5'></Check>
 								</Button>
@@ -415,6 +418,7 @@ export function PlaylistHero({
 												variant='outline'
 												size='icon'
 												type='button'
+												aria-label='Remove image'
 												className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 												onClick={() => {
 													setImageUrl(
@@ -531,6 +535,7 @@ export function PlaylistHero({
 							size='icon-lg'
 							variant={editMode ? 'default' : 'outline'}
 							disabled={!currentUser}
+							aria-label={editMode ? 'Cancel editing' : 'Edit'}
 							onClick={() => {
 								if (editMode) {
 									setEditMode(false);
@@ -548,6 +553,7 @@ export function PlaylistHero({
 									size='icon-lg'
 									variant='outline'
 									disabled={!currentUser}
+									aria-label='Save changes'
 								>
 									<Check className='size-5'></Check>
 								</Button>
@@ -665,6 +671,7 @@ export function AlbumHero({
 												variant='outline'
 												size='icon'
 												type='button'
+												aria-label='Remove image'
 												className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 												onClick={() => {
 													setImageUrl(
@@ -781,6 +788,7 @@ export function AlbumHero({
 							size='icon-lg'
 							variant={editMode ? 'default' : 'outline'}
 							disabled={!currentUser}
+							aria-label={editMode ? 'Cancel editing' : 'Edit'}
 							onClick={() => {
 								if (editMode) {
 									setEditMode(false);
@@ -798,6 +806,7 @@ export function AlbumHero({
 									size='icon-lg'
 									variant='outline'
 									disabled={!currentUser}
+									aria-label='Save changes'
 								>
 									<Check className='size-5'></Check>
 								</Button>

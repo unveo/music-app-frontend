@@ -150,6 +150,7 @@ export default function CreatePlaylist() {
 														variant='outline'
 														size='icon'
 														type='button'
+														aria-label='Remove image'
 														className='absolute right-2 top-2 z-10 rounded-md opacity-0 transition-opacity group-hover:opacity-100'
 														onClick={() => {
 															setImageUrl(undefined);

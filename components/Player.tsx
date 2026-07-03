@@ -32,32 +32,33 @@ export default function Player() {
 		return <FooterLayout></FooterLayout>;
 	}
 
+	const coverAlt = `${trackInfo.title} cover art`;
+
 	return (
 		<FooterLayout>
-			<div className='flex h-full w-full items-center gap-4 sm:w-64'>
+			<div className='flex h-full w-full min-w-0 items-center gap-4 sm:w-64'>
 				<Link
 					href={`/${trackInfo.username}/${trackInfo.changeableId}`}
-					className='size-12 min-h-12 min-w-12 rounded-md border'
+					className='size-12 min-h-12 min-w-12 shrink-0 rounded-md border'
 				>
 					<Image
-						priority
-						alt='cover'
+						alt={coverAlt}
 						src={`${IMAGES_URL}/${trackInfo.image}${SMALL_IMAGE_ENDING}`}
 						width={50}
 						height={50}
 						className='aspect-square size-12 min-h-12 min-w-12 rounded-md'
 					/>
 				</Link>
-				<div className='flex w-full min-w-8 flex-col overflow-hidden text-sm sm:max-w-20 lg:max-w-28'>
+				<div className='flex min-w-0 flex-1 flex-col overflow-hidden text-sm sm:max-w-20 lg:max-w-28'>
 					<Link
-						className='overflow-hidden whitespace-nowrap'
+						className='truncate'
 						href={`/${trackInfo.username}/${trackInfo.changeableId}`}
 					>
 						{trackInfo.title}
 					</Link>
 					<Link
 						href={`/${trackInfo.username}`}
-						className='overflow-hidden whitespace-nowrap text-muted-foreground'
+						className='truncate text-muted-foreground'
 					>
 						{trackInfo.username}
 					</Link>
@@ -72,7 +73,7 @@ export default function Player() {
 					<SkipForwardButton />
 					<RepeatButton />
 				</div>
-				<div className='flex w-full items-center justify-center gap-2 text-xs'>
+				<div className='flex w-full items-center justify-center gap-2 text-xs tabular-nums'>
 					<span className='w-12 text-end'>
 						{audioReady ? formatTime(currentTime) : '0:00'}
 					</span>

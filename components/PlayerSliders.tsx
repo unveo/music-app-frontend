@@ -1,6 +1,7 @@
 'use client';
 
 import type { SliderValueChangeDetails } from '@ark-ui/react';
+import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useTrackStore } from '@/stores/track.store';
@@ -33,16 +34,22 @@ export function TrackSlider({ updateTime }: { updateTime: () => void }) {
 	}
 
 	return (
-		<Slider
-			value={[progress]}
-			onPointerDown={onPointerDown}
-			onValueChange={onTrackSliderChange}
-			onValueChangeEnd={onTrackSliderChangeEnd}
-			max={1}
-			step={0.01}
-			disabled={!audioReady}
-			className='w-full sm:w-52 md:w-80 lg:w-[26rem]'
-		/>
+		<div className='w-full sm:w-52 md:w-80 lg:w-[26rem]'>
+			<Label htmlFor='track-progress' className='sr-only'>
+				Track progress
+			</Label>
+			<Slider
+				id='track-progress'
+				value={[progress]}
+				onPointerDown={onPointerDown}
+				onValueChange={onTrackSliderChange}
+				onValueChangeEnd={onTrackSliderChangeEnd}
+				max={1}
+				step={0.01}
+				disabled={!audioReady}
+				className='w-full'
+			/>
+		</div>
 	);
 }
 
@@ -63,12 +70,18 @@ export function VolumeSlider() {
 	}
 
 	return (
-		<Slider
-			value={[muted ? 0 : volume]}
-			onValueChange={onVolumeChange}
-			max={1}
-			step={0.01}
-			className='w-16 md:w-20 lg:w-28'
-		/>
+		<div className='w-16 md:w-20 lg:w-28'>
+			<Label htmlFor='volume' className='sr-only'>
+				Volume
+			</Label>
+			<Slider
+				id='volume'
+				value={[muted ? 0 : volume]}
+				onValueChange={onVolumeChange}
+				max={1}
+				step={0.01}
+				className='w-full'
+			/>
+		</div>
 	);
 }

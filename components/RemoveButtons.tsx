@@ -70,8 +70,9 @@ export function RemoveFromPlaylistButton({
 			onClick={() => removeMutation.mutate({ playlistId, trackToRemoveId })}
 			variant='clear'
 			size='icon-xs'
+			aria-label='Remove from playlist'
 		>
-			<X className='size-4 translate-y-[0.5px]' />
+			<X className='size-4 translate-y-[0.5px]' aria-hidden='true' />
 		</Button>
 	);
 }

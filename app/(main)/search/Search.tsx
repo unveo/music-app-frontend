@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { AlbumRow, TrackRow, UserRow } from '@/components/SearchRows';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { searchService } from '@/services/search/search.service';
 
@@ -28,44 +29,63 @@ export default function Search() {
 	const searchParams = useSearchParams();
 	const search = searchParams.get('search') || '';
 
-	const [query, setQuery] = useState('');
+	const [query, setQuery] = useState(search);
 
 	const searchQuery = useSearchQuery(search);
 	const searchData = searchQuery.data?.data;
 
 	useEffect(() => {
-		if (search) {
-			setQuery(search);
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		setQuery(search);
+	}, [search]);
+
+	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+		router.push(`?search=${encodeURIComponent(query.trim())}`);
+	}
 
 	return (
 		<div className='flex flex-col items-center gap-4 p-4 sm:p-6 md:p-8'>
-			<div className='flex w-full max-w-md flex-col items-center gap-2 sm:flex-row'>
+			<form
+				onSubmit={handleSubmit}
+				className='flex w-full max-w-md flex-col items-center gap-2 sm:flex-row'
+			>
 				<div className='flex w-full items-center gap-2'>
-					<div className='flex h-10 flex-grow items-center rounded-md border border-border bg-background px-2'>
-						<Input
-							id='search'
-							placeholder='Search...'
-							value={query}
-							onChange={(event) => setQuery(event.target.value)}
-							maxLength={30}
-							className='w-full'
-						/>
-					</div>
+					<Label htmlFor='search' className='sr-only'>
+						Search
+					</Label>
+					<Input
+						id='search'
+						name='search'
+						type='search'
+						autoComplete='off'
+						spellCheck={false}
+						placeholder='Search…'
+						value={query}
+						onChange={(event) => setQuery(event.target.value)}
+						maxLength={30}
+						className='h-10 flex-grow rounded-md border border-input bg-background px-3 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+					/>
 					<Button
+						type='submit'
 						variant='outline'
 						className='size-10 min-h-10 min-w-10 rounded-md p-0'
-						onClick={() => router.push(`?search=${query}`)}
+						aria-label='Search'
 					>
-						<SearchIcon className='size-5' />
+						<SearchIcon className='size-5' aria-hidden='true' />
 					</Button>
 				</div>
 				{searchQuery.isLoading ? (
-					<LoadingSpinner className='opacity-100' />
+					<div role='status' aria-live='polite'>
+						<LoadingSpinner className='opacity-100' aria-hidden='true' />
+						<span className='sr-only'>Searching…</span>
+					</div>
 				) : null}
-			</div>
+			</form>
+			{search && searchQuery.isError ? (
+				<p className='text-center text-muted-foreground' role='alert'>
+					Search failed. Try again or refresh the page.
+				</p>
+			) : null}
 			{searchData && (
 				<div className='w-full max-w-7xl'>
 					{searchData.length > 0 ? (
@@ -97,7 +117,7 @@ export default function Search() {
 						</ul>
 					) : (
 						<p className='text-center text-muted-foreground'>
-							No results found
+							No results found. Try a different search term.
 						</p>
 					)}
 				</div>

@@ -75,6 +75,8 @@ export function LikeTrackButton({
 					? removeFromLikedMutation.mutate(track.id)
 					: addToLikedMutation.mutate(track.id);
 			}}
+			aria-label={track.likes.length ? 'Unlike track' : 'Like track'}
+			aria-pressed={track.likes.length > 0}
 		>
 			{track.likes.length ? (
 				<Heart
@@ -142,6 +144,10 @@ export function SavePlaylistButton({
 					? removeFromSavedMutation.mutate(playlist.id)
 					: addToSavedMutation.mutate(playlist.id);
 			}}
+			aria-label={
+				playlist.savedByUsers.length ? 'Unsave playlist' : 'Save playlist'
+			}
+			aria-pressed={playlist.savedByUsers.length > 0}
 		>
 			{playlist.savedByUsers.length ? (
 				<Heart className='size-5 fill-foreground'></Heart>
@@ -198,6 +204,8 @@ export function LikeAlbumButton({
 					? removeFromLikedMutation.mutate(album.id)
 					: addToLikedMutation.mutate(album.id);
 			}}
+			aria-label={album.likes.length ? 'Unlike album' : 'Like album'}
+			aria-pressed={album.likes.length > 0}
 		>
 			{album.likes.length ? (
 				<Heart className='size-5 fill-foreground'></Heart>

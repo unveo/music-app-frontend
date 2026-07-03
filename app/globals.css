@@ -4,6 +4,7 @@
 
 @layer base {
 	:root {
+		color-scheme: light;
 		--background: 0 0% 100%;
 		--foreground: 240 10% 3.9%;
 		--card: 0 0% 100%;
@@ -33,6 +34,7 @@
 	}
 
 	.dark {
+		color-scheme: dark;
 		--background: 240 10% 3.9%;
 		--foreground: 0 0% 98%;
 		--card: 240 10% 3.9%;
@@ -89,5 +91,16 @@
 
 	.library-div {
 		@apply flex flex-col gap-4 p-4 sm:p-6 md:p-8;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
+		transition-duration: 0.01ms;
+		scroll-behavior: auto;
 	}
 }
