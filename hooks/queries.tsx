@@ -229,7 +229,8 @@ export function useCurrentTrackQuery(trackId: number) {
 export function useNotificationsQuery() {
 	return useQuery({
 		queryKey: ['notifications'],
-		queryFn: () => notificationService.getAll()
+		queryFn: () => notificationService.getAll(),
+		refetchInterval: 60_000
 	});
 }
 
@@ -248,6 +249,7 @@ export function useSearchQuery(query: string) {
 		enabled: !!query,
 		refetchOnMount: false,
 		refetchOnWindowFocus: false,
-		refetchOnReconnect: false
+		refetchOnReconnect: false,
+		staleTime: 1000 * 60 * 5
 	});
 }

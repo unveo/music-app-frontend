@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { PlayTrackProvider } from '@/hooks/play-track';
 import { getErrorMessage } from '@/lib/error-message';
 
 export default function Providers({ children }: React.PropsWithChildren) {
@@ -30,6 +31,8 @@ export default function Providers({ children }: React.PropsWithChildren) {
 	);
 
 	return (
-		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		<QueryClientProvider client={queryClient}>
+			<PlayTrackProvider>{children}</PlayTrackProvider>
+		</QueryClientProvider>
 	);
 }

@@ -66,7 +66,7 @@ export default function Signup() {
 								<FormItem className='grid gap-2'>
 									<FormLabel htmlFor='username'>Username</FormLabel>
 									<FormControl>
-										<div className='flex h-10 items-center rounded-md border border-border px-2'>
+										<div className='flex h-10 items-center rounded-md border border-border px-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
 											<Input
 												id='username'
 												placeholder='username'
@@ -86,7 +86,7 @@ export default function Signup() {
 								<FormItem className='grid gap-2'>
 									<FormLabel htmlFor='email'>Email</FormLabel>
 									<FormControl>
-										<div className='flex h-10 items-center rounded-md border border-border px-2'>
+										<div className='flex h-10 items-center rounded-md border border-border px-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
 											<Input
 												id='email'
 												type='email'
@@ -107,7 +107,7 @@ export default function Signup() {
 								<FormItem className='grid gap-2'>
 									<FormLabel htmlFor='password'>Password</FormLabel>
 									<FormControl>
-										<div className='flex h-10 items-center rounded-md border border-border px-2'>
+										<div className='flex h-10 items-center rounded-md border border-border px-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
 											<Input
 												id='password'
 												type='password'

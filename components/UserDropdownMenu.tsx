@@ -17,7 +17,7 @@ import {
 } from './ui/dropdown-menu';
 
 export function UserDropdownMenu() {
-	const { audio } = useTrackStore();
+	const audio = useTrackStore((state) => state.audio);
 
 	const { push } = useRouter();
 

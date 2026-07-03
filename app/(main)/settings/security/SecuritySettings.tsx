@@ -80,7 +80,7 @@ export default function SecuritySettings() {
 									</div>
 								) : null}
 							</div>
-							<div className='flex h-10 items-center rounded-md border border-border px-2'>
+							<div className='flex h-10 items-center rounded-md border border-border px-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
 								<Input
 									id='email'
 									required
@@ -110,7 +110,7 @@ export default function SecuritySettings() {
 						</Label>
 						<div className='grid gap-2'>
 							<Label htmlFor='oldPassword'>Old password</Label>
-							<div className='flex h-10 items-center rounded-md border border-border px-2'>
+							<div className='flex h-10 items-center rounded-md border border-border px-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
 								<Input
 									id='oldPassword'
 									type='password'
@@ -126,7 +126,7 @@ export default function SecuritySettings() {
 						</div>
 						<div className='grid gap-2'>
 							<Label htmlFor='newPassword'>New password</Label>
-							<div className='flex h-10 items-center rounded-md border border-border px-2'>
+							<div className='flex h-10 items-center rounded-md border border-border px-2 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2'>
 								<Input
 									id='newPassword'
 									type='password'

@@ -1,7 +1,7 @@
 'use client';
 
 import { Pause, Play } from 'lucide-react';
-import { usePlayTrack } from '@/hooks/play-track';
+import { usePlayTrackActions, usePlayTrackState } from '@/hooks/play-track';
 import type { Track } from '@/services/track/track.types';
 import { Button } from './ui/button';
 
@@ -16,8 +16,8 @@ export function PlayUserTrackButton({
 	track?: Track;
 	variant: 'card' | 'table' | 'set';
 }) {
-	const { isPlaying, trackId, type, queueId, onClickUserTrack } =
-		usePlayTrack();
+	const { isPlaying, trackId, type, queueId } = usePlayTrackState();
+	const { onClickUserTrack } = usePlayTrackActions();
 
 	if (!track) {
 		return null;
@@ -69,7 +69,8 @@ export function PlayUserButton({
 	track?: Track;
 	variant: 'card' | 'set';
 }) {
-	const { isPlaying, type, queueId, onClickUser } = usePlayTrack();
+	const { isPlaying, type, queueId } = usePlayTrackState();
+	const { onClickUser } = usePlayTrackActions();
 
 	if (!track) {
 		return null;
@@ -107,7 +108,8 @@ export function PlayUserButton({
 }
 
 export function PlayLikedTrackButton({ track }: { track?: Track }) {
-	const { isPlaying, trackId, type, onClickLikedTrack } = usePlayTrack();
+	const { isPlaying, trackId, type } = usePlayTrackState();
+	const { onClickLikedTrack } = usePlayTrackActions();
 
 	if (!track) {
 		return null;
@@ -143,8 +145,8 @@ export function PlayPlaylistTrackButton({
 	playlistId: number;
 	position: number;
 }) {
-	const { isPlaying, trackId, type, queueId, onClickPlaylistTrack } =
-		usePlayTrack();
+	const { isPlaying, trackId, type, queueId } = usePlayTrackState();
+	const { onClickPlaylistTrack } = usePlayTrackActions();
 
 	if (!track) {
 		return null;
@@ -190,7 +192,8 @@ export function PlayPlaylistButton({
 	playlistId: number;
 	variant: 'card' | 'set';
 }) {
-	const { isPlaying, type, queueId, onClickPlaylist } = usePlayTrack();
+	const { isPlaying, type, queueId } = usePlayTrackState();
+	const { onClickPlaylist } = usePlayTrackActions();
 
 	if (!track) {
 		return null;
@@ -232,8 +235,8 @@ export function PlayAlbumTrackButton({
 	albumId: number;
 	position: number;
 }) {
-	const { isPlaying, trackId, type, queueId, onClickAlbumTrack } =
-		usePlayTrack();
+	const { isPlaying, trackId, type, queueId } = usePlayTrackState();
+	const { onClickAlbumTrack } = usePlayTrackActions();
 
 	if (!track) {
 		return null;
@@ -279,7 +282,8 @@ export function PlayAlbumButton({
 	albumId: number;
 	variant: 'card' | 'set';
 }) {
-	const { isPlaying, type, queueId, onClickAlbum } = usePlayTrack();
+	const { isPlaying, type, queueId } = usePlayTrackState();
+	const { onClickAlbum } = usePlayTrackActions();
 
 	if (!track) {
 		return null;

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { IMAGES_URL, SMALL_IMAGE_ENDING } from '@/config';
 import { usePlayer } from '@/hooks/player';
 import { useCurrentUserQuery } from '@/hooks/queries';
+import { useMediaSession } from '@/hooks/use-media-session';
+import { usePlayerKeyboard } from '@/hooks/use-player-keyboard';
 import { formatTime } from '@/lib/utils';
 import { useTrackStore } from '@/stores/track.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
@@ -17,25 +19,31 @@ import {
 	SkipForwardButton,
 	VolumeButton
 } from './PlayerButtons';
+import { PlayerFooterLayout } from './PlayerFooterLayout';
 import { TrackSlider, VolumeSlider } from './PlayerSliders';
+import { QueuePanel } from './QueuePanel';
 
 export default function Player() {
-	const { currentTime } = useTrackLocalStore();
-	const { trackInfo, audio, audioReady } = useTrackStore();
+	const currentTime = useTrackLocalStore((state) => state.currentTime);
+	const trackInfo = useTrackStore((state) => state.trackInfo);
+	const audio = useTrackStore((state) => state.audio);
+	const audioReady = useTrackStore((state) => state.audioReady);
 
 	const { updateTime } = usePlayer();
+	useMediaSession();
+	usePlayerKeyboard();
 
 	const currentUserQuery = useCurrentUserQuery();
 	const currentUser = currentUserQuery.data?.data;
 
 	if (!currentUser || !trackInfo || !audio) {
-		return <FooterLayout></FooterLayout>;
+		return <PlayerFooterLayout></PlayerFooterLayout>;
 	}
 
 	const coverAlt = `${trackInfo.title} cover art`;
 
 	return (
-		<FooterLayout>
+		<PlayerFooterLayout>
 			<div className='flex h-full w-full min-w-0 items-center gap-4 sm:w-64'>
 				<Link
 					href={`/${trackInfo.username}/${trackInfo.changeableId}`}
@@ -67,6 +75,7 @@ export default function Player() {
 			</div>
 			<div className='flex h-full w-full flex-col items-center pt-1 sm:w-[48rem]'>
 				<div className='flex justify-center gap-2'>
+					<QueuePanel />
 					<ShuffleButton />
 					<SkipBackButton />
 					<PlayButton />
@@ -85,20 +94,6 @@ export default function Player() {
 				<VolumeButton />
 				<VolumeSlider />
 			</div>
-		</FooterLayout>
-	);
-}
-
-function FooterLayout({
-	children
-}: Readonly<{
-	children?: React.ReactNode;
-}>) {
-	return (
-		<footer className='sticky bottom-0 flex h-32 max-h-32 min-h-32 justify-center border-t bg-background sm:h-16 sm:max-h-16 sm:min-h-16'>
-			<div className='flex h-full w-full max-w-[80rem] flex-col px-2 sm:flex-row sm:items-center'>
-				{children}
-			</div>
-		</footer>
+		</PlayerFooterLayout>
 	);
 }

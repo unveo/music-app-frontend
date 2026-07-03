@@ -1,6 +1,5 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { SearchIcon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -9,19 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { searchService } from '@/services/search/search.service';
-
-export function useSearchQuery(query: string) {
-	return useQuery({
-		queryKey: ['search', query],
-		queryFn: () => searchService.search(query),
-		enabled: !!query,
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
-		staleTime: 1000 * 60 * 5
-	});
-}
+import { useSearchQuery } from '@/hooks/queries';
 
 export default function Search() {
 	const router = useRouter();

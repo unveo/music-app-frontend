@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { usePlayTrack } from '@/hooks/play-track';
+import { usePlayTrackActions, usePlayTrackState } from '@/hooks/play-track';
 import { useDisabledLikedTracksQuery } from '@/hooks/queries';
 import { likedTrackService } from '@/services/user/liked-track/liked-track.service';
 import { useSettingsStore } from '@/stores/settings.store';
@@ -24,7 +24,8 @@ import { useTrackStore } from '@/stores/track.store';
 import { Button } from './ui/button';
 
 export function PlayButton() {
-	const { isPlaying, audioReady, onClickPlay } = usePlayTrack();
+	const { isPlaying, audioReady } = usePlayTrackState();
+	const { onClickPlay } = usePlayTrackActions();
 
 	useEffect(() => {
 		const handleSpaceKey = (event: KeyboardEvent) => {
@@ -73,7 +74,8 @@ export function PlayButton() {
 }
 
 export function SkipBackButton() {
-	const { audioReady, onClickSkipBack } = usePlayTrack();
+	const { audioReady } = usePlayTrackState();
+	const { onClickSkipBack } = usePlayTrackActions();
 
 	return (
 		<Button
@@ -89,7 +91,8 @@ export function SkipBackButton() {
 }
 
 export function SkipForwardButton() {
-	const { audioReady, onClickSkipForward } = usePlayTrack();
+	const { audioReady } = usePlayTrackState();
+	const { onClickSkipForward } = usePlayTrackActions();
 
 	return (
 		<Button
@@ -105,7 +108,8 @@ export function SkipForwardButton() {
 }
 
 export function ShuffleButton() {
-	const { shuffle, audioReady, onClickShuffle } = usePlayTrack();
+	const { shuffle, audioReady } = usePlayTrackState();
+	const { onClickShuffle } = usePlayTrackActions();
 
 	return (
 		<Button
@@ -125,7 +129,8 @@ export function ShuffleButton() {
 }
 
 export function RepeatButton() {
-	const { repeat, audioReady, onClickRepeat } = usePlayTrack();
+	const { repeat, audioReady } = usePlayTrackState();
+	const { onClickRepeat } = usePlayTrackActions();
 
 	const repeatLabel =
 		repeat === 'one'
@@ -155,8 +160,8 @@ export function RepeatButton() {
 }
 
 export function LikeTrackPlayerButton() {
-	const { setTrackInfo } = useTrackStore();
-	const trackInfo = useTrackStore.getState().trackInfo;
+	const trackInfo = useTrackStore((state) => state.trackInfo);
+	const setTrackInfo = useTrackStore((state) => state.setTrackInfo);
 
 	const pathname = usePathname();
 
@@ -222,7 +227,7 @@ export function LikeTrackPlayerButton() {
 
 export function VolumeButton() {
 	const { volume, muted, setVolume, setMuted } = useSettingsStore();
-	const { audio } = useTrackStore();
+	const audio = useTrackStore((state) => state.audio);
 
 	if (!audio) {
 		return null;

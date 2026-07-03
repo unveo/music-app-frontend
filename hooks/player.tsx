@@ -2,99 +2,111 @@
 
 import { useCallback, useEffect } from 'react';
 import { AUDIO_ENDING, AUDIO_URL, MS_TO_ADD_LISTEN } from '@/config';
+import { usePlayTrack } from '@/hooks/play-track';
+import { useCurrentTrackQuery } from '@/hooks/queries';
 import { trackService } from '@/services/track/track.service';
 import { useListenTimeStore } from '@/stores/listen-time.store';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useTrackStore } from '@/stores/track.store';
 import { useTrackLocalStore } from '@/stores/track-local.store';
-import { usePlayTrack } from './play-track';
-import { useCurrentTrackQuery } from './queries';
 
 export function usePlayer() {
-	const {
-		isPlaying,
-		audio,
-		audioReady,
-		isSeeking,
-		trackInfo,
-		setTrackInfo,
-		setAudio,
-		setAudioReady,
-		setProgress
-	} = useTrackStore();
-	const { currentTime, setCurrentTime } = useTrackLocalStore();
-	const { setListenTime, setStartTime, listenTime, startTime } =
-		useListenTimeStore();
-	const { muted, volume } = useSettingsStore();
+	const audio = useTrackStore((state) => state.audio);
+	const audioReady = useTrackStore((state) => state.audioReady);
+	const isSeeking = useTrackStore((state) => state.isSeeking);
+	const isPlaying = useTrackStore((state) => state.isPlaying);
+	const trackInfo = useTrackStore((state) => state.trackInfo);
+	const setTrackInfo = useTrackStore((state) => state.setTrackInfo);
+	const setAudio = useTrackStore((state) => state.setAudio);
+	const setAudioReady = useTrackStore((state) => state.setAudioReady);
+	const setProgress = useTrackStore((state) => state.setProgress);
+	const setCurrentTime = useTrackLocalStore((state) => state.setCurrentTime);
+	const trackId = useTrackLocalStore((state) => state.trackId);
+	const listenTime = useListenTimeStore((state) => state.listenTime);
+	const startTime = useListenTimeStore((state) => state.startTime);
+	const setListenTime = useListenTimeStore((state) => state.setListenTime);
+	const setStartTime = useListenTimeStore((state) => state.setStartTime);
+	const muted = useSettingsStore((state) => state.muted);
+	const volume = useSettingsStore((state) => state.volume);
 
 	const { onEnded } = usePlayTrack();
 
-	const currentTrackQuery = useCurrentTrackQuery(
-		useTrackLocalStore.getState().trackId!
-	);
+	const currentTrackQuery = useCurrentTrackQuery(trackId ?? 0);
 	const currentTrack = currentTrackQuery.data?.data;
 
 	const updateTime = useCallback(() => {
-		if (audio && !isSeeking) {
-			setCurrentTime(audio.currentTime);
-			setProgress(audio.currentTime / audio.duration);
-		}
-	}, [isSeeking, audio]);
+		const currentAudio = useTrackStore.getState().audio;
 
-	function onCanPlayThroughFirstLoad() {
-		setAudioReady(true);
-	}
+		if (currentAudio && !useTrackStore.getState().isSeeking) {
+			setCurrentTime(currentAudio.currentTime);
+			setProgress(currentAudio.currentTime / currentAudio.duration);
+		}
+	}, [setCurrentTime, setProgress]);
 
 	useEffect(() => {
-		if (useTrackLocalStore.getState().trackId) {
+		if (trackId) {
 			currentTrackQuery.refetch();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if (currentTrack) {
-			const audio = new Audio(
-				`${AUDIO_URL}/${currentTrack.audio}${AUDIO_ENDING}`
-			);
-
-			setAudio(audio);
-			setTrackInfo(currentTrack);
-
-			audio.addEventListener('canplaythrough', onCanPlayThroughFirstLoad);
-			audio.addEventListener('ended', onEnded);
-
-			return () => {
-				audio.removeEventListener('canplaythrough', onCanPlayThroughFirstLoad);
-				audio.removeEventListener('ended', onEnded);
-			};
+		if (!currentTrack || useTrackStore.getState().audio) {
+			return;
 		}
-	}, [currentTrack]);
+
+		const restoredAudio = new Audio(
+			`${AUDIO_URL}/${currentTrack.audio}${AUDIO_ENDING}`
+		);
+
+		setAudio(restoredAudio);
+		setTrackInfo(currentTrack);
+
+		function onCanPlayThroughFirstLoad() {
+			setAudioReady(true);
+		}
+
+		restoredAudio.addEventListener('canplaythrough', onCanPlayThroughFirstLoad);
+		restoredAudio.addEventListener('ended', onEnded);
+
+		return () => {
+			restoredAudio.removeEventListener(
+				'canplaythrough',
+				onCanPlayThroughFirstLoad
+			);
+			restoredAudio.removeEventListener('ended', onEnded);
+		};
+	}, [currentTrack, onEnded, setAudio, setAudioReady, setTrackInfo]);
 
 	useEffect(() => {
 		if (audio && audioReady) {
-			if (currentTime > 0 && currentTime < audio.duration) {
-				audio.currentTime = currentTime;
-			}
+			const savedTime = useTrackLocalStore.getState().currentTime;
 
-			if (volume >= 0 && volume <= 1) {
-				if (muted) {
-					audio.volume = 0;
-				} else {
-					audio.volume = volume;
-				}
+			if (savedTime > 0 && savedTime < audio.duration) {
+				audio.currentTime = savedTime;
 			}
 		}
+		// Only restore seek position once when audio becomes ready.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [audioReady]);
 
 	useEffect(() => {
-		if (audio && !isSeeking) {
-			audio.addEventListener('timeupdate', updateTime);
-
-			return () => {
-				audio.removeEventListener('timeupdate', updateTime);
-			};
+		if (audio && audioReady && volume >= 0 && volume <= 1) {
+			audio.volume = muted ? 0 : volume;
 		}
-	}, [audio, updateTime]);
+	}, [audio, audioReady, muted, volume]);
+
+	useEffect(() => {
+		if (!audio || isSeeking) {
+			return;
+		}
+
+		audio.addEventListener('timeupdate', updateTime);
+
+		return () => {
+			audio.removeEventListener('timeupdate', updateTime);
+		};
+	}, [audio, isSeeking, updateTime]);
 
 	useEffect(() => {
 		if (trackInfo && typeof listenTime === 'number') {
@@ -113,7 +125,14 @@ export function usePlayer() {
 				setStartTime(undefined);
 			}
 		}
-	}, [isPlaying, trackInfo]);
+	}, [
+		isPlaying,
+		listenTime,
+		setListenTime,
+		setStartTime,
+		startTime,
+		trackInfo
+	]);
 
 	useEffect(() => {
 		if (trackInfo && typeof listenTime === 'number' && isPlaying && startTime) {
@@ -127,7 +146,14 @@ export function usePlayer() {
 
 			return () => clearInterval(intervalId);
 		}
-	}, [isPlaying, listenTime, startTime, trackInfo]);
+	}, [
+		isPlaying,
+		listenTime,
+		setListenTime,
+		setStartTime,
+		startTime,
+		trackInfo
+	]);
 
 	return { updateTime };
 }

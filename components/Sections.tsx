@@ -5,6 +5,8 @@ import {
 	useAlbumsQuery,
 	useFollowersQuery,
 	useFollowingQuery,
+	useHistoryQuery,
+	useLikedTracksQuery,
 	usePlaylistsQuery,
 	useRecommendedQuery,
 	useTracksQuery,
@@ -13,6 +15,8 @@ import {
 import { useCardsCountStore } from '@/stores/cards-count.store';
 import {
 	AlbumCardProfile,
+	LikedTrackCard,
+	ListeningHistoryCard,
 	PlaylistCardProfile,
 	TrackCard,
 	UserCard
@@ -60,6 +64,42 @@ export function RecommendedSection() {
 		<Section name='Recommended'>
 			{recommended.map((user) => (
 				<UserCard key={user.id} user={user}></UserCard>
+			))}
+		</Section>
+	);
+}
+
+export function RecentHistorySection() {
+	const { cardsCount } = useCardsCountStore();
+	const historyQuery = useHistoryQuery();
+	const history = historyQuery.data?.data;
+
+	if (!history?.length) {
+		return null;
+	}
+
+	return (
+		<Section href='/library/history' name='Recently played'>
+			{history.slice(0, cardsCount).map(({ track }) => (
+				<ListeningHistoryCard key={track.id} track={track} />
+			))}
+		</Section>
+	);
+}
+
+export function LikedTracksHomeSection() {
+	const { cardsCount } = useCardsCountStore();
+	const likedTracksQuery = useLikedTracksQuery();
+	const likedTracks = likedTracksQuery.data?.data;
+
+	if (!likedTracks?.length) {
+		return null;
+	}
+
+	return (
+		<Section href='/library/tracks' name='Liked tracks'>
+			{likedTracks.slice(0, cardsCount).map(({ track }) => (
+				<LikedTrackCard key={track.id} track={track} />
 			))}
 		</Section>
 	);
