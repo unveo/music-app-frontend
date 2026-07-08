@@ -1,7 +1,4 @@
-## Music app
-
-- [Backend код](https://github.com/ocenb/music-app-backend)
-- [Frontend код](https://github.com/ocenb/music-app-frontend)
+# Music app
 
 ## Основные возможности
 
@@ -20,22 +17,9 @@
 
 ## Используемые технологии
 
-- **Backend:** NestJS, Prisma, PostgreSQL, Redis, Elasticsearch, Docker, Nginx, Ffmpeg.
-- **Frontend:** Next.js, TailwindCSS, React-query, Axios, React-hook-form, Zod, Zustand, Shadcn/ui.
+Next.js, TailwindCSS, React-query, Axios, React-hook-form, Zod, Zustand, Shadcn/ui.
 
 ## Архитектура и особенности
-
-### Backend
-
-- Авторизация с JWT токенами (access и refresh). ([auth module](https://github.com/ocenb/music-app-backend/tree/main/src/auth))
-- Валидация, документация и т.д.
-- Кэширование с Redis.
-- Поиск через Elasticsearch (Bonsai.io).
-- Нормализация громкости и конвертация аудиофайлов в `.webm` с помощью Ffmpeg. ([file module](https://github.com/ocenb/music-app-backend/blob/main/src/file/file.service.ts))
-- Загрузка аудио и изображений в облако Cloudinary.
-- Деплой на VPS с использованием Docker.
-
-### Frontend
 
 - Сложная логика проигрывания треков, полный функционал плеера. ([play-track.tsx](https://github.com/ocenb/music-app-frontend/blob/main/hooks/play-track.tsx), [player.tsx](https://github.com/ocenb/music-app-frontend/blob/main/hooks/player.tsx))
 - Валидация данных.
